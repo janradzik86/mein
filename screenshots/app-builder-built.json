@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "KADR — generator memów",
+      "hasCanvas": true,
+      "bodyTextLen": 396,
+      "bodyTextHash": "fa4b892e8863b9fbd2c082cc8cb0ddf35fb2269814709203677438d330404b89",
+      "bodyTextPrefix": "KADR Generator memów Resetuj Pobierz mem Złap napis i przesuń · ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "KADR — generator memów",
+      "hasCanvas": true,
+      "bodyTextLen": 366,
+      "bodyTextHash": "603dc9cb2975f22239f37f16537588831fa0a932ef2e6e8ee2abd3b28d5d6fda",
+      "bodyTextPrefix": "KADR Generator memów Złap napis i przesuń ZDJĘCIE Wgraj zdjęcie ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}
