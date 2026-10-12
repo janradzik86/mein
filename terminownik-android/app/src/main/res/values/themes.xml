@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      Motyw bazowy: Compose rysuje cały interfejs, więc styl XML odpowiada jedynie
+      za tło okna, pasek stanu i krawędzie. Kolory aplikacji pochodzą z ui/theme/Theme.kt.
+    -->
+    <style name="Theme.Terminownik" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/cream_background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+    </style>
+
+    <!-- Ekran startowy (core-splashscreen) z ikoną i tłem marki. -->
+    <style name="Theme.Terminownik.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/cream_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Terminownik</item>
+    </style>
+</resources>

@@ -1,0 +1,360 @@
+name: Terminownik – testy, lint i podpisane wydanie
+
+# Wyzwalacz: push na gałąź sesji (workflow_dispatch wymaga obecności na gałęzi domyślnej,
+# której ta gałąź nie spełnia, dlatego podstawowym trybem jest push).
+on:
+  push:
+    branches:
+      - 'arena/3c74200e-mein'
+    paths:
+      - 'terminownik-android/**'
+      - '.github/workflows/terminownik-release.yml'
+  pull_request:
+    paths:
+      - 'terminownik-android/**'
+      - '.github/workflows/terminownik-release.yml'
+
+permissions:
+  # write jest potrzebny wyłącznie do publikacji Release z APK i (przy pierwszym buildzie)
+  # z prywatnym kluczem podpisywania. Repozytorium jest prywatne.
+  contents: write
+
+concurrency:
+  group: terminownik-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_DIR: terminownik-android
+
+jobs:
+  verify:
+    name: Lint, testy jednostkowe, podpisane APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: terminownik-android
+
+    steps:
+      - name: Pobranie kodu
+        uses: actions/checkout@v4
+
+      - name: JDK 21 (zulu)
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: '21'
+
+      - name: Gradle (cache)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Spójność zasobów tekstowych (bez Gradle)
+        run: |
+          python3 tools/check-strings.py | tee /tmp/strings-check.txt
+          # Brakujące klucze albo niezgodna liczba argumentów blokuje wydanie.
+          if ! python3 tools/check-strings.py > /dev/null; then
+            echo "::error::Kontrola zasobów tekstowych nie przeszła – patrz log powyżej."
+            exit 1
+          fi
+
+      # Scenariusze logiki biznesowej uruchamia JUnit w kroku „Testy jednostkowe"
+      # (DomainScenariosTest → DomainScenarios.runAll(), 67 scenariuszy).
+      # Lokalnie, bez Gradle i bez sieci, ten sam zestaw sprawdza tools/verify-domain.sh.
+
+      - name: Przygotowanie klucza podpisywania
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TERMINOWNIK_KEYSTORE_BASE64: ${{ secrets.TERMINOWNIK_KEYSTORE_BASE64 }}
+          TERMINOWNIK_STORE_PASSWORD: ${{ secrets.TERMINOWNIK_STORE_PASSWORD }}
+          TERMINOWNIK_KEY_ALIAS: ${{ secrets.TERMINOWNIK_KEY_ALIAS }}
+          TERMINOWNIK_KEY_PASSWORD: ${{ secrets.TERMINOWNIK_KEY_PASSWORD }}
+        run: bash scripts/ci-prepare-signing.sh
+
+      - name: Lint (release)
+        run: ./gradlew --no-daemon --stacktrace :app:lintRelease
+
+      - name: Testy jednostkowe
+        run: ./gradlew --no-daemon --stacktrace :app:testDebugUnitTest :app:testReleaseUnitTest
+
+      - name: Zbudowanie podpisanego APK (release)
+        run: ./gradlew --no-daemon --stacktrace :app:assembleRelease
+
+      - name: Weryfikacja artefaktu i podpisu
+        id: verify
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/release/app-release.apk"
+          if [[ ! -f "$APK" ]]; then
+            echo "::error::Nie znaleziono APK: $APK"
+            exit 1
+          fi
+
+          BUILD_TOOLS="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+          APKSIGNER="$BUILD_TOOLS/apksigner"
+          AAPT2="$BUILD_TOOLS/aapt2"
+          echo "build-tools: $BUILD_TOOLS"
+
+          {
+            echo "## Plik"
+            echo '```'
+            ls -l "$APK"
+            echo '```'
+            echo
+            echo "## Rozmiar i skrót"
+            echo '```'
+            SIZE_BYTES=$(stat -c %s "$APK")
+            SIZE_MB=$(awk -v b="$SIZE_BYTES" 'BEGIN { printf "%.2f", b/1048576 }')
+            echo "rozmiar: $SIZE_BYTES bajtów ($SIZE_MB MiB)"
+            sha256sum "$APK"
+            echo '```'
+            echo
+            echo "## apksigner verify --verbose --print-certs"
+            echo '```'
+            "$APKSIGNER" verify --verbose --print-certs "$APK" 2>&1
+            echo '```'
+            echo
+            echo "## Wersja i pakiety (aapt2)"
+            echo '```'
+            "$AAPT2" dump badging "$APK" 2>/dev/null | grep -E "package:|sdkVersion|targetSdkVersion|application-label|native-code" || true
+            echo '```'
+            echo
+            echo "## ABI w APK"
+            echo '```'
+            unzip -l "$APK" | grep -E "lib/" | awk '{print $4}' | cut -d/ -f2 | sort -u || echo "brak bibliotek natywnych w APK"
+            echo '```'
+          } > /tmp/verify-report.md
+
+          SHA256=$(sha256sum "$APK" | cut -d' ' -f1)
+          SIZE_BYTES=$(stat -c %s "$APK")
+          VERSION_NAME=$("$AAPT2" dump badging "$APK" 2>/dev/null | sed -n "s/.*versionName='\([^']*\)'.*/\1/p" | head -1)
+          VERSION_CODE=$("$AAPT2" dump badging "$APK" 2>/dev/null | sed -n "s/.*versionCode='\([^']*\)'.*/\1/p" | head -1)
+
+          echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
+          echo "size_bytes=$SIZE_BYTES" >> "$GITHUB_OUTPUT"
+          echo "version_name=${VERSION_NAME:-unknown}" >> "$GITHUB_OUTPUT"
+          echo "version_code=${VERSION_CODE:-0}" >> "$GITHUB_OUTPUT"
+
+          # Kontrola manifestu: aplikacja nie ma uprawnień sieciowych i nie jest debuggowalna.
+          MANIFEST_TXT="/tmp/manifest.txt"
+          if command -v apkanalyzer >/dev/null 2>&1; then
+            apkanalyzer manifest print "$APK" > "$MANIFEST_TXT" 2>/dev/null || true
+          elif [[ -x "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" ]]; then
+            "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" manifest print "$APK" > "$MANIFEST_TXT" 2>/dev/null || true
+          fi
+
+          if [[ -s "$MANIFEST_TXT" ]]; then
+            {
+              echo
+              echo "## Manifest (apkanalyzer) – kontrola prywatności"
+              echo '```'
+              grep -E "uses-permission|android:debuggable|android:name=\"pl.terminownik" "$MANIFEST_TXT" || true
+              echo '```'
+            } >> /tmp/verify-report.md
+
+            if grep -q "android.permission.INTERNET" "$MANIFEST_TXT"; then
+              echo "::error::W manifeście znaleziono INTERNET – aplikacja ma działać w pełni offline."
+              exit 1
+            fi
+            if grep -q 'android:debuggable="true"' "$MANIFEST_TXT"; then
+              echo "::error::APK release jest debuggowalny (android:debuggable=true)."
+              exit 1
+            fi
+            echo "Kontrola manifestu: OK (brak INTERNET, brak debuggable=true)"
+          else
+            echo "::warning::apkanalyzer niedostępny – kontrola manifestu wykonana tylko przez aapt2."
+            "$AAPT2" dump permissions "$APK" > /tmp/permissions.txt 2>/dev/null || true
+            {
+              echo
+              echo "## Uprawnienia (aapt2 dump permissions)"
+              echo '```'
+              cat /tmp/permissions.txt
+              echo '```'
+            } >> /tmp/verify-report.md
+            if grep -q "android.permission.INTERNET" /tmp/permissions.txt 2>/dev/null; then
+              echo "::error::W uprawnieniach znaleziono INTERNET."
+              exit 1
+            fi
+          fi
+
+          cp "$APK" "dist-terminownik-release.apk"
+          echo "$SHA256  terminownik-release.apk" > SHA256SUMS.txt
+          cat /tmp/verify-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Podsumowanie testów i lint
+        if: always()
+        run: |
+          set +e
+          {
+            echo
+            echo "## Testy jednostkowe (JUnit)"
+            echo '```'
+            python3 - <<'PY'
+          import glob, xml.etree.ElementTree as ET
+          total = failures = errors = skipped = 0
+          for path in sorted(glob.glob('app/build/test-results/*/TEST-*.xml')):
+              root = ET.parse(path).getroot()
+              total += int(root.get('tests', 0))
+              failures += int(root.get('failures', 0))
+              errors += int(root.get('errors', 0))
+              skipped += int(root.get('skipped', 0))
+          print(f"testy: {total}, nieudane: {failures}, błędy: {errors}, pominięte: {skipped}")
+          print("WYNIK:", "PASS" if failures == 0 and errors == 0 and total > 0 else "FAIL")
+          PY
+            echo '```'
+            echo
+            echo "## Lint"
+            echo '```'
+            if [[ -f app/build/reports/lint-results-release.xml ]]; then
+              grep -c "<issue" app/build/reports/lint-results-release.xml | xargs -I{} echo "zgłoszenia lint: {}"
+              grep -o 'severity="[^"]*"' app/build/reports/lint-results-release.xml | sort | uniq -c || true
+            else
+              echo "brak raportu lint (sprawdź log kroku Lint)"
+            fi
+            echo '```'
+          } > /tmp/tests-summary.md
+          cat /tmp/tests-summary.md >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/tests-summary.md
+
+      - name: Archiwizacja raportów
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terminownik-raporty
+          path: |
+            terminownik-android/app/build/reports/lint-results-release.*
+            terminownik-android/app/build/reports/tests/**
+            terminownik-android/app/build/test-results/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Publikacja wydania z APK
+        if: github.event_name == 'push' && success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.verify.outputs.version_name }}"
+          SHA="${{ steps.verify.outputs.sha256 }}"
+          SIZE="${{ steps.verify.outputs.size_bytes }}"
+          TAG="terminownik-v${VERSION}"
+          APK="dist-terminownik-release.apk"
+          mv "$APK" "terminownik-release.apk"
+
+          {
+            echo "# Terminownik ${VERSION} – podpisane wydanie APK"
+            echo
+            echo "Artefakt zbudowany automatycznie z commitu \`${GITHUB_SHA}\` (gałąź \`${GITHUB_REF_NAME}\`)."
+            echo
+            echo "| Pole | Wartość |"
+            echo "| --- | --- |"
+            echo "| Nazwa aplikacji | Terminownik |"
+            echo "| Package | \`pl.terminownik.app\` |"
+            echo "| Wersja | ${VERSION} (kod ${{ steps.verify.outputs.version_code }}) |"
+            echo "| Plik | \`terminownik-release.apk\` |"
+            echo "| Rozmiar | ${SIZE} bajtów |"
+            echo "| SHA-256 | \`${SHA}\` |"
+            echo "| Typ buildu | release (minify + shrinkResources, \`debuggable=false\`) |"
+            echo "| Źródło klucza | \`${TERMINOWNIK_SIGNING_SOURCE:-unknown}\` |"
+            echo "| Commit | \`${GITHUB_SHA}\` |"
+            echo
+            echo "## Instalacja"
+            echo '```'
+            echo "adb install -r terminownik-release.apk"
+            echo '```'
+            echo
+            echo "## Weryfikacja podpisu i prywatności"
+            cat /tmp/verify-report.md
+            cat /tmp/tests-summary.md
+            echo
+            echo "## Ograniczenia tego wydania"
+            echo "* Brak dystrybucji sklepowej i płatności (zgodnie z założeniami: pełna wersja jako płatny plik APK poza sklepami)."
+            echo "* Klucz podpisywania: patrz \`RELEASE_CHECKLIST.md\`. Jeśli użyto klucza wygenerowanego przez CI,"
+            echo "  przenieś go do własnego sejfu i ustaw sekrety repozytorium – to udokumentowany bloker produkcyjny."
+            echo "* Testy instrumentowane na emulatorze: patrz job \`instrumented\` (oznaczony jako best-effort)."
+          } > BODY.md
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" terminownik-release.apk SHA256SUMS.txt BODY.md \
+              --repo "$GITHUB_REPOSITORY" --clobber
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file BODY.md
+            echo "Zaktualizowano istniejące wydanie: $TAG"
+          else
+            gh release create "$TAG" terminownik-release.apk SHA256SUMS.txt \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Terminownik ${VERSION} – podpisane APK" \
+              --notes-file BODY.md
+            echo "Utworzono wydanie: $TAG"
+          fi
+
+          echo
+          echo "Adres wydania: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+
+  instrumented:
+    name: Testy instrumentowane (emulator, best-effort)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    # Emulatory na runnerach GitHub bywają niestabilne – porażka nie blokuje wydania,
+    # ale jest raportowana uczciwie (nigdy nie oznaczamy nieuruchomionych testów jako zaliczonych).
+    continue-on-error: true
+    needs: verify
+    defaults:
+      run:
+        working-directory: terminownik-android
+
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [30, 34]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Uruchomienie testów na emulatorze (API ${{ matrix.api-level }})
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: ./gradlew --no-daemon :app:connectedDebugAndroidTest
+          working-directory: terminownik-android
+
+      - name: Raport z testów instrumentowanych
+        if: always()
+        run: |
+          set +e
+          {
+            echo "## Testy instrumentowane – API ${{ matrix.api-level }}"
+            echo '```'
+            python3 - <<'PY'
+          import glob, xml.etree.ElementTree as ET
+          total = failures = errors = skipped = 0
+          for path in sorted(glob.glob('app/build/outputs/androidTest-results/connected/**/TEST-*.xml', recursive=True)):
+              root = ET.parse(path).getroot()
+              total += int(root.get('tests', 0))
+              failures += int(root.get('failures', 0))
+              errors += int(root.get('errors', 0))
+              skipped += int(root.get('skipped', 0))
+          print(f"testy: {total}, nieudane: {failures}, błędy: {errors}, pominięte: {skipped}")
+          print("WYNIK:", "PASS" if total > 0 and failures == 0 and errors == 0 else ("NIE URUCHOMIONO" if total == 0 else "FAIL"))
+          PY
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Archiwizacja wyników instrumentowanych
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terminownik-testy-instrumentowane-api${{ matrix.api-level }}
+          path: terminownik-android/app/build/outputs/androidTest-results/**
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reguly Auto Backup (API <= 30). Kopie systemowa robimy dla bazy i zdjec aplikacji. -->
+<full-backup-content>
+    <include domain="database" path="." />
+    <include domain="sharedpref" path="." />
+    <include domain="file" path="photos/" />
+    <include domain="file" path="datastore/" />
+    <exclude domain="file" path="cache/" />
+    <exclude domain="file" path="tmp/" />
+</full-backup-content>

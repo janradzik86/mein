@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Kolory używane wyłącznie przez warstwę XML (motyw systemowy, splash, ikona).
+  Paleta Compose jest zdefiniowana w ui/theme/Theme.kt i to ona rządzi wyglądem aplikacji.
+-->
+<resources>
+    <color name="green_primary">#FF2E6B3E</color>
+    <color name="green_dark">#FFA7D7AE</color>
+    <color name="green_container">#FFC3E8C8</color>
+    <color name="cream_background">#FFFBF9F4</color>
+    <color name="night_background">#FF12140F</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="icon_background">#FF2E6B3E</color>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reguly Data Extraction (API 31+): te same dane w chmurze i przy przenoszeniu na nowy telefon. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="database" path="." />
+        <include domain="sharedpref" path="." />
+        <include domain="file" path="photos/" />
+        <include domain="file" path="datastore/" />
+        <exclude domain="file" path="cache/" />
+        <exclude domain="file" path="tmp/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="database" path="." />
+        <include domain="sharedpref" path="." />
+        <include domain="file" path="photos/" />
+        <include domain="file" path="datastore/" />
+        <exclude domain="file" path="cache/" />
+        <exclude domain="file" path="tmp/" />
+    </device-transfer>
+</data-extraction-rules>

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===================== Aplikacja ===================== -->
+    <string name="app_name">Terminownik</string>
+    <string name="app_tagline">Spiżarnia i apteczka pod kontrolą terminów</string>
+
+    <!-- ===================== Wspólne ===================== -->
+    <string name="ok">OK</string>
+    <string name="cancel">Anuluj</string>
+    <string name="save">Zapisz</string>
+    <string name="delete">Usuń</string>
+    <string name="edit">Edytuj</string>
+    <string name="close">Zamknij</string>
+    <string name="back">Wstecz</string>
+    <string name="retry">Spróbuj ponownie</string>
+    <string name="yes">tak</string>
+    <string name="no">nie</string>
+    <string name="loading">Wczytywanie…</string>
+    <string name="error_generic">Coś poszło nie tak. Spróbuj ponownie.</string>
+    <string name="error_io">Nie udało się odczytać lub zapisać pliku.</string>
+    <string name="more_options">Więcej opcji</string>
+    <string name="navigate_up">Wstecz</string>
+
+    <!-- ===================== Wdrożenie użytkownika ===================== -->
+    <string name="onboarding_next">Dalej</string>
+    <string name="onboarding_skip">Pomiń</string>
+    <string name="onboarding_start">Zaczynamy</string>
+    <string name="onboarding_page">Strona %1$d z %2$d</string>
+    <string name="onboarding_1_title">Dwie sekcje, jeden porządek</string>
+    <string name="onboarding_1_body">Spiżarnia i Apteczka są prowadzone osobno. Każdy produkt ma ilość, jednostkę, miejsce przechowywania, partię, zdjęcie i termin ważności.</string>
+    <string name="onboarding_2_title">Termin tylko wtedy, gdy go znasz</string>
+    <string name="onboarding_2_body">Skanuj kody i czytaj etykiety aparatem. Data z kodu GS1 albo z OCR zawsze wymaga Twojego potwierdzenia – aplikacja niczego nie zgaduje, a z samego EAN nie wyciąga terminu.</string>
+    <string name="onboarding_3_title">Przypomnienia bez konta i bez internetu</string>
+    <string name="onboarding_3_body">Wszystkie dane zostają na telefonie. Ustaw wyprzedzenie przypomnienia, a Terminownik da znać, zanim termin minie. Możesz też zrobić kopię zapasową i eksport CSV.</string>
+
+    <!-- ===================== Nawigacja ===================== -->
+    <string name="nav_pantry">Spiżarnia</string>
+    <string name="nav_medicine">Apteczka</string>
+    <string name="nav_deadlines">Terminy</string>
+    <string name="nav_shopping">Zakupy</string>
+    <string name="nav_settings">Ustawienia</string>
+    <string name="section_pantry">Spiżarnia</string>
+    <string name="section_medicine">Apteczka</string>
+
+    <!-- ===================== Listy ===================== -->
+    <string name="search_hint">Szukaj po nazwie, miejscu lub partii</string>
+    <string name="search_clear">Wyczyść wyszukiwanie</string>
+    <string name="filter_all">Wszystko</string>
+    <string name="filter_expiring">Kończą się</string>
+    <string name="filter_expired">Po terminie</string>
+    <string name="filter_no_date">Brak daty</string>
+    <string name="filter_unconfirmed">Do potwierdzenia</string>
+    <string name="filter_storage">Miejsce</string>
+    <string name="filter_storage_all">Wszystkie miejsca</string>
+    <string name="show_archived">Pokaż zużyte i wyrzucone</string>
+    <string name="hide_archived">Ukryj zużyte i wyrzucone</string>
+    <string name="items_count">%1$d pozycji</string>
+    <string name="sort_by_date">Sortuj: termin</string>
+    <string name="sort_by_name">Sortuj: nazwa</string>
+    <string name="sort_by_added">Sortuj: dodane</string>
+
+    <string name="empty_pantry_title">Spiżarnia jest pusta</string>
+    <string name="empty_pantry_body">Dodaj pierwszy produkt ręcznie albo zeskanuj kod z opakowania.</string>
+    <string name="empty_medicine_title">Apteczka jest pusta</string>
+    <string name="empty_medicine_body">Dodaj lek lub wyrób medyczny i pilnuj jego terminu.</string>
+    <string name="empty_filter_title">Brak pozycji dla tych filtrów</string>
+    <string name="empty_filter_body">Zmień filtr albo wyczyść wyszukiwanie.</string>
+    <string name="empty_search_title">Nic nie znaleziono</string>
+    <string name="empty_search_body">Sprawdź pisownię albo wyszukaj inną frazę.</string>
+
+    <string name="action_add">Dodaj pozycję</string>
+    <string name="action_scan">Skanuj kod</string>
+    <string name="action_ocr">Czytaj etykietę (OCR)</string>
+    <string name="action_use">Oznacz jako zużyte</string>
+    <string name="action_discard">Oznacz jako wyrzucone</string>
+    <string name="action_reactivate">Przywróć do aktywnych</string>
+    <string name="action_restock">Uzupełnij (nowa partia)</string>
+    <string name="action_to_shopping">Dodaj do listy zakupów</string>
+    <string name="action_delete_item">Usuń pozycję</string>
+    <string name="action_confirm_date">Potwierdź datę</string>
+    <string name="action_open_item">Otwórz pozycję</string>
+
+    <string name="item_status_active">Aktywna</string>
+    <string name="item_status_used">Zużyta</string>
+    <string name="item_status_discarded">Wyrzucona</string>
+    <string name="badge_expired">Po terminie</string>
+    <string name="badge_due_today">Termin dziś</string>
+    <string name="badge_expiring">Kończy się</string>
+    <string name="badge_no_date">Brak daty</string>
+    <string name="badge_unconfirmed">Do potwierdzenia</string>
+    <string name="badge_ok">Termin odległy</string>
+    <string name="expiry_days_left">Termin za %1$s</string>
+    <string name="expiry_days_ago">Termin minął %1$s</string>
+    <string name="card_expiry">Termin: %1$s</string>
+    <string name="card_location">Miejsce: %1$s</string>
+    <string name="card_batch">Partia: %1$s</string>
+    <string name="card_quantity">Ilość: %1$s</string>
+    <string name="card_updated">Aktualizacja: %1$s</string>
+    <string name="card_code">Kod: %1$s</string>
+
+    <!-- Bezpieczeństwo i wiarygodność komunikatów -->
+    <string name="disclaimer_food">Data to tylko wskazówka organizacyjna. Przydatność produktu oceń samodzielnie: zapach, wygląd, smak i sposób przechowywania mówią więcej niż sama data.</string>
+    <string name="disclaimer_medicine">Terminownik nie udziela porad medycznych ani nie sugeruje dawkowania. W sprawie leków – także tych po terminie – skonsultuj się z lekarzem lub farmaceutą.</string>
+    <string name="disclaimer_unconfirmed">Data została odczytana automatycznie i nie jest jeszcze potwierdzona. Sprawdź ją na opakowaniu, zanim zaufasz przypomnieniu.</string>
+    <string name="disclaimer_month_only">Znamy tylko miesiąc terminu. Uzupełnij dokładny dzień, jeśli jest nadrukowany na opakowaniu.</string>
+    <string name="disclaimer_barcodes">Ten sam produkt może mieć kilka partii z różnymi terminami. Partie nie są łączone automatycznie.</string>
+
+    <!-- ===================== Formularz pozycji ===================== -->
+    <string name="edit_title_new_pantry">Nowa pozycja – Spiżarnia</string>
+    <string name="edit_title_new_medicine">Nowa pozycja – Apteczka</string>
+    <string name="edit_title_edit">Edycja pozycji</string>
+    <string name="field_name">Nazwa</string>
+    <string name="field_name_hint">np. Jogurt naturalny</string>
+    <string name="field_quantity">Ilość</string>
+    <string name="field_quantity_hint">np. 2</string>
+    <string name="field_unit">Jednostka</string>
+    <string name="field_unit_hint">np. szt., g, ml</string>
+    <string name="field_location">Miejsce przechowywania</string>
+    <string name="field_location_hint">np. Lodówka</string>
+    <string name="field_batch">Partia</string>
+    <string name="field_batch_hint">Numer partii z opakowania</string>
+    <string name="field_barcode">Kod kreskowy</string>
+    <string name="field_note">Notatka</string>
+    <string name="field_note_hint">np. otwarte 3 dni temu</string>
+    <string name="field_photo">Zdjęcie</string>
+    <string name="photo_add">Dodaj zdjęcie</string>
+    <string name="photo_replace">Zmień zdjęcie</string>
+    <string name="photo_remove">Usuń zdjęcie</string>
+    <string name="photo_import_failed">Nie udało się wczytać zdjęcia.</string>
+    <string name="field_expiry">Termin ważności</string>
+    <string name="date_not_set">Data nieustawiona</string>
+    <string name="date_set_action">Ustaw datę</string>
+    <string name="date_change_action">Zmień datę</string>
+    <string name="date_clear_action">Usuń datę</string>
+    <string name="field_date_type">Rodzaj daty</string>
+    <string name="date_type_use_by">Należy spożyć do</string>
+    <string name="date_type_best_before">Najlepiej spożyć przed</string>
+    <string name="date_type_unspecified">Nie określono rodzaju</string>
+    <string name="date_type_help">„Należy spożyć do” to termin bezpieczeństwa (żywność świeża), „najlepiej spożyć przed” to data minimalnej trwałości.</string>
+    <string name="field_date_source">Źródło daty</string>
+    <string name="source_manual">Wpis ręczny</string>
+    <string name="source_gs1">GS1 DataMatrix</string>
+    <string name="source_ocr">OCR etykiety</string>
+    <string name="source_import">Kopia zapasowa</string>
+    <string name="date_needs_confirmation">Wymaga potwierdzenia</string>
+    <string name="date_confirmed">Potwierdzona</string>
+    <string name="confirm_date_action">Potwierdzam datę</string>
+    <string name="field_reminder">Przypomnienie dla tej pozycji</string>
+    <string name="error_name_required">Nazwa jest wymagana.</string>
+    <string name="error_name_too_long">Nazwa może mieć maksymalnie 200 znaków.</string>
+    <string name="error_quantity_invalid">Ilość musi być liczbą nieujemną.</string>
+    <string name="error_date_invalid">Podana data nie istnieje. Sprawdź dzień i miesiąc.</string>
+    <string name="error_date_far_future">Data jest bardzo odległa. Sprawdź rok.</string>
+    <string name="form_saved">Zapisano</string>
+    <string name="form_delete_confirm_title">Usunąć pozycję?</string>
+    <string name="form_delete_confirm_body">Pozycja zostanie trwale usunięta razem ze zdjęciem i przypomnieniami. Tej operacji nie można cofnąć.</string>
+    <string name="restock_title">Uzupełnij zapas</string>
+    <string name="restock_body">Uzupełnienie tworzy nową partię z własnym terminem. Poprzednia partia zostaje w historii.</string>
+    <string name="restock_quantity">Nowa ilość</string>
+    <string name="restock_batch">Nowa partia (opcjonalnie)</string>
+    <string name="restock_confirm">Dodaj nową partię</string>
+    <string name="restock_done">Dodano nową partię</string>
+    <string name="dictionary_hint">Zapamiętano dla tego kodu</string>
+    <string name="dictionary_forget">Zapomnij nazwę dla tego kodu</string>
+    <string name="dictionary_forgotten">Usunięto powiązanie kodu z nazwą</string>
+
+    <!-- ===================== Dialog daty ===================== -->
+    <string name="date_dialog_title">Termin ważności</string>
+    <string name="date_dialog_day">Dzień</string>
+    <string name="date_dialog_month">Miesiąc</string>
+    <string name="date_dialog_year">Rok</string>
+    <string name="date_dialog_day_optional">Dzień (puste = znam tylko miesiąc)</string>
+    <string name="date_dialog_today">Dziś</string>
+    <string name="date_dialog_in_week">Za tydzień</string>
+    <string name="date_dialog_in_month">Za miesiąc</string>
+    <string name="date_dialog_in_year">Za rok</string>
+    <string name="date_dialog_error">Podaj prawidłowy dzień (1–%1$d), miesiąc (1–12) i rok.</string>
+    <string name="date_dialog_preview">Wybrana data: %1$s</string>
+    <string name="date_dialog_preview_month">Wybrany miesiąc: %1$s</string>
+
+    <!-- ===================== Skaner kodów ===================== -->
+    <string name="scanner_title">Skanuj kod</string>
+    <string name="scanner_hint">Nakieruj aparat na kod kreskowy lub kod DataMatrix z opakowania.</string>
+    <string name="scanner_permission_title">Potrzebny dostęp do aparatu</string>
+    <string name="scanner_permission_body">Skanowanie kodów działa lokalnie na urządzeniu. Używamy aparatu tylko wtedy, gdy jesteś na tym ekranie.</string>
+    <string name="scanner_permission_action">Zezwól na dostęp do aparatu</string>
+    <string name="scanner_permission_denied_body">Bez dostępu do aparatu nie zeskanujesz kodu. Możesz wpisać kod i datę ręcznie albo nadać uprawnienie w ustawieniach systemu.</string>
+    <string name="scanner_permission_settings">Otwórz ustawienia aplikacji</string>
+    <string name="scanner_no_camera">To urządzenie nie ma aparatu. Wpisz kod ręcznie.</string>
+    <string name="scanner_result_title">Zeskanowany kod</string>
+    <string name="scanner_code_label">Kod: %1$s</string>
+    <string name="scanner_format_label">Symbol: %1$s</string>
+    <string name="scanner_known_name">Zapamiętana nazwa: %1$s</string>
+    <string name="scanner_gs1_gtin">GTIN (AI 01): %1$s</string>
+    <string name="scanner_gs1_lot">Partia (AI 10): %1$s</string>
+    <string name="scanner_gs1_serial">Numer seryjny (AI 21): %1$s</string>
+    <string name="scanner_gs1_expiry">Termin (AI 17): %1$s</string>
+    <string name="scanner_gs1_weight">Masa netto (AI 310n): %1$s kg</string>
+    <string name="scanner_gs1_volume">Objętość (AI 315n): %1$s l</string>
+    <string name="scanner_gs1_count">Liczba sztuk (AI 30): %1$s</string>
+    <string name="scanner_gs1_unrecognized">Nieobsłużone elementy GS1: %1$s</string>
+    <string name="scanner_msg_ok">Kod zawiera termin ważności. Potwierdź go przed zapisaniem.</string>
+    <string name="scanner_msg_invalid_check_digit">Cyfra kontrolna kodu jest nieprawidłowa – odczyt może być błędny.</string>
+    <string name="scanner_msg_ean_no_expiry">To zwykły kod produktu (EAN/UPC). On nie zawiera terminu ważności – podaj datę ręcznie albo użyj OCR etykiety.</string>
+    <string name="scanner_msg_gs1_no_date">Kod GS1 nie zawiera elementu AI 17 z terminem ważności.</string>
+    <string name="scanner_msg_gs1_date_ambiguous">Termin z kodu GS1 jest nieprecyzyjny (np. sam miesiąc). Uzupełnij dokładny dzień.</string>
+    <string name="scanner_msg_gs1_parse_error">Nie udało się odczytać danych GS1: %1$s</string>
+    <string name="scanner_action_use">Użyj tych danych</string>
+    <string name="scanner_action_rescan">Skanuj ponownie</string>
+    <string name="scanner_action_manual">Wpisz ręcznie</string>
+    <string name="scanner_action_ocr">Czytaj etykietę (OCR)</string>
+
+    <!-- ===================== OCR etykiety ===================== -->
+    <string name="ocr_title">Czytaj datę z etykiety</string>
+    <string name="ocr_hint">Zrób zdjęcie fragmentu opakowania z datą. Rozpoznawanie działa offline, na urządzeniu.</string>
+    <string name="ocr_action_capture">Zrób zdjęcie etykiety</string>
+    <string name="ocr_action_pick">Wybierz zdjęcie z galerii</string>
+    <string name="ocr_processing">Rozpoznaję tekst…</string>
+    <string name="ocr_no_results">Nie znalazłem daty na tym zdjęciu. Spróbuj bliżej i przy lepszym świetle albo wpisz datę ręcznie.</string>
+    <string name="ocr_results_title">Znalezione daty</string>
+    <string name="ocr_results_hint">Każda data z OCR wymaga potwierdzenia. Wybierz właściwą albo popraw ją ręcznie.</string>
+    <string name="ocr_candidate">Propozycja: %1$s</string>
+    <string name="ocr_confidence_high">Pewność: wysoka</string>
+    <string name="ocr_confidence_medium">Pewność: średnia</string>
+    <string name="ocr_confidence_low">Pewność: niska – sprawdź</string>
+    <string name="ocr_issue_ambiguous">Zapis niejednoznaczny: nie wiadomo, czy to %1$s, czy %2$s.</string>
+    <string name="ocr_issue_month_only">Znaleziono tylko miesiąc i rok – podaj dzień, jeśli jest nadrukowany.</string>
+    <string name="ocr_issue_order">Zapis w kolejności miesiąc-dzień został przestawiony na polski porządek.</string>
+    <string name="ocr_issue_year">Rok wygląda nieprawdopodobnie – sprawdź datę na opakowaniu.</string>
+    <string name="ocr_issue_no_label">Nie znaleziono etykiety przy dacie – potwierdź, że to termin ważności.</string>
+    <string name="ocr_label_found">Etykieta: %1$s</string>
+    <string name="ocr_source_line">Odczytany tekst: %1$s</string>
+    <string name="ocr_use_selected">Użyj tej daty</string>
+    <string name="ocr_edit_manually">Popraw ręcznie</string>
+    <string name="ocr_retry">Nowe zdjęcie</string>
+    <string name="ocr_permission_denied">Bez aparatu nie zrobię zdjęcia etykiety. Możesz wybrać gotowe zdjęcie albo wpisać datę ręcznie.</string>
+    <string name="ocr_failed">Rozpoznawanie tekstu nie powiodło się.</string>
+
+    <!-- ==================== Ekran Terminy ===================== -->
+    <string name="deadlines_title">Terminy</string>
+    <string name="deadlines_tab_expiring">Kończące się</string>
+    <string name="deadlines_tab_expired">Po terminie</string>
+    <string name="deadlines_tab_no_date">Brak daty</string>
+    <string name="deadlines_tab_unconfirmed">Do potwierdzenia</string>
+    <string name="deadlines_tab_all">Wszystko</string>
+    <string name="deadlines_empty_expiring">Nic nie kończy się w ustawionym wyprzedzeniu (%1$d dni).</string>
+    <string name="deadlines_empty_expired">Brak pozycji po terminie.</string>
+    <string name="deadlines_empty_no_date">Wszystkie pozycje mają datę.</string>
+    <string name="deadlines_empty_unconfirmed">Nie ma dat czekających na potwierdzenie.</string>
+    <string name="deadlines_empty_all">Brak pozycji do pokazania.</string>
+    <string name="deadlines_summary">Kończące się: %1$d • Po terminie: %2$d • Do potwierdzenia: %3$d</string>
+    <string name="deadlines_reminder_state_on">Przypomnienia są włączone (%1$d dni przed terminem, o %2$s).</string>
+    <string name="deadlines_reminder_state_off">Przypomnienia są wyłączone w ustawieniach.</string>
+
+    <!-- ===================== Lista zakupów ===================== -->
+    <string name="shopping_title">Lista zakupów</string>
+    <string name="shopping_empty_title">Lista jest pusta</string>
+    <string name="shopping_empty_body">Dodaj produkt ręcznie albo użyj „Kup ponownie” przy pozycji ze spisu.</string>
+    <string name="shopping_add">Dodaj do listy</string>
+    <string name="shopping_field_name">Nazwa produktu</string>
+    <string name="shopping_field_quantity">Ilość</string>
+    <string name="shopping_field_unit">Jednostka</string>
+    <string name="shopping_field_note">Notatka</string>
+    <string name="shopping_mark_done">Oznacz jako kupione</string>
+    <string name="shopping_mark_undone">Przywróć na listę</string>
+    <string name="shopping_clear_done">Usuń kupione</string>
+    <string name="shopping_delete">Usuń z listy</string>
+    <string name="shopping_export">Eksportuj listę do CSV</string>
+    <string name="shopping_left">Do kupienia: %1$d</string>
+    <string name="shopping_done_section">Kupione</string>
+    <string name="shopping_added">Dodano do listy zakupów</string>
+    <string name="shopping_error_name">Podaj nazwę produktu.</string>
+    <string name="shopping_cleared">Usunięto kupione pozycje</string>
+
+    <!-- ===================== Ustawienia ===================== -->
+    <string name="settings_title">Ustawienia</string>
+    <string name="settings_section_appearance">Wygląd</string>
+    <string name="settings_theme">Motyw</string>
+    <string name="theme_system">Zgodnie z systemem</string>
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="settings_font_note">Aplikacja używa systemowego rozmiaru czcionki i ustawień dostępności.</string>
+
+    <string name="settings_section_reminders">Przypomnienia</string>
+    <string name="settings_reminders_enabled">Włącz przypomnienia</string>
+    <string name="settings_lead_days">Wyprzedzenie: %1$d dni przed terminem</string>
+    <string name="settings_lead_days_zero">Wyprzedzenie: tylko w dniu terminu</string>
+    <string name="settings_reminder_time">Godzina przypomnienia: %1$s</string>
+    <string name="settings_reminder_time_action">Zmień godzinę</string>
+    <string name="settings_remind_due_day">Przypomnij także w dniu terminu</string>
+    <string name="settings_reminder_limitations">Android nie gwarantuje przypomnienia co do sekundy: system ogranicza pracę w tle (Doze), a periodyczne zadania mają minimum 15 minut. Używamy alarmów systemowych, a przy starcie aplikacji nadrabiamy pominięte przypomnienia.</string>
+    <string name="settings_notifications_state">Powiadomienia: %1$s</string>
+    <string name="settings_state_granted">włączone</string>
+    <string name="settings_state_denied">wyłączone</string>
+    <string name="settings_state_not_needed">nie dotyczy tej wersji systemu</string>
+    <string name="settings_notifications_action">Włącz powiadomienia</string>
+    <string name="settings_exact_alarm_action">Zezwól na dokładne alarmy</string>
+    <string name="settings_exact_alarm_denied_note">Bez dokładnych alarmów przypomnienie może przyjść w oknie do 15 minut od ustawionej godziny.</string>
+    <string name="time_dialog_title">Godzina przypomnienia</string>
+    <string name="time_dialog_hour">Godzina (0–23)</string>
+    <string name="time_dialog_minute">Minuta (0–59)</string>
+    <string name="time_dialog_error">Podaj godzinę 0–23 i minutę 0–59.</string>
+
+    <string name="settings_section_data">Dane i kopia zapasowa</string>
+    <string name="settings_export_backup">Utwórz kopię zapasową</string>
+    <string name="settings_import_backup">Odtwórz z kopii</string>
+    <string name="settings_export_csv">Eksportuj spis do CSV</string>
+    <string name="settings_stats">Pozycje: %1$d • Kody w słowniku: %2$d • Lista zakupów: %3$d</string>
+    <string name="settings_photos">Zdjęcia: %1$d (%2$s)</string>
+    <string name="settings_erase_all">Usuń wszystkie dane</string>
+    <string name="settings_erase_title">Usunąć wszystkie dane?</string>
+    <string name="settings_erase_body">Skasujemy pozycje, partie, zdjęcia, słownik kodów, listę zakupów, historię przypomnień i ustawienia. Dane znikną z tego telefonu bezpowrotnie. Najpierw warto zrobić kopię zapasową.</string>
+    <string name="settings_erase_confirm">Usuń wszystko</string>
+    <string name="settings_erased">Wszystkie dane zostały usunięte</string>
+
+    <string name="settings_section_about">O aplikacji</string>
+    <string name="settings_privacy">Prywatność i przepływ danych</string>
+    <string name="settings_licenses">Biblioteki i licencje</string>
+    <string name="settings_version">Wersja %1$s (kod %2$d)</string>
+    <string name="settings_offline_note">Aplikacja nie łączy się z internetem. W manifeście celowo usunęliśmy uprawnienie INTERNET.</string>
+
+    <!-- ===================== Kopia zapasowa ===================== -->
+    <string name="backup_export_title">Kopia zapasowa</string>
+    <string name="backup_export_hint">Wybierz, gdzie zapisać plik kopii. Format: ZIP z manifestem, danymi JSON i zdjęciami.</string>
+    <string name="backup_export_success">Kopia utworzona: %1$d pozycji, %2$d zdjęć, %3$s.</string>
+    <string name="backup_import_title">Odtwarzanie kopii</string>
+    <string name="backup_import_hint">Plik kopii traktujemy jako niezaufany: sprawdzamy format, rozmiary, ścieżki i sumy kontrolne.</string>
+    <string name="backup_inspect_found">Kopia z %1$s • wersja formatu %2$d • pozycje: %3$d • zdjęcia: %4$d</string>
+    <string name="backup_mode_title">Jak odtworzyć dane?</string>
+    <string name="backup_mode_replace">Zastąp wszystko</string>
+    <string name="backup_mode_replace_body">Usuwa bieżące dane i wstawia dane z kopii.</string>
+    <string name="backup_mode_merge">Dołącz do istniejących</string>
+    <string name="backup_mode_merge_body">Dodaje pozycje z kopii, pomijając te już obecne.</string>
+    <string name="backup_import_success">Odtworzono: %1$d pozycji, %2$d zdjęć, %3$d kodów, %4$d pozycji zakupów.</string>
+    <string name="backup_import_skipped">Pominięto %1$d nieprawidłowych rekordów.</string>
+    <string name="backup_warnings">Ostrzeżenia: %1$s</string>
+    <string name="backup_warning_format_older">Kopia pochodzi ze starszej wersji formatu – część nowych funkcji mogła nie zostać zapisana.</string>
+    <string name="backup_warning_empty">Ta kopia nie zawiera żadnych pozycji.</string>
+    <string name="backup_warning_timestamp">Kopia nie ma zapisanej daty utworzenia.</string>
+    <string name="backup_warning_date_range">Niektóre daty były poza rozsądnym zakresem i zostały pominięte.</string>
+    <string name="backup_warning_photos">Nie wszystkich zdjęć udało się odtworzyć.</string>
+    <string name="backup_warning_corrupt_section">Część danych kopii była nieczytelna i została pominięta.</string>
+    <string name="backup_warning_manifest">Manifest kopii nie opisuje samego siebie.</string>
+    <string name="backup_progress_export">Tworzę kopię…</string>
+    <string name="backup_progress_import">Sprawdzam i odtwarzam kopię…</string>
+    <string name="backup_error_not_a_zip">To nie jest plik kopii Terminownika (nieprawidłowy ZIP).</string>
+    <string name="backup_error_missing_manifest">Archiwum nie zawiera manifestu – to nie jest kopia Terminownika.</string>
+    <string name="backup_error_format_too_new">Kopia jest z nowszej wersji aplikacji. Zaktualizuj Terminownik, aby ją odtworzyć.</string>
+    <string name="backup_error_format_unsupported">Format kopii nie jest już obsługiwany.</string>
+    <string name="backup_error_wrong_app">Ten plik pochodzi z innej aplikacji.</string>
+    <string name="backup_error_corrupted_json">Dane w kopii są nieczytelne (uszkodzony JSON).</string>
+    <string name="backup_error_checksum">Suma kontrolna się nie zgadza – plik jest uszkodzony lub zmodyfikowany.</string>
+    <string name="backup_error_entry_too_large">Plik w archiwum przekracza dozwolony rozmiar.</string>
+    <string name="backup_error_archive_too_large">Archiwum po rozpakowaniu jest za duże.</string>
+    <string name="backup_error_too_many_entries">Archiwum zawiera za dużo plików.</string>
+    <string name="backup_error_too_many_items">Kopia zawiera za dużo pozycji.</string>
+    <string name="backup_error_unsafe_path">Archiwum zawiera niebezpieczną ścieżkę – import przerwany.</string>
+    <string name="backup_error_unexpected_entry">Archiwum zawiera nieoczekiwane pliki.</string>
+    <string name="backup_error_compression_bomb">Podejrzany stopień kompresji – import przerwany.</string>
+    <string name="backup_error_io">Nie udało się odczytać pliku kopii.</string>
+    <string name="csv_export_success">Wyeksportowano %1$d pozycji do CSV.</string>
+    <string name="csv_export_empty">Nie ma czego eksportować – spis jest pusty.</string>
+    <string name="csv_headers_name">Nazwa</string>
+    <string name="csv_headers_quantity">Ilość</string>
+    <string name="csv_headers_unit">Jednostka</string>
+    <string name="csv_headers_section">Sekcja</string>
+    <string name="csv_headers_done">Kupione</string>
+    <string name="csv_headers_note">Notatka</string>
+    <string name="csv_suggested_filename">terminownik-spis</string>
+    <string name="csv_suggested_filename_shopping">terminownik-zakupy</string>
+    <string name="backup_suggested_filename">terminownik-kopia</string>
+
+    <!-- ===================== Powiadomienia ===================== -->
+    <string name="channel_reminders_name">Przypomnienia o terminach</string>
+    <string name="channel_reminders_description">Powiadomienia o zbliżających się i mijających terminach ważności produktów ze spisu.</string>
+    <string name="notification_title_lead">Kończy się termin</string>
+    <string name="notification_title_due">Termin mija dziś</string>
+    <string name="notification_body">%1$s — termin: %2$s (%3$s, %4$s)</string>
+    <string name="notification_summary_title">Wymaga uwagi: %1$d pozycji</string>
+    <string name="notification_summary_body_generic">Sprawdź listę terminów w aplikacji.</string>
+
+    <!-- ===================== O aplikacji / prywatność ===================== -->
+    <string name="about_title">O aplikacji</string>
+    <string name="about_intro">Terminownik to lokalny spis zapasów żywności i domowej apteczki z przypomnieniami o terminach ważności.</string>
+    <string name="about_version">Wersja: %1$s (kod wersji %2$d)</string>
+    <string name="privacy_title">Prywatność i przepływ danych</string>
+    <string name="privacy_1">Wszystkie dane (pozycje, partie, zdjęcia, słownik kodów, lista zakupów, ustawienia, historia przypomnień) są przechowywane wyłącznie na tym urządzeniu: w bazie Room i w katalogu prywatnym aplikacji.</string>
+    <string name="privacy_2">Aplikacja nie ma uprawnień sieciowych – w manifeście celowo usunięto INTERNET i ACCESS_NETWORK_STATE. Nie wysyłamy nic na żaden serwer.</string>
+    <string name="privacy_3">Nie wymagamy konta, e-maila ani numeru telefonu. Nie ma reklam, analityki, SDK śledzących ani profilowania.</string>
+    <string name="privacy_4">Kamera jest używana tylko na ekranach skanowania i OCR, a obrazy są przetwarzane na urządzeniu przez wbudowane modele ML Kit. Zdjęcia kodów i etykiet nie opuszczają telefonu.</string>
+    <string name="privacy_5">Zdjęcia pozycji wybierasz przez systemowy picker plików – aplikacja nie żąda dostępu do całej pamięci urządzenia.</string>
+    <string name="privacy_6">Nazwy produktów w słowniku kodów pochodzą wyłącznie z Twoich wpisów. Aplikacja nie pobiera danych z zewnętrznej bazy produktów i nie wymaga płatnego API.</string>
+    <string name="privacy_7">Eksport CSV i kopia zapasowa trafiają tam, gdzie wskażesz w systemowym oknie zapisu. To Ty decydujesz o miejscu i o udostępnianiu tych plików.</string>
+    <string name="privacy_8">Usunięcie danych: „Usuń wszystkie dane” w ustawieniach kasuje bazę, zdjęcia, słownik kodów, listę zakupów, historię przypomnień i ustawienia. Odinstalowanie aplikacji usuwa wszystko razem z katalogiem prywatnym.</string>
+    <string name="privacy_9">Nie zbieramy danych o zdrowiu ani nie prowadzimy żadnych rejestrów medycznych. Zapiski o lekach są Twoją prywatną notatką organizacyjną.</string>
+    <string name="licenses_title">Biblioteki i licencje</string>
+    <string name="licenses_intro">Terminownik korzysta z bibliotek open source. Pełny wykaz z licencjami jest w pliku DEPENDENCIES_PL.md w repozytorium.</string>
+    <string name="disclaimer_title">Zastrzeżenia</string>
+    <string name="field_section">Sekcja</string>
+    <string name="form_status">Stan pozycji</string>
+    <string name="form_item_not_found">Nie znaleziono pozycji – została usunięta. Możesz dodać nową.</string>
+    <string name="error_barcode_length">Kod produktu ma zwykle 8, 12, 13 lub 14 cyfr.</string>
+    <string name="error_barcode_invalid_chars">Kod może zawierać tylko cyfry.</string>
+    <string name="settings_test_notification">Wyślij powiadomienie próbne</string>
+    <string name="settings_test_sent">Powiadomienie próbne wysłane – sprawdź pasek powiadomień.</string>
+    <string name="notification_test_item">Pozycja próbna</string>
+    <string name="settings_repeat_onboarding">Pokaż ponownie krótkie wdrożenie</string>
+    <string name="settings_database_size">Baza danych: %1$s</string>
+    <string name="settings_section_theme_help">Motyw możesz też zmienić systemowo – aplikacja stosuje się do ustawienia systemu.</string>
+    <string name="dictionary_use_name">Użyj nazwy: %1$s</string>
+    <string name="csv_headers_created">Dodano</string>
+    <string name="csv_headers_updated">Zaktualizowano</string>
+    <string name="shopping_clear_done_body">Usuniemy z listy wszystkie pozycje oznaczone jako kupione.</string>
+    <string name="licenses_data_note">Nie używamy zewnętrznych źródeł danych o produktach ani płatnych API. Słownik kod → nazwa tworzy się wyłącznie z Twoich wpisów.</string>
+</resources>

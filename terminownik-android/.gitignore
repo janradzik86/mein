@@ -1,0 +1,23 @@
+# Gradle / Android
+.gradle/
+build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.iml
+.idea/
+# Podpisy i sekrety - NIGDY nie commitujemy
+*.jks
+*.keystore
+*.pk12
+keystore.properties
+signing.properties
+keys/
+dist/
+# Artefakty podpisywania tworzone w CI (poza VCS)
+.signing/
+dist-*.apk
+*.apk
+# Wyniki lokalnej weryfikacji
+/tools/.cache/
