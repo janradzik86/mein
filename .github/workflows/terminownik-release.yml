@@ -57,7 +57,7 @@ jobs:
             exit 1
           fi
 
-      # Scenariusze logiki biznesowej uruchamia JUnit w kroku „Testy jednostkowe"
+      # Scenariusze logiki biznesowej uruchamia JUnit w kroku "Testy jednostkowe"
       # (DomainScenariosTest → DomainScenarios.runAll(), 67 scenariuszy).
       # Lokalnie, bez Gradle i bez sieci, ten sam zestaw sprawdza tools/verify-domain.sh.
 
@@ -306,7 +306,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [30, 34]
+        api_level: [30, 34]
 
     steps:
       - uses: actions/checkout@v4
@@ -318,10 +318,10 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Uruchomienie testów na emulatorze (API ${{ matrix.api-level }})
+      - name: Uruchomienie testów na emulatorze (API ${{ matrix.api_level }})
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ matrix.api-level }}
+          api-level: ${{ matrix.api_level }}
           arch: x86_64
           target: google_apis
           disable-animations: true
@@ -333,7 +333,7 @@ jobs:
         run: |
           set +e
           {
-            echo "## Testy instrumentowane – API ${{ matrix.api-level }}"
+            echo "## Testy instrumentowane – API ${{ matrix.api_level }}"
             echo '```'
             python3 - <<'PY'
           import glob, xml.etree.ElementTree as ET
@@ -354,7 +354,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: terminownik-testy-instrumentowane-api${{ matrix.api-level }}
+          name: terminownik-testy-instrumentowane-api${{ matrix.api_level }}
           path: terminownik-android/app/build/outputs/androidTest-results/**
           if-no-files-found: warn
           retention-days: 30
