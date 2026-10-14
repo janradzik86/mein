@@ -177,6 +177,48 @@ jobs:
           echo "$SHA256  terminownik-release.apk" > SHA256SUMS.txt
           cat /tmp/verify-report.md >> "$GITHUB_STEP_SUMMARY"
 
+      # Logi runnerow nie sa dostepne przez API (blokada hosta pipelines.actions...),
+      # wiec przy porazce zapisujemy najwazniejsze fragmenty jako plik w repozytorium
+      # (sciezka poza filtrem `paths`, zeby nie petlic workflow; dodatkowo [skip ci]).
+      - name: Diagnostyka przy porazce
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          LOG=/tmp/build.log
+          ./gradlew --no-daemon :app:assembleRelease --stacktrace > "$LOG" 2>&1
+          {
+            echo "# Diagnostyka buildu (automatyczna)"
+            echo
+            echo "* commit: ${GITHUB_SHA}"
+            echo "* data: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "* runner: ${RUNNER_OS} / java: $(java -version 2>&1 | head -1)"
+            echo
+            echo "## Bledy kompilacji i przyczyny"
+            echo '```'
+            grep -nE "^e: |error:|FAILURE:|Caused by:|What went wrong|FAILED|Unresolved reference|Execution failed|Type mismatch|None of the following" "$LOG" | head -250
+            echo '```'
+            echo
+            echo "## Ostatnie 300 linii logu"
+            echo '```'
+            tail -300 "$LOG"
+            echo '```'
+          } > /tmp/diag.md
+          base64 -w0 /tmp/diag.md > /tmp/diag.b64
+          echo "rozmiar diagnostyki: $(wc -c < /tmp/diag.md) bajtow"
+          EXISTING_SHA="$(gh api "repos/$GITHUB_REPOSITORY/contents/.github/ci-diagnostics/terminownik-build.md?ref=$GITHUB_REF_NAME" --jq .sha 2>/dev/null || true)"
+          ARGS=(-X PUT "repos/$GITHUB_REPOSITORY/contents/.github/ci-diagnostics/terminownik-build.md"
+                -f message="chore(ci): diagnostyka nieudanego buildu [skip ci]"
+                -F content=@/tmp/diag.b64
+                -f branch="$GITHUB_REF_NAME")
+          if [[ -n "$EXISTING_SHA" ]]; then ARGS+=(-f sha="$EXISTING_SHA"); fi
+          if gh api "${ARGS[@]}" >/dev/null 2>&1; then
+            echo "diagnostyka zapisana: .github/ci-diagnostics/terminownik-build.md"
+          else
+            echo "::warning::nie udalo sie zapisac diagnostyki przez API"
+          fi
+
       - name: Podsumowanie testow i lint
         if: always()
         run: |
