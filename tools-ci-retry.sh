@@ -8,7 +8,7 @@ set -uo pipefail
 
 REPO="janradzik86/mein"
 BRANCH="arena/3c74200e-mein"
-RUN_ID="${1:-38496245640}"
+RUN_ID="${1:-}"          # puste = zawsze najnowszy run galezi (zeby budowac biezacy kod)
 RESULT="/home/user/mein/CI_RESULT.md"
 API="https://api.github.com"
 TOKEN="$(gh auth token)"
@@ -16,7 +16,21 @@ AUTH=(-H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json"
 
 log() { echo "[$(date -u '+%H:%M:%S')] $*"; }
 
-job_state() {  # -> "steps conclusion"
+latest_run() {   # id najnowszego runa na galezi (albo puste)
+  curl -sS "${AUTH[@]}" "$API/repos/$REPO/actions/runs?branch=$BRANCH&per_page=1" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+runs=d.get('workflow_runs',[])
+print(runs[0]['id'] if runs else '')
+" 2>/dev/null
+}
+
+resolve_run() {
+  if [[ -n "$RUN_ID" ]]; then echo "$RUN_ID"; return; fi
+  latest_run
+}
+
+job_state() {  # -> "steps conclusion" (dla bieżącego RUN_ID)
   curl -sS "${AUTH[@]}" "$API/repos/$REPO/actions/runs/$RUN_ID/jobs" | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
@@ -40,6 +54,9 @@ print(jobs[0]['id'] if jobs else '')
 }
 
 for attempt in $(seq 1 36); do   # 36 * 10 min = 6 h
+  RESOLVED="$(resolve_run)"
+  if [[ -n "$RESOLVED" ]]; then RUN_ID="$RESOLVED"; fi
+  if [[ -z "$RUN_ID" ]]; then log "brak runa dla galezi $BRANCH - czekam"; sleep 600; continue; fi
   read -r STEPS CONCLUSION < <(job_state)
   log "proba $attempt/36: kroki=$STEPS stan=$CONCLUSION"
 
@@ -65,6 +82,7 @@ for attempt in $(seq 1 36); do   # 36 * 10 min = 6 h
   sleep 600
 done
 
+RESOLVED="$(resolve_run)"; [[ -n "$RESOLVED" ]] && RUN_ID="$RESOLVED"
 read -r STEPS CONCLUSION < <(job_state)
 {
   echo "# Wynik buildu CI (zapis automatyczny)"
