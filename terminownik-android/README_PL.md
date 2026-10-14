@@ -63,19 +63,44 @@ Bez tych sekretów CI używa klucza przechowywanego w prywatnym Release `signing
 a przy pierwszym uruchomieniu tworzy go i tam zapisuje (szczegóły i ścieżka migracji:
 `RELEASE_CHECKLIST.md`).
 
-### B. Lokalnie
+### B. Lokalnie — jedna komenda, bez żadnych przygotowań
+
+`scripts/one-shot-build.sh` (Linux / macOS / WSL / Git Bash) oraz `scripts/one-shot-build.ps1`
+(Windows) **same instalują** JDK 21 i Android SDK (bez Android Studio), tworzą trwały klucz
+podpisywania, kompilują, podpisują i weryfikują APK.
 
 ```bash
-# wymagania: JDK 17–21, Android SDK (platform 36 + build-tools), ANDROID_HOME
 cd terminownik-android
-bash scripts/build-release.sh            # lint + testy + podpisane APK
-# albo szybciej, bez testów:
-bash scripts/build-release.sh --skip-tests
+bash scripts/one-shot-build.sh            # Linux / macOS / WSL / Git Bash
 ```
 
-Wynik: `dist/terminownik-release.apk`, `dist/SHA256SUMS.txt`, `dist/VERIFY_REPORT.md`.
-Klucz podpisywania powstanie przy pierwszym uruchomieniu w `~/keys/terminownik` (skrypt **nigdy**
-nie nadpisuje istniejącego klucza i nie drukuje haseł).
+```powershell
+cd terminownik-android
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\scripts\one-shot-build.ps1             # Windows
+```
+
+Flagi: `--skip-tests` / `-SkipTests` (najszybciej do pliku APK), `--clean` / `-Clean`,
+`--tools-dir` / `-ToolsDir <katalog>`. Narzędzia (~800 MB) i zależności Gradle są buforowane
+w `~/.terminownik-tools` i `~/.gradle`, więc kolejne buildy trwają minuty.
+
+### C. Lokalnie — gdy JDK i Android SDK już są zainstalowane
+
+```bash
+cd terminownik-android
+bash scripts/build-release.sh --assemble-first   # NAJPIERW APK, potem lint i testy informacyjnie
+bash scripts/build-release.sh                    # lint + testy + APK w jednym przebiegu
+bash scripts/build-release.sh --skip-tests       # bez testów
+```
+
+Wymagania: JDK 17–21, Android SDK (platform 36 + build-tools), `ANDROID_HOME` albo
+`local.properties` z `sdk.dir=...`. Tryb `--assemble-first` jest zalecany przy pierwszym buildzie:
+ewentualny problem z lintem nie blokuje powstania pliku instalacyjnego.
+
+### Gdy kompilacja się nie powiedzie
+
+Skrypt zapisuje pełny log do `dist/BUILD_FAILURE_LOG.txt` i drukuje jego ostatnie 60 linii.
+Wystarczy wkleić ten plik w zgłoszeniu — zawiera dokładne błędy kompilatora z numerami linii.
 
 ### Instalacja
 

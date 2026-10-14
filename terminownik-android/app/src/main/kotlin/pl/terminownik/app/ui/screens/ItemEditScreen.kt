@@ -78,8 +78,7 @@ import pl.terminownik.app.ui.components.NoticeBar
 import pl.terminownik.app.ui.components.NoticeTone
 
 /** Formularz pozycji: dodawanie nowej i edycja istniejącej. */
-@OptIn(ExperimentalMaterial3Api::class)
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ItemEditScreen(
     container: AppContainer,

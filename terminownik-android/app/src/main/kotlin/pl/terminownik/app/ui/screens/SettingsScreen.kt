@@ -75,8 +75,7 @@ import pl.terminownik.app.ui.components.NoticeTone
 import pl.terminownik.app.ui.components.ReminderTimeDialog
 
 /** Ustawienia: wygląd, przypomnienia, dane (CSV/kopia/odzyskiwanie/kasowanie), informacje. */
-@OptIn(ExperimentalMaterial3Api::class)
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScreen(
     container: AppContainer,

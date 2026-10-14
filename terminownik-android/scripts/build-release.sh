@@ -8,23 +8,51 @@
 #   * ~10 GB miejsca i sieć do pierwszego pobrania zależności Gradle
 #
 # Użycie:
-#   scripts/build-release.sh            # pełny build: lint + testy + podpisane APK
-#   scripts/build-release.sh --skip-tests
+#   scripts/build-release.sh                   # lint + testy + podpisane APK (jedno wywołanie Gradle)
+#   scripts/build-release.sh --skip-tests      # bez testów jednostkowych
+#   scripts/build-release.sh --assemble-first  # NAJPIERW APK, potem lint/testy informacyjnie
+#                                              # (zalecane przy pierwszym buildzie: błąd lint nie
+#                                              #  blokuje powstania pliku instalacyjnego)
 #
 # Wynik:
 #   dist/terminownik-release.apk
 #   dist/SHA256SUMS.txt
 #   dist/VERIFY_REPORT.md   (apksigner, aapt2, kontrola manifestu, wyniki testów)
+#   dist/BUILD_FAILURE_LOG.txt  (tylko gdy kompilacja się nie powiedzie – do wklejenia w zgłoszeniu)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 SKIP_TESTS=0
-[[ "${1:-}" == "--skip-tests" ]] && SKIP_TESTS=1
+ASSEMBLE_FIRST=0
+for arg in "$@"; do
+  case "$arg" in
+    --skip-tests) SKIP_TESTS=1 ;;
+    --assemble-first) ASSEMBLE_FIRST=1 ;;
+    *) echo "Nieznany argument: $arg" >&2 ;;
+  esac
+done
 
 log() { printf '\n=== %s\n' "$*"; }
 die() { echo "BŁĄD: $*" >&2; exit 1; }
+
+# Zapisz pełny log nieudanego buildu – to jedyna rzecz potrzebna do zdalnej naprawy.
+save_failure_log() {
+  local logfile="$1"
+  mkdir -p dist
+  {
+    echo "# Log nieudanego buildu – $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+    echo "# commit: $(git rev-parse HEAD 2>/dev/null || echo nieznany)"
+    echo "# java: $(java -version 2>&1 | head -1)"
+    echo "# gradle: $(./gradlew --version 2>/dev/null | sed -n 's/^Gradle //p' | head -1)"
+    echo
+    tail -400 "$logfile"
+  } > dist/BUILD_FAILURE_LOG.txt 2>&1 || true
+  echo "Log błędu zapisany: $ROOT/dist/BUILD_FAILURE_LOG.txt" >&2
+  echo ">>> Wklej jego treść (albo ostatnie 60 linii poniżej) w odpowiedzi – poprawię kod. <<<" >&2
+  tail -60 "$logfile" >&2 || true
+}
 
 # --- 1. Java ----------------------------------------------------------------------------------
 log "Sprawdzam JDK"
@@ -74,12 +102,46 @@ else
 fi
 
 # --- 4. Build -----------------------------------------------------------------------------------
-log "Buduję (lint + testy + release APK)"
-GRADLE_TASKS=(":app:lintRelease" ":app:assembleRelease")
-if (( SKIP_TESTS == 0 )); then
-  GRADLE_TASKS=(":app:lintRelease" ":app:testDebugUnitTest" ":app:assembleRelease")
+QA_LOG="$(mktemp)"
+QA_STATUS=0
+
+if (( ASSEMBLE_FIRST == 1 )); then
+  log "Etap 1/2: kompilacja i podpisanie release APK"
+  if ! ./gradlew --no-daemon --stacktrace --continue ":app:assembleRelease" 2>&1 | tee "$QA_LOG"; then
+    save_failure_log "$QA_LOG"
+    die "kompilacja release się nie powiodła – szczegóły w dist/BUILD_FAILURE_LOG.txt"
+  fi
+  if grep -qE "^FAILURE:|BUILD FAILED" "$QA_LOG"; then
+    save_failure_log "$QA_LOG"
+    die "BUILD FAILED – szczegóły w dist/BUILD_FAILURE_LOG.txt"
+  fi
+
+  log "Etap 2/2: lint i testy (informacyjnie – nie blokują gotowego APK)"
+  QA_TASKS=(":app:lintRelease")
+  (( SKIP_TESTS == 0 )) && QA_TASKS+=(":app:testReleaseUnitTest")
+  set +e
+  ./gradlew --no-daemon --continue "${QA_TASKS[@]}" 2>&1 | tee -a "$QA_LOG"
+  QA_STATUS=${PIPESTATUS[0]}
+  set -e
+  if (( QA_STATUS != 0 )); then
+    echo "UWAGA: lint/testy zgłosiły problemy (kod $QA_STATUS). APK mimo to został zbudowany –"
+    echo "       wyniki są zapisane w dist/VERIFY_REPORT.md i wymagają przeglądu przed wydaniem."
+  fi
+else
+  log "Buduję (lint + testy + release APK)"
+  GRADLE_TASKS=(":app:lintRelease" ":app:assembleRelease")
+  if (( SKIP_TESTS == 0 )); then
+    GRADLE_TASKS=(":app:lintRelease" ":app:testDebugUnitTest" ":app:assembleRelease")
+  fi
+  if ! ./gradlew --no-daemon --stacktrace "${GRADLE_TASKS[@]}" 2>&1 | tee "$QA_LOG"; then
+    save_failure_log "$QA_LOG"
+    die "build się nie powiódł – szczegóły w dist/BUILD_FAILURE_LOG.txt"
+  fi
+  if grep -qE "^FAILURE:|BUILD FAILED" "$QA_LOG"; then
+    save_failure_log "$QA_LOG"
+    die "BUILD FAILED – szczegóły w dist/BUILD_FAILURE_LOG.txt"
+  fi
 fi
-./gradlew --no-daemon --stacktrace "${GRADLE_TASKS[@]}"
 
 APK="app/build/outputs/apk/release/app-release.apk"
 [[ -f "$APK" ]] || die "nie znaleziono APK: $APK"
@@ -144,27 +206,41 @@ if [[ -x "$SDK/cmdline-tools/latest/bin/apkanalyzer" ]]; then
   } >> dist/VERIFY_REPORT.md
 fi
 
-# --- 6. Podsumowanie testów ------------------------------------------------------------------------
-if (( SKIP_TESTS == 0 )); then
-  {
-    echo
-    echo "## Testy jednostkowe"
-    echo '```'
-    python3 - <<'PY'
-import glob, xml.etree.ElementTree as ET
-total = failures = errors = skipped = 0
-for path in sorted(glob.glob('app/build/test-results/*/TEST-*.xml')):
-    root = ET.parse(path).getroot()
-    total += int(root.get('tests', 0))
-    failures += int(root.get('failures', 0))
-    errors += int(root.get('errors', 0))
-    skipped += int(root.get('skipped', 0))
-print(f"testy: {total}, nieudane: {failures}, bledy: {errors}, pominięte: {skipped}")
-print("WYNIK:", "PASS" if total > 0 and failures == 0 and errors == 0 else "FAIL")
-PY
-    echo '```'
-  } >> dist/VERIFY_REPORT.md
-fi
+# --- 6. Podsumowanie testów i lint (bez zależności od pythona) -----------------------------------
+{
+  echo
+  echo "## Jakość kodu"
+  echo
+  echo "* tryb buildu: $( (( ASSEMBLE_FIRST == 1 )) && echo 'assemble-first (APK przed lint/testami)' || echo 'lint + testy + APK' )"
+  echo "* kod wyjściowy etapu lint/testy: $QA_STATUS $( (( QA_STATUS == 0 )) && echo '(bez problemów)' || echo '(WYMAGA PRZEGLĄDU)')"
+  echo
+  echo '```'
+  shopt -s nullglob
+  RESULT_FILES=(app/build/test-results/*/TEST-*.xml)
+  if (( ${#RESULT_FILES[@]} > 0 )); then
+    awk '
+      match($0, /tests="[0-9]+"/)      { t += substr($0, RSTART+7,  RLENGTH-8) }
+      match($0, /failures="[0-9]+"/)   { f += substr($0, RSTART+10, RLENGTH-11) }
+      match($0, /errors="[0-9]+"/)     { e += substr($0, RSTART+8,  RLENGTH-9) }
+      match($0, /skipped="[0-9]+"/)    { s += substr($0, RSTART+9,  RLENGTH-10) }
+      END {
+        printf "testy jednostkowe: %d, nieudane: %d, bledy: %d, pominiete: %d\n", t, f, e, s
+        printf "WYNIK: %s\n", (t > 0 && f == 0 && e == 0) ? "PASS" : "FAIL"
+      }' "${RESULT_FILES[@]}"
+  else
+    echo "testy jednostkowe: BRAK WYNIKÓW (nie uruchomiono albo nie wygenerowano raportów)"
+  fi
+  LINT_XML="$(ls app/build/reports/lint-results-release.xml 2>/dev/null || true)"
+  if [[ -n "$LINT_XML" ]]; then
+    awk '
+      /<issue/ { if (match($0, /severity="[^"]+"/)) { sev = substr($0, RSTART+10, RLENGTH-11); c[sev]++; n++ } }
+      END { printf "lint: %d zgloszen", n; for (s in c) printf " | %s: %d", s, c[s]; print "" }' "$LINT_XML"
+  else
+    echo "lint: brak raportu XML"
+  fi
+  shopt -u nullglob
+  echo '```'
+} >> dist/VERIFY_REPORT.md
 
 log "Gotowe"
 cat dist/VERIFY_REPORT.md

@@ -1,0 +1,7 @@
+[01:22:14] widocznosc: private (oczekuje na publiczne, proba 1/360)
+[01:31:52] repozytorium PUBLICZNE - wyzwalam build
+[01:31:54] push wyzwalajacy OK (proba 1)
+[01:31:54] commit wyzwalajacy: 32552657c84c220b1b07ec33e9f127055321a8d2
+[01:31:55] run id: 38493599247
+[01:31:55] run zakonczony: startup_failure
+[01:31:57] wyniki zapisane: /home/user/mein/CI_RESULT.md
