@@ -1,0 +1,13 @@
+# klucze i hasła — NIGDY w repo
+keystore/*.p12
+keystore/*.jks
+keystore/*.env
+wojan-config.json
+# artefakty pośrednie
+android/build/build/
+desktop/build/obj/
+desktop/build/out/
+__pycache__/
+*.pyc
+data/
+dist/setup-base*

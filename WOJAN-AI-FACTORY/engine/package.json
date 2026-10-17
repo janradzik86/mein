@@ -1,0 +1,9 @@
+{
+  "name": "wojan-engine",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "WOJAN AI FACTORY — silnik AI (router, role, pipeline) dla Node i QuickJS",
+  "scripts": {
+    "test": "node --test test/"
+  }
+}
