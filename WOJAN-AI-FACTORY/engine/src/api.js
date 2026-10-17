@@ -54,6 +54,15 @@ export class Api {
         const a = this._listArtifacts().find((x) => x.id === seg[1]);
         return a ? { status: 200, body: a } : { status: 404, body: { error: "brak artefaktu" } };
       }
+      if (method === "POST" && seg[0] === "mode") {
+        const mode = (body && body.mode) || "";
+        try {
+          this.router.setMode(mode);
+          return { status: 200, body: { mode: this.router.mode } };
+        } catch (e) {
+          return { status: 400, body: { error: String(e && e.message || e) } };
+        }
+      }
       if (method === "POST" && seg[0] === "projects" && seg.length === 1) {
         const id = `p_${Date.now()}`;
         const name = (body && body.name) || "projekt";

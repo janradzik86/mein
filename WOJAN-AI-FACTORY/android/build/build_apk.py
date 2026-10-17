@@ -57,6 +57,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
     ap.add_argument("--dev", action="store_true", help="podpisz kluczem dev")
+    ap.add_argument("--keystore", default=None,
+                    help="własny keystore produkcyjny (PKCS12); nadpisuje --dev")
     args = ap.parse_args()
 
     java = find_java()
@@ -115,7 +117,7 @@ def main():
     with open(unsigned, "wb") as fh:
         fh.write(raw)
 
-    keystore = os.path.join(ROOT, "keystore", "wojan-dev.p12" if args.dev else "wojan-release.p12")
+    keystore = args.keystore or os.path.join(ROOT, "keystore", "wojan-dev.p12" if args.dev else "wojan-release.p12")
     if not os.path.exists(keystore):
         raise SystemExit(f"brak keystore {keystore} — tools/apksig/make_keystore.py (hasło w env)")
     out = os.path.abspath(args.out)

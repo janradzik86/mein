@@ -59,6 +59,15 @@ test("projekty + zadanie + logi + artefakty", async () => {
   assert.equal(role.status, 200);
   assert.equal(role.body.role, "ARCHITEKT");
 
+  // przełączanie trybu pracy routera (Ustawienia w EXE)
+  const m1 = await e.handle("POST", "/api/v1/mode", { mode: "LOCAL_ONLY" }, H);
+  assert.equal(m1.status, 200);
+  assert.equal(m1.body.mode, "LOCAL_ONLY");
+  const m2 = await e.handle("GET", "/api/v1/status", null, H);
+  assert.equal(m2.body.mode, "LOCAL_ONLY");
+  const m3 = await e.handle("POST", "/api/v1/mode", { mode: "BZDURA" }, H);
+  assert.equal(m3.status, 400);
+
   const nope = await e.handle("GET", "/api/v1/nie-ma", null, H);
   assert.equal(nope.status, 404);
 });

@@ -332,9 +332,11 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, PWSTR cmdLine, int) {
             }
             if (ImGui::BeginTabItem("Ustawienia")) {
                 if (ImGui::Combo("Tryb pracy", &g_app.modeIdx, MODES, IM_ARRAYSIZE(MODES))) {
-                    std::string body = std::string("{\"mode\":\"") + MODES[g_app.modeIdx] + "\"}";
-                    api_call("POST", "/api/v1/agents/ARCHITEKT/run", "{}"); // utrzymanie sesji
-                    app_log("Tryb: " + std::string(MODES[g_app.modeIdx]));
+                    std::string mode = MODES[g_app.modeIdx];
+                    for (auto& c : mode) if (c == ' ') c = '_';   // LOCAL ONLY -> LOCAL_ONLY
+                    std::string body = "{\"mode\":\"" + mode + "\"}";
+                    std::string r = api_call("POST", "/api/v1/mode", body);
+                    app_log("Tryb pracy: " + std::string(MODES[g_app.modeIdx]) + " -> " + r);
                 }
                 ImGui::Text("Token API dla telefonu:");
                 ImGui::InputText("##token", (char*)g_app.token.c_str(), 0, ImGuiInputTextFlags_ReadOnly);
