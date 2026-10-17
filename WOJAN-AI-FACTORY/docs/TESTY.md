@@ -15,6 +15,7 @@
 | Protokół OpenAI-compatible (OmniRoute/OpenRouter): /chat/completions + Bearer + quota mapping | **PASS** (stub HTTP) | tamże |
 | APK: build ECJ→j2smali→dex→AXML→zip→podpis v1+v2+v3 | **PASS** | `ApkSignerTool verify --print-certs` OK |
 | APK: niezależna walidacja (androguard: manifest, 42/42 klas w dex, podpisy) | **PASS** | odczyt APK androguardiem |
+| Silnik w QuickJS-NG (runtime z EXE): init + pipeline z pętlą POPRAWKI + trwałość | **PASS** | `tests/run_qjs_engine.sh` (`engine/test/qjs_smoke.js`) |
 | Setup.exe / EXE: struktura PE x64 GUI, kompletne archiwum instalacyjne, importy DLL | **PASS** | parser PE (własny) |
 | Testy silnika zbiorczo | **10/10 PASS** | `cd engine && node --test "test/*.test.js"` |
 

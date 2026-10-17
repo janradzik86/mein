@@ -6,4 +6,6 @@ echo "== Silnik (node:test) =="
 (cd engine && node --test "test/*.test.js")
 echo "== Fabryka E2E =="
 node tests/test_factory_e2e.js
+echo "== Silnik w QuickJS-NG (runtime z EXE) =="
+bash tests/run_qjs_engine.sh
 echo "== Wszystkie testy automatyczne: PASS =="
