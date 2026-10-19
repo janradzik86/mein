@@ -101,6 +101,13 @@ def main():
     dex = os.path.join(dex_dir, "classes.dex")
     run([java, "-jar", smali, smali_dir, "-o", dex])
 
+    # 3b) głęboka walidacja dex przed spakowaniem (nagłówki, kod, payloady, try/handlery)
+    dc = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "dexcheck.py"), dex],
+                        capture_output=True, text=True)
+    sys.stderr.write(dc.stdout + dc.stderr)
+    if dc.returncode != 0:
+        raise SystemExit("dexcheck: classes.dex NIE przeszedł walidacji — build przerwany")
+
     # 4) binarny manifest AXML (pyaxml)
     manifest = os.path.join(BUILD, "AndroidManifest.xml")
     run([sys.executable, AXMLBUILD, manifest, PACKAGE] + ACTIVITIES)

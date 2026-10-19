@@ -75,3 +75,28 @@ Uruchomienie całego zestawu: `bash WOJAN-AI-FACTORY/tests/run_all.sh` → **10/
 - Zero WWW/PWA — brak jakiegokolwiek serwera frontendowego; aplikacje: Win32 EXE + natywny Android Java
 - Zero integracji z CrossFlow Command — nie zmieniono żadnego pliku poza `WOJAN-AI-FACTORY/`
 - Klucze/hasła: `keystore/*.p12`, `*.env`, `wojan-config.json` w `.gitignore`; hasła tylko w zmiennych środowiskowych; procedura podpisu zakazuje zapisu sekretów w repo/logach
+
+## 7. Diagnostyka problemu „APK nie instaluje się" (2026-10-19)
+
+Kontekst: właściciel zgłasza „apk nie może zainstalować / nadal nie działa" bez komunikatu błędu.
+Wykonane realne prace diagnostyczne (narzędzia własne, uruchomione — wyniki realne):
+
+1. **Struktura ZIP/AXML** (własne parsery, czysty Python): central directory poprawne, manifest
+   binarny AXML dekoduje się w całości (typed values, typed string references), wpisy zipalign 4-B.
+2. **dexcheck.py (`tools/dexcheck.py`)** — walidator dex: nagłówek (adler32/sha1), mapa sekcji,
+   class_data, code_item, szerokości instrukcji (z przeskokami payloadów switch/array-data),
+   try/catch handlery (sleb), `ins_size` vs proto, zakresy rejestrów invoke.
+   **Wynik dla bieżącego dex: 141 code_item, 0 błędów.** Walidator wbudowany w `build_apk.py`.
+3. **Poprawki bezpieczeństwa weryfikatora ART w j2smali**: porównania referencji nie przechodzą
+   przez rejstry `int` (ART VerifyError); wynik `iget-wide` nie nakłada się na rejestr obiektu.
+4. **apksigner verify** dla minSdk 21/23/26/34 — **PASS** (v1+v2+v3), cert `66f4dae4…`.
+5. **androguard**: 42 klasy, pełne xref bez błędów.
+
+**Rozmiar: 45 399 B, SHA-256: `666dbe271ba64a396be78a40079210238de0a1efb58d797dc8bc87a65f1a1b69`.**
+
+**NIEUKOŃCZONE — przeszkoda:** brak fizycznego urządzenia z Androidem — nie da się wykonać testu
+instalacji w środowisku budowania. Mechaniczna poprawność APK zweryfikowana powyżej; jednoznaczna
+diagnoza wymaga **dokładnego komunikatu błędu** z telefonu lub wyniku `adb install -r`
+(procedura: `docs/INSTALACJA.md`). Możliwe przyczyny po stronie urządzenia: uszkodzone pobranie
+(plik ≠ 45 399 B), blokada „nieznanych źródeł", konflikt podpisu ze starą wersją (odinstaluj),
+Play Protect / nakładka producenta (MIUI/OneUI).

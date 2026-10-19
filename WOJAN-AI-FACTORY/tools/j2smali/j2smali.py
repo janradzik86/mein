@@ -370,10 +370,16 @@ class MethodTranslator:
             kind = "iget-object" if t == T_REF else ("iget-wide" if t == T_WIDE else "iget")
             w(f"    {kind} {dest}, {objreg}, {fref}")
             return
-        w(f"    move-object/from16 v1, {objreg}")
         kind = "iget-object" if t == T_REF else ("iget-wide" if t == T_WIDE else "iget")
-        w(f"    {kind} v0, v1, {fref}")
-        self._mov(w, t, dest, "v0")
+        if t == T_WIDE:
+            # obiekt w v0, wynik w parze v2,v3 — bez nakładania się rejestrów (weryfikator ART)
+            w(f"    move-object/from16 v0, {objreg}")
+            w(f"    {kind} v2, v0, {fref}")
+            self._mov(w, t, dest, "v2")
+        else:
+            w(f"    move-object/from16 v1, {objreg}")
+            w(f"    {kind} v0, v1, {fref}")
+            self._mov(w, t, dest, "v0")
 
     def _iput(self, w, t, valreg, objreg, fref):
         kind = "iput-object" if t == T_REF else ("iput-wide" if t == T_WIDE else "iput")
@@ -911,7 +917,8 @@ class MethodTranslator:
             if self._regnum(reg) < 16:
                 w(f"    {Z_BRANCH[op]} {reg}, {tgt}")
             else:
-                self._mov(w, T_INT, "v0", reg)
+                tt = tS(sp0-1)
+                self._mov(w, T_REF if tt == T_REF else T_INT, "v0", reg)
                 w(f"    {Z_BRANCH[op]} v0, {tgt}")
             return
         if op in (0xC6, 0xC7):
@@ -934,8 +941,13 @@ class MethodTranslator:
             if self._regnum(ra) < 16 and self._regnum(rb) < 16:
                 w(f"    {name} {ra}, {rb}, {tgt}")
             else:
-                self._mov(w, T_INT, "v0", ra)
-                self._mov(w, T_INT, "v1", rb)
+                # typy z analizy przepływu — acmp porównuje REFERENCJE (move-object!)
+                if op in (0xA5, 0xA6):
+                    ta, tb = T_REF, T_REF
+                else:
+                    ta, tb = T_INT, T_INT
+                self._mov(w, ta, "v0", ra)
+                self._mov(w, tb, "v1", rb)
                 w(f"    {name} v0, v1, {tgt}")
             return
         if op == 0xA7:

@@ -16,7 +16,10 @@ Zamiast instalatora: `WOJAN-AI-FACTORY-Portable.zip` → rozpakuj → `WOJAN-AI-
    (Wcześniejsze buildy były podpisane innym kluczem testowym — Android odmówi aktualizacji:
    „Nie zainstalowano aplikacji" / signature mismatch.)
 2. Pobierz APK → skopiuj na telefon.
-3. (Opcjonalnie) sprawdź sumę pliku po przeniesieniu — musi się zgadzać z podaną przy pobieraniu.
+3. **Sprawdź rozmiar pliku na telefonie** (Menedżer plików → szczegóły): musi mieć
+   **45 399 B**. Inny rozmiar = pobranie/przeniesienie uszkodzone (przeglądarka zapisała
+   stronę błędu zamiast pliku) → usuń i pobierz ponownie przez Chrome.
+   Suma SHA-256 poprawnego pliku: `666dbe271ba64a396be78a40079210238de0a1efb58d797dc8bc87a65f1a1b69`.
 4. Stuknij w APK. Gdy system pyta o **„Nieznane źródła"** — zezwól **dla tej aplikacji**
    (Przeglądarka/Menedżer plików → Instaluj nieznane aplikacje).
 5. Gdy **Play Protect** zablokuje: „Szczegóły" → **„Zainstaluj mimo wszystko"**.
@@ -28,7 +31,7 @@ Zamiast instalatora: `WOJAN-AI-FACTORY-Portable.zip` → rozpakuj → `WOJAN-AI-
 | Komunikat na telefonie | Przyczyna | Rozwiązanie |
 |---|---|---|
 | „Nie zainstalowano aplikacji" / „App not installed" po instalacji WCZEŚNIEJSZEJ wersji | inny klucz podpisu (stara wersja) | **odinstaluj starą wersję** → zainstaluj nową |
-| „Nie udało się przeanalizować pakietu" / „There was a problem parsing the package" | plik uszkodzony przy pobieraniu/przenoszeniu | pobierz ponownie, porównaj SHA-256, przenieś kablem/USB |
+| „Nie udało się przeanalizować pakietu" / „There was a problem parsing the package" | plik uszkodzony przy pobieraniu/przenoszeniu | sprawdź rozmiar = 45 399 B, pobierz ponownie przez Chrome, porównaj SHA-256 |
 | „Zablokowano przez Play Protect" | brak reputacji w Google | Szczegóły → Zainstaluj mimo wszystko |
 | „Aplikacja nie jest zgodna z telefonem" / brak w liście | Android < 5.0 (minSdk 21) | wymagany Android 5.0+ |
 | „Brak miejsca" | pamięć pełna | zwolnij miejsce |
