@@ -32,6 +32,28 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            buildUi(savedInstanceState);
+        } catch (Throwable t) {
+            showFatal(t);
+        }
+    }
+
+    /** Awaria UI nigdy nie może być niewidoczna — pokazujemy dokładny błąd na ekranie. */
+    private void showFatal(Throwable t) {
+        TextView v = new TextView(this);
+        v.setText("BŁĄD STARTU (wersja " + BuildInfo.VERSION + "):\n\n"
+                + t.getClass().getName() + ":\n" + String.valueOf(t.getMessage())
+                + "\n\nZrób zdjęcie tego ekranu i wyślij je do zgłoszenia.");
+        v.setTextColor(Color.WHITE);
+        v.setBackgroundColor(Color.rgb(120, 24, 24));
+        v.setTextSize(14);
+        v.setPadding(dp(24), dp(24), dp(24), dp(24));
+        v.setTextIsSelectable(true);
+        setContentView(v);
+    }
+
+    private void buildUi(Bundle savedInstanceState) {
         Store store = Store.get(this);
 
         ScrollView scroll = new ScrollView(this);

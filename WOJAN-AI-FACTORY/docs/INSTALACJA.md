@@ -10,16 +10,27 @@
 
 Zamiast instalatora: `WOJAN-AI-FACTORY-Portable.zip` → rozpakuj → `WOJAN-AI-FACTORY.exe`.
 
-## Android — `WOJAN-AI-FACTORY-Release.apk`
+## Android — `WOJAN-AI-FACTORY-Release-v1.0.2.apk`
+
+**NOWY PLIK (v1.0.2) — inna nazwa niż wcześniej, żeby telefon NIE używał starego pobrania z cache:**
+
+1. **Usuń WSZYSTKIE wcześniej pobrane pliki WOJAN z folderu Pobrane** (stare `WOJAN-AI-FACTORY-Release.apk` też).
+2. Pobierz **TYLKO** z tego linku:
+   `https://github.com/janradzik86/mein/raw/main/WOJAN-AI-FACTORY/dist/WOJAN-AI-FACTORY-Release-v1.0.2.apk`
+   (zapasowo: `https://github.com/janradzik86/mein/raw/arena/febf4296-mein/WOJAN-AI-FACTORY/dist/WOJAN-AI-FACTORY-Release-v1.0.2.apk`)
+3. Rozmiar musi być **45 399 B**; w aplikacji po uruchomieniu na ekranie startowym
+   musi być napisane **wersja 1.0.2** (jeśli widzisz 1.0.0 — masz stary plik).
+
+### Stara nazwa pliku (zgodność)
 
 1. **Jeśli masz zainstalowaną wcześniejszą wersję WOJAN — ODINSTALUJ JĄ NAJPIERW.**
    (Wcześniejsze buildy były podpisane innym kluczem testowym — Android odmówi aktualizacji:
    „Nie zainstalowano aplikacji" / signature mismatch.)
 2. Pobierz APK → skopiuj na telefon.
 3. **Sprawdź rozmiar pliku na telefonie** (Menedżer plików → szczegóły): musi mieć
-   **45 399 B**. Inny rozmiar = pobranie/przeniesienie uszkodzone (przeglądarka zapisała
+   **45 399 B (v1.0.2)**. Inny rozmiar = pobranie/przeniesienie uszkodzone (przeglądarka zapisała
    stronę błędu zamiast pliku) → usuń i pobierz ponownie przez Chrome.
-   Suma SHA-256 poprawnego pliku: `666dbe271ba64a396be78a40079210238de0a1efb58d797dc8bc87a65f1a1b69`.
+   Suma SHA-256 poprawnego pliku: `a3503cd809f0ce4946de1f52336a7e6f4d46feed672f68926d7aaffafe2317e3`.
 4. Stuknij w APK. Gdy system pyta o **„Nieznane źródła"** — zezwól **dla tej aplikacji**
    (Przeglądarka/Menedżer plików → Instaluj nieznane aplikacje).
 5. Gdy **Play Protect** zablokuje: „Szczegóły" → **„Zainstaluj mimo wszystko"**.

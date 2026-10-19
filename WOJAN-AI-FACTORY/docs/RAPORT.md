@@ -92,7 +92,7 @@ Wykonane realne prace diagnostyczne (narzędzia własne, uruchomione — wyniki 
 4. **apksigner verify** dla minSdk 21/23/26/34 — **PASS** (v1+v2+v3), cert `66f4dae4…`.
 5. **androguard**: 42 klasy, pełne xref bez błędów.
 
-**Rozmiar: 45 399 B, SHA-256: `666dbe271ba64a396be78a40079210238de0a1efb58d797dc8bc87a65f1a1b69`.**
+**Rozmiar: 45 399 B, SHA-256: `a3503cd809f0ce4946de1f52336a7e6f4d46feed672f68926d7aaffafe2317e3`.**
 
 **NIEUKOŃCZONE — przeszkoda:** brak fizycznego urządzenia z Androidem — nie da się wykonać testu
 instalacji w środowisku budowania. Mechaniczna poprawność APK zweryfikowana powyżej; jednoznaczna
@@ -100,3 +100,16 @@ diagnoza wymaga **dokładnego komunikatu błędu** z telefonu lub wyniku `adb in
 (procedura: `docs/INSTALACJA.md`). Możliwe przyczyny po stronie urządzenia: uszkodzone pobranie
 (plik ≠ 45 399 B), blokada „nieznanych źródeł", konflikt podpisu ze starą wersją (odinstaluj),
 Play Protect / nakładka producenta (MIUI/OneUI).
+
+
+## 8. WYDANIE v1.0.2 (2026-10-19) — odpowiedź na „nadal nie działa"
+
+- Nowy artefakt o **nowej nazwie** `WOJAN-AI-FACTORY-Release-v1.0.2.apk` (zabicie cache'a
+  przeglądarki — użytkownik mógł wielokrotnie dotykać starego pobranego pliku).
+- Wersja 1.0.2 / versionCode 3 / minSdk 21; ekran startowy aplikacji pokazuje numer wersji
+  (diagnostyka: użytkownik od razu widzi, który build uruchamia).
+- **Crash-guard**: `MainActivity.onCreate` owinięty w try/catch — każdy błąd startu jest
+  WIDOCZNY na ekranie (czerwony panel z nazwą wyjątku) zamiast cichego zamknięcia aplikacji.
+- dexcheck wbudowany w build: **143 code_item, 0 błędów**; apksigner verify PASS (sdk 21/26/34,
+  exit 0); androguard „successfully validated", minSdk 21, exported=true, MAIN/LAUNCHER OK.
+- SHA-256: `a3503cd809f0ce4946de1f52336a7e6f4d46feed672f68926d7aaffafe2317e3` (45 399 B).
