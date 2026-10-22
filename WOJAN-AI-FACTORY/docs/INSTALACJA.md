@@ -10,7 +10,19 @@
 
 Zamiast instalatora: `WOJAN-AI-FACTORY-Portable.zip` → rozpakuj → `WOJAN-AI-FACTORY.exe`.
 
-## Android — `WOJAN-AI-FACTORY-Release-v1.0.3.apk` (NAJNOWSZY)
+## Android — `WOJAN-AI-FACTORY-Release-v1.0.4.apk` (NAJNOWSZY — NAPRAWIA „NIE OTWIERA SIĘ")
+
+**Przyczyna ustalona i naprawiona:** wcześniejsze buildy miały w dex konstruktory bez flagi
+`ACC_CONSTRUCTOR` — Android nie mógł utworzyć instancji Activity (stąd brak jakiejkolwiek reakcji
+po „Otwórz"). v1.0.4 to naprawia (43/43 konstruktorów z flagą).
+
+1. **Odinstaluj** starą wersję WOJAN (Ustawienia → Aplikacje → Odinstaluj).
+2. Pobierz: `https://github.com/janradzik86/mein/raw/arena/6fc88dc6-mein/WOJAN-AI-FACTORY/dist/WOJAN-AI-FACTORY-Release-v1.0.4.apk`
+3. Rozmiar **45 399 B**; SHA-256 `4f8f6c8f13d9d10f9e7e8cd4cfd91f5934fa44966ff23eda36deeab0d41b7694`.
+4. Zainstaluj → **Otwórz**. Powinieneś zobaczyć **zielony napis „Start OK — wersja 1.0.4"**,
+   potem główny ekran. Czerwony panel = zrób zdjęcie (dokładny błąd).
+
+## Android — `WOJAN-AI-FACTORY-Release-v1.0.3.apk` (starszy)
 
 **WAŻNE: najpierw ODINSTALUJ starą wersję WOJAN** (Ustawienia → Aplikacje → WOJAN AI FACTORY →
 Odinstaluj). v1.0.3 jest podpisana świeżym kluczem testowym — instalacja „na wierzch" zostanie

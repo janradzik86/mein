@@ -139,3 +139,26 @@ dezinstalacja wcześniejszych wersji przed instalacją v1.0.3.
 
 **NIEUKOŃCZONE — przeszkoda:** brak fizycznego urządzenia — test uruchomieniowy wykona właściciel;
 ekran startowy v1.0.3 zwraca diagnozę wizualnie (zielony / czerwony panel / brak obrazu).
+
+
+## 10. NAPRAWA PRZYCZYNY „APKA NIE OTWIERA SIĘ" — v1.0.4 (2026-10-22)
+
+**Przyczyna (ustalona metodą inspekcji złożonego dex):** translator j2smali nie emitował flagi
+`ACC_CONSTRUCTOR` (0x10000) dla metod `<init>`/`<clinit>` — brakowało jej w tabeli flag.
+Skutkiem **wszystkie 43 konstruktory** w dotychczasowych buildach miały acc typu 0x0/0x1/0x0002.
+Android tworzy instancję Activity przez refleksję (`Class.newInstance` → szuka `<init>` z flagą
+CONSTRUCTOR) — nie znalazł jej, więc aplikacja instalowała się, ale nie uruchamiała się bez
+żadnego komunikatu. Dotyczyło to **każdej** wcześniejszej wersji APK (v1.0.0–v1.0.3).
+
+**Naprawa:** `(0x10000, "constructor")` w `ACC_METHOD` w j2smali + zabezpieczenie nazwowe
+(nazwa `<init>`/`<clinit>` wymusza flagę) + **nowa kontrola w dexcheck** (każdy `<init>`/`<clinit>`
+bez ACC_CONSTRUCTOR przerywa build). Weryfikacja v1.0.4: **43/43 konstruktorów z flagą**
+(0x10000/0x10001/0x10002), dexcheck **148 code_item, 0 błędów**, apksigner PASS sdk 21/26/34.
+
+**Artefakt: `dist/WOJAN-AI-FACTORY-Release-v1.0.4.apk` (45 399 B), SHA-256
+`4f8f6c8f13d9d10f9e7e8cd4cfd91f5934fa44966ff23eda36deeab0d41b7694`, versionCode 5,
+versionName 1.0.4, minSdk 21.** Ekran startowy v1.0.3+ (zielony pasek/czerwony panel) pozostaje
+jako diagnostyka na przyszłość.
+
+**NIEUKOŃCZONE — przeszkoda:** brak fizycznego urządzenia w środowisku — potwierdzenie uruchomienia
+wykona właściciel (oczekiwany efekt: zielony „Start OK — wersja 1.0.4", potem główny ekran).

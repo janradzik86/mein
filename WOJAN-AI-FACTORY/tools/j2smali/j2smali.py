@@ -305,7 +305,8 @@ ACC_CLASS = [(0x1, "public"), (0x10, "final"), (0x200, "interface"),
 ACC_METHOD = [(0x1, "public"), (0x2, "private"), (0x4, "protected"),
               (0x8, "static"), (0x10, "final"), (0x20, "synchronized"),
               (0x40, "bridge"), (0x80, "varargs"), (0x100, "native"),
-              (0x400, "abstract"), (0x800, "strict"), (0x1000, "synthetic")]
+              (0x400, "abstract"), (0x800, "strict"), (0x1000, "synthetic"),
+              (0x10000, "constructor")]
 ACC_FIELD = [(0x1, "public"), (0x2, "private"), (0x4, "protected"),
              (0x8, "static"), (0x10, "final"), (0x40, "volatile"),
              (0x80, "transient"), (0x1000, "synthetic"), (0x4000, "enum")]
@@ -647,7 +648,9 @@ class MethodTranslator:
             self.label(pc)
         for s, e, h, t in exc:
             self.label(s); self.label(e); self.label(h)
-        self.lines.append(f".method {' '.join(flags(self.acc, ACC_METHOD))} {self.name}{self.desc}")
+        names = self.name
+        extra = "constructor " if self.name in ("<init>", "<clinit>") and "constructor" not in flags(self.acc, ACC_METHOD) else ""
+        self.lines.append(f".method {' '.join(flags(self.acc, ACC_METHOD))} {extra}{self.name}{self.desc}")
         self.lines.append(f"    .registers {self.N}")
         for s, e, h, t in exc:
             if t == 0:
@@ -1084,7 +1087,8 @@ def translate(cf) -> str:
     for acc, nm, ds, code in cf["methods"]:
         mt = MethodTranslator(cf, acc, nm, ds, code if code else (0, 0, b"", []))
         if code is None:
-            out.append(f".method {' '.join(flags(acc, ACC_METHOD))} {nm}{ds}")
+            extra = "constructor " if nm in ("<init>", "<clinit>") and not (acc & 0x10000) else ""
+            out.append(f".method {' '.join(flags(acc, ACC_METHOD))} {extra}{nm}{ds}")
             out.append(".end method")
             out.append("")
             continue

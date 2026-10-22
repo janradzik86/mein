@@ -148,6 +148,12 @@ def main(path):
                         if d[sp2:sp2+1] in (b"J", b"D"):
                             n_params += 1
                 is_static = (acc & 0x8) != 0
+                _nsi = struct.unpack_from("<I", d, moff + 4)[0]
+                _nso = struct.unpack_from("<I", d, str_off + 4 * _nsi)[0]
+                _nl, _np = uleb(d, _nso)
+                mname_chk = d[_np:_np + _nl].decode("utf-8", "replace")
+                if mname_chk in ("<init>", "<clinit>") and not (acc & 0x10000):
+                    errs.append(f"method {midx} {mname_chk}: BRAK ACC_CONSTRUCTOR (0x10000) w acc={acc:#x}")
                 expected_ins = n_params + (0 if is_static else 1)
                 if ins_size != expected_ins:
                     errs.append(f"method {midx}: ins_size={ins_size}, oczekiwane {expected_ins} (params={n_params}, acc={acc:#x})")
