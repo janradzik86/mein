@@ -513,7 +513,8 @@ class MethodTranslator:
             _, rt = ARRAY_LOAD[op]
             sp -= 2; setS(sp, rt); sp += wide(rt)
         elif op in ARRAY_STORE:
-            sp -= 3
+            # lastore/dastore zdejmują parę szeroką (2 sloty) + tablica + indeks
+            sp -= 4 if op in (0x50, 0x52) else 3
         elif op == 0xBE:
             pass  # array-length: typ bez zmian (int)
         elif op in (0xBC, 0xBD):
@@ -769,7 +770,13 @@ class MethodTranslator:
             w(f"    {kind} {self.S(sp0-2)}, {self.S(sp0-2)}, {self.S(sp0-1)}"); return
         if op in ARRAY_STORE:
             kind = ARRAY_STORE[op]
-            w(f"    {kind} {self.S(sp0-3)}, {self.S(sp0-2)}, {self.S(sp0-1)}"); return
+            # składnia smali: aput vWARTOŚĆ, vTABLICA, vINDEKS
+            # JVM: stos [tablica, indeks, wartość] (wartość na szczycie!)
+            if op in (0x50, 0x52):  # lastore/dastore — wartość szeroka w S(sp0-2)
+                w(f"    {kind} {self.S(sp0-2)}, {self.S(sp0-4)}, {self.S(sp0-3)}")
+            else:
+                w(f"    {kind} {self.S(sp0-1)}, {self.S(sp0-3)}, {self.S(sp0-2)}")
+            return
         if op == 0xBE:
             reg = self.S(sp0-1)
             if self._regnum(reg) < 16:

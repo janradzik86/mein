@@ -30,8 +30,8 @@ ACTIVITY_TEMPLATE = """    <activity android:name="{name}"{exported}{parent}>
     </activity>"""
 
 
-def build_manifest(package, activities, label="WOJAN AI FACTORY", version_code=5,
-                   version_name="1.0.4", min_sdk=21, target_sdk=34):
+def build_manifest(package, activities, label="WOJAN AI FACTORY", version_code=6,
+                   version_name="1.0.5", min_sdk=21, target_sdk=34):
     acts = []
     for i, act in enumerate(activities):
         exported = ' android:exported="true"' if i == 0 else ' android:exported="false"'
