@@ -113,3 +113,29 @@ Play Protect / nakładka producenta (MIUI/OneUI).
 - dexcheck wbudowany w build: **143 code_item, 0 błędów**; apksigner verify PASS (sdk 21/26/34,
   exit 0); androguard „successfully validated", minSdk 21, exported=true, MAIN/LAUNCHER OK.
 - SHA-256: `a3503cd809f0ce4946de1f52336a7e6f4d46feed672f68926d7aaffafe2317e3` (45 399 B).
+
+
+## 9. WYDANIE v1.0.3 (2026-10-22) — odpowiedź na „nie otwiera aplikacji"
+
+Zrzut ekranu właściciela (Samsung, „Informacje o aplikacji — Zainstalowane") rozstrzygnął:
+aplikacja **instaluje się poprawnie**, usterka jest przy **uruchamianiu**. Wprowadzone zmiany:
+
+- **Start dwuetapowy** w `MainActivity`: najpierw minimalny zielony ekran „Start OK — wersja 1.0.3"
+  (zero zależności poza TextView), dopiero potem właściwy interfejs. Każda awaria startu zamienia
+  się w **czerwony panel** z nazwą wyjątku, komunikatem i 8 ramkami śladu (zamiast cichego
+  zamknięcia aplikacji).
+- **dexcheck rozszerzony** o kontrole reguł weryfikatora ART: liczba rejestrów `invoke` vs
+  prototyp metody, typ `move-result*` vs typ zwracany, rodzaj `iget/iput/sget/sput` vs deskryptor
+  pola, `return*` vs typ metody. Wynik na bieżącym dex: **148 code_item, 0 błędów**.
+- Dodatkowo poza dexcheck (analiza porównawcza): brak naruszeń formatów 4-bit, ART inicjalizuje
+  wszystkie kopie niezainicjalizowanych referencji (źródła AOSP `register_line.cc`), co wykluczyło
+  hipotezę błędów konstruktora.
+
+**Artefakt: `dist/WOJAN-AI-FACTORY-Release-v1.0.3.apk` (45 399 B), SHA-256:
+`0bc7afbb87fe888f9ea81449af6717ebfffaf70795689e3b196f5474b2c371a5`, versionCode 4,
+versionName 1.0.3, minSdk 21/target 34.** apksigner verify PASS (sdk 21/26/34), androguard
+„successfully validated". Uwaga: dev-klucz testowy wygenerowany ponownie w tej sesji — wymagana
+dezinstalacja wcześniejszych wersji przed instalacją v1.0.3.
+
+**NIEUKOŃCZONE — przeszkoda:** brak fizycznego urządzenia — test uruchomieniowy wykona właściciel;
+ekran startowy v1.0.3 zwraca diagnozę wizualnie (zielony / czerwony panel / brak obrazu).

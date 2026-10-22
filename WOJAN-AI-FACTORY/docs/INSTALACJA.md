@@ -10,7 +10,27 @@
 
 Zamiast instalatora: `WOJAN-AI-FACTORY-Portable.zip` → rozpakuj → `WOJAN-AI-FACTORY.exe`.
 
-## Android — `WOJAN-AI-FACTORY-Release-v1.0.2.apk`
+## Android — `WOJAN-AI-FACTORY-Release-v1.0.3.apk` (NAJNOWSZY)
+
+**WAŻNE: najpierw ODINSTALUJ starą wersję WOJAN** (Ustawienia → Aplikacje → WOJAN AI FACTORY →
+Odinstaluj). v1.0.3 jest podpisana świeżym kluczem testowym — instalacja „na wierzch" zostanie
+odrzucona z powodu konfliktu podpisu.
+
+1. Usuń wszystkie starsze pobrane pliki WOJAN z folderu Pobrane.
+2. Pobierz: `https://github.com/janradzik86/mein/raw/arena/6fc88dc6-mein/WOJAN-AI-FACTORY/dist/WOJAN-AI-FACTORY-Release-v1.0.3.apk`
+3. Rozmiar: **45 399 B**; SHA-256: `0bc7afbb87fe888f9ea81449af6717ebfffaf70795689e3b196f5474b2c371a5`.
+4. Stuknij w APK → zezwól na instalację z nieznanych źródeł (patrz niżej) → Zainstaluj → **Otwórz**.
+
+### Ekran startowy v1.0.3 = diagnostyka
+
+- **Zielony napis „WOJAN AI FACTORY / wersja 1.0.3 / Start OK"** → aplikacja działa; jeśli potem
+  pojawi się główny ekran — jest po problemie.
+- **Czerwony panel „BŁĄD STARTU"** z nazwą wyjątku i śladem → **zrób zdjęcie** — to dokładna
+  diagnoza usterki.
+- **Nic się nie wyświetla** → awaria na poziomie ładowania klasy (zgłoś to — przygotuję izolowany
+  build diagnostyczny).
+
+## Android — `WOJAN-AI-FACTORY-Release-v1.0.2.apk` (starszy)
 
 **NOWY PLIK (v1.0.2) — inna nazwa niż wcześniej, żeby telefon NIE używał starego pobrania z cache:**
 

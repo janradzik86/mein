@@ -32,28 +32,84 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // ETAP 1: minimalny ekran startowy — zero zależności poza TextView/LinearLayout.
+        // Zielony pasek „Start OK" = klasa MainActivity ładuje się i działa.
         try {
-            buildUi(savedInstanceState);
+            showStartup();
         } catch (Throwable t) {
-            showFatal(t);
+            try {
+                TextView v = new TextView(this);
+                v.setText("BŁĄD STARTU (v" + BuildInfo.VERSION + "): "
+                        + t.getClass().getName() + ": " + String.valueOf(t.getMessage()));
+                v.setTextColor(Color.WHITE);
+                v.setBackgroundColor(Color.rgb(120, 24, 24));
+                v.setTextSize(14);
+                v.setPadding(48, 48, 48, 48);
+                v.setTextIsSelectable(true);
+                setContentView(v);
+            } catch (Throwable ignored) {
+                // nic więcej nie da się zrobić
+            }
+            return;
+        }
+        // ETAP 2: właściwy interfejs — dopiero po pokazaniu zielonego paska.
+        // Każdy błąd zamienia się w czerwony panel z nazwą wyjątku i śladem.
+        ui.post(new Runnable() {
+            public void run() {
+                try {
+                    buildUi();
+                } catch (Throwable t) {
+                    showFatal(t);
+                }
+            }
+        });
+    }
+
+    /** Ekran startowy — musi przejść nawet przy uszkodzonym Store/API. */
+    private void showStartup() {
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setBackgroundColor(Color.rgb(18, 20, 28));
+        root.setPadding(48, 96, 48, 48);
+        TextView t = new TextView(this);
+        t.setText("WOJAN AI FACTORY\nwersja " + BuildInfo.VERSION
+                + "\n\nStart OK — wczytywanie interfejsu…");
+        t.setTextColor(Color.rgb(96, 210, 140));
+        t.setTextSize(18);
+        root.addView(t);
+        setContentView(root);
+    }
+
+    /** Awaria nigdy nie może być niewidoczna — dokładny błąd na ekranie. */
+    private void showFatal(Throwable t) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append("BŁĄD STARTU (wersja ").append(BuildInfo.VERSION).append(")\n\n")
+              .append(t.getClass().getName()).append(":\n")
+              .append(String.valueOf(t.getMessage())).append("\n\n");
+            StackTraceElement[] st = t.getStackTrace();
+            for (int i = 0; i < st.length && i < 8; i++) {
+                sb.append("  at ").append(st[i].toString()).append("\n");
+            }
+            sb.append("\nZrób zdjęcie tego ekranu i wyślij je do zgłoszenia.");
+            TextView v = new TextView(this);
+            v.setText(sb.toString());
+            v.setTextColor(Color.WHITE);
+            v.setBackgroundColor(Color.rgb(120, 24, 24));
+            v.setTextSize(13);
+            v.setPadding(48, 48, 48, 48);
+            v.setTextIsSelectable(true);
+            ScrollView sv = new ScrollView(this);
+            sv.addView(v);
+            setContentView(sv);
+        } catch (Throwable ignored) {
+            TextView v = new TextView(this);
+            v.setText("BŁĄD STARTU: " + t.getClass().getName());
+            setContentView(v);
         }
     }
 
-    /** Awaria UI nigdy nie może być niewidoczna — pokazujemy dokładny błąd na ekranie. */
-    private void showFatal(Throwable t) {
-        TextView v = new TextView(this);
-        v.setText("BŁĄD STARTU (wersja " + BuildInfo.VERSION + "):\n\n"
-                + t.getClass().getName() + ":\n" + String.valueOf(t.getMessage())
-                + "\n\nZrób zdjęcie tego ekranu i wyślij je do zgłoszenia.");
-        v.setTextColor(Color.WHITE);
-        v.setBackgroundColor(Color.rgb(120, 24, 24));
-        v.setTextSize(14);
-        v.setPadding(dp(24), dp(24), dp(24), dp(24));
-        v.setTextIsSelectable(true);
-        setContentView(v);
-    }
-
-    private void buildUi(Bundle savedInstanceState) {
+    private void buildUi() {
         Store store = Store.get(this);
 
         ScrollView scroll = new ScrollView(this);

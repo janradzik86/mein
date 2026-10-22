@@ -78,6 +78,22 @@ def sleb(data, p):
                 v |= - (1 << s)
             return v, p
 
+def tname_of(d, str_off, type_off, tidx):
+    sidx = struct.unpack_from("<I", d, type_off + 4 * tidx)[0]
+    so = struct.unpack_from("<I", d, str_off + 4 * sidx)[0]
+    l, p = uleb(d, so)
+    return d[p:p + l].decode("utf-8", "replace")
+
+def proto_descs(d, proto_off, str_off, type_off, proto_idx):
+    _, ret_idx, params_off = struct.unpack_from("<III", d, proto_off + 12 * proto_idx)
+    args = []
+    if params_off:
+        n = struct.unpack_from("<I", d, params_off)[0]
+        for k in range(n):
+            args.append(tname_of(d, str_off, type_off,
+                                 struct.unpack_from("<H", d, params_off + 4 + 2 * k)[0]))
+    return args, tname_of(d, str_off, type_off, ret_idx)
+
 def main(path):
     d = open(path, "rb").read()
     errs = []
@@ -118,7 +134,8 @@ def main(path):
                 moff = meth_off + 8 * midx
                 _mclass, proto_idx = struct.unpack_from("<HH", d, moff)
                 proto_p = proto_off + 12 * proto_idx
-                _, _, params_off = struct.unpack_from("<III", d, proto_p)
+                _shorty, ret_tidx, params_off = struct.unpack_from("<III", d, proto_p)
+                mret_of_method = tname_of(d, str_off, type_off, ret_tidx)
                 n_params = 0
                 if params_off:
                     cnt2 = struct.unpack_from("<I", d, params_off)[0]
@@ -139,6 +156,7 @@ def main(path):
                 insns = d[code_off + 16: code_off + 16 + insns_size * 2]
                 off = 0
                 payloads = {}
+                prev_ret = None
                 while off < insns_size:
                     if off in payloads:
                         off = payloads[off]
@@ -181,6 +199,47 @@ def main(path):
                         count = insns[off * 2 + 1] >> 4
                         if count > 5:
                             errs.append(f"method {midx}: invoke count={count} > 5 @ {off}")
+                    # --- spójność sygnatur (reguły weryfikatora ART) ---
+                    if op in (0x6e, 0x6f, 0x70, 0x71, 0x72, 0x74, 0x75, 0x76, 0x77, 0x78):
+                        mid = struct.unpack_from("<H", insns, off * 2 + 2)[0]
+                        pidx = struct.unpack_from("<H", d, meth_off + 8 * mid + 2)[0]
+                        margs, mret = proto_descs(d, proto_off, str_off, type_off, pidx)
+                        cnt = insns[off * 2 + 1]
+                        need = sum(2 if a in ("J", "D") else 1 for a in margs) \
+                               + (0 if op in (0x71, 0x77) else 1)
+                        if cnt != need:
+                            errs.append(f"method {midx}: invoke@{off} count={cnt} != {need} ({margs}->{mret})")
+                        prev_ret = mret
+                    elif op in (0x0a, 0x0b, 0x0c):
+                        if prev_ret is None:
+                            errs.append(f"method {midx}: move-result@{off} bez invoke")
+                        else:
+                            got = "W" if prev_ret in ("J", "D") else \
+                                  ("O" if prev_ret[:1] in ("L", "[") else "I")
+                            exp = {0x0a: "I", 0x0b: "W", 0x0c: "O"}[op]
+                            if exp != got:
+                                errs.append(f"method {midx}: move-result@{off} op={op:#x} vs ret {prev_ret}")
+                        prev_ret = None
+                    else:
+                        prev_ret = None
+                    if 0x52 <= op <= 0x6d:
+                        fidx = struct.unpack_from("<H", insns, off * 2 + 2)[0]
+                        ftype_idx = struct.unpack_from("<H", d, field_off + 8 * fidx + 2)[0]
+                        fd = tname_of(d, str_off, type_off, ftype_idx)
+                        kindop = (op - 0x52) if op <= 0x58 else (op - 0x59) if op <= 0x5f \
+                                 else (op - 0x60) if op <= 0x66 else (op - 0x67)
+                        ok = {0: fd in ("I", "F", "Z", "B", "C", "S"),
+                              1: fd in ("J", "D"), 2: fd[:1] in ("L", "["),
+                              3: fd == "Z", 4: fd == "B", 5: fd == "C", 6: fd == "S"}[kindop]
+                        if not ok:
+                            errs.append(f"method {midx}: field-op@{off} kind={kindop} vs pole {fd}")
+                    if op in (0x0e, 0x0f, 0x10, 0x11):
+                        exp = {0x0e: "V", 0x0f: "P", 0x10: "W", 0x11: "O"}[op]
+                        got = "V" if mret_of_method == "V" else \
+                              ("W" if mret_of_method in ("J", "D") else
+                               ("O" if mret_of_method[:1] in ("L", "[") else "P"))
+                        if exp != got:
+                            errs.append(f"method {midx}: return@{off} op={op:#x} vs metoda {mret_of_method}")
                     off += wdt
                 if off != insns_size and not errs:
                     errs.append(f"method {midx}: spacer {off} != insns_size {insns_size}")
