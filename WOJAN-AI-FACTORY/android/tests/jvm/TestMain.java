@@ -39,7 +39,7 @@ public class TestMain {
         onCreate.invoke(act, new Bundle());
         String all = log();
         check("start: zielony ekran 'Start OK' pokazany", all.contains("Start OK"));
-        check("start: numer wersji 1.0.5 na ekranie startowym", all.contains("1.0.5"));
+        check("start: numer wersji 1.0.6 na ekranie startowym", all.contains("1.0.6"));
         check("start: setContentView wywolane", all.contains("setContentView"));
         check("start: tytul glowny 'WOJAN AI FACTORY'", all.contains("WOJAN AI FACTORY"));
         check("start: pole 'Adres silnika Windows'", all.contains("Adres silnika Windows"));
@@ -69,7 +69,7 @@ public class TestMain {
         ss.invoke(act);
         all = log();
         check("showStartup: zielony 'Start OK'", all.contains("Start OK"));
-        check("showStartup: wersja 1.0.5", all.contains("1.0.5"));
+        check("showStartup: wersja 1.0.6", all.contains("1.0.6"));
 
         // ---------- 5) Store — zapis i odczyt ustawien ----------
         Class<?> sc = Class.forName("pl.wojan.factory.Store");

@@ -162,3 +162,36 @@ jako diagnostyka na przyszłość.
 
 **NIEUKOŃCZONE — przeszkoda:** brak fizycznego urządzenia w środowisku — potwierdzenie uruchomienia
 wykona właściciel (oczekiwany efekt: zielony „Start OK — wersja 1.0.4", potem główny ekran).
+
+## 11. WYDANIE v1.0.5 (2026-10-22) — drugi realny bug tłumacza (`aput`)
+
+`dexverify.py` (nowy weryfikator typów wg reguł ART) wykrył, że j2smali emitował
+`aput` w kolejności (array,index,value), a składnia smali to `aput WARTOŚĆ,TABLICA,INDEKS`
+(+ zły bilans stosu dla `lastore/dastore`). Naprawione; do tego testy JVM 23/23
+(realne wykonanie logiki aplikacji). Szczegóły: `docs/RAPORT-TESTY-APK-1.0.5.md`.
+
+## 12. WYDANIE v1.0.6 (2026-10-22) — audyt „od pierwszej do ostatniej linii"
+
+Pełny audyt tłumacza j2smali rodzina po rodzinie (step/emit vs specyfikacja JVM +
+Dalvik) + histogram opcode'ów 43 klas produkcyjnych. Znaleziono i naprawiono
+**6 kolejnych realnych bugów tłumacza** (fconst_2 bity IEEE-754; przepływ stosu
+konwersji 0x85-0x93; bilans lshl/lshr/lushr; putfield szerokiej; typy po
+permutacjach dup/swap; sloty parametrów P dla long/double). Wszystkie 6 leżały
+poza rozkazami używanymi przez tę apkę — **dowód: stary i nowy tłumacz generują
+identyczne bajt w bajt smali dla wszystkich 43 klas** (jedyna zmiana w APK to
+napis wersji).
+
+Nowa warstwa testów: `tools/test_j2smali_map.py` — **36/36 PASS** (złote smali
+na syntetycznych klasach + end-to-end ECJ→smali→dex→dexcheck/dexverify); stare
+bugi wykrywane przez te testy potwierdzone na starym tłumaczu. Pełna macierz
+weryfikacji v1.0.6: testy tłumacza 36/36, JVM 23/23, dexverify 148/0,
+dexcheck 148/0, apksigner PASS sdk 21/26/34, androguard „successfully validated".
+
+**Artefakt: `dist/WOJAN-106.apk` = `dist/WOJAN-AI-FACTORY-Release.apk` (45 399 B),
+SHA-256 `2aec4a5ca43262f6b6ece68dd84aab047d2d3293f0861051364fde9bb4a13dfe`,
+versionCode 7, versionName 1.0.6, minSdk 21, target 34, podpis v1+v2+v3.**
+Szczegóły: `docs/RAPORT-TESTY-APK-1.0.6.md`.
+
+**NIEUKOŃCZONE — przeszkoda:** brak fizycznego urządzenia — potwierdzenie „naprawdę
+działa" może dać wyłącznie test właściciela (procedura w raporcie 1.0.6, sekcja 5).
+Zgodnie z żądaniem: gotowość deklarowana dopiero po tym teście.

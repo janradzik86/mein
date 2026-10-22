@@ -323,7 +323,7 @@ class MethodTranslator:
         self.lines = []
         self.params, self.ret = split_params(desc)
         self.is_static = bool(acc & 0x8)
-        self.P = len(self.params) + (0 if self.is_static else 1)
+        self.P = sum(slot_count(p) for p in self.params) + (0 if self.is_static else 1)
         self.np_locals = code[1] - self.P          # nie-parametrowe lokale
         self.max_stack = code[0]
         self.WIN = 6                               # v0..v5 zarezerwowane na staging
@@ -411,10 +411,17 @@ class MethodTranslator:
         cb = self.code[2]
         exc = self.code[3]
         types0 = [T_TOP] * self.N
+        base = self.N - self.P
+        off = 0
         if not self.is_static:
-            types0[self.N - self.P] = T_REF
-        for k, p in enumerate(self.params):
-            types0[self.N - self.P + (0 if self.is_static else 1) + k] = type_of_desc(p)
+            types0[base] = T_REF
+            off = 1
+        for p in self.params:
+            t = type_of_desc(p)
+            types0[base + off] = t
+            if t == T_WIDE:
+                types0[base + off + 1] = T_WIDE
+            off += 2 if t == T_WIDE else 1
 
         work = [(0, 0, types0)]
         for s, e, h, t in exc:
@@ -525,27 +532,48 @@ class MethodTranslator:
             sp -= 1
         elif op == 0x58:
             sp -= 2
-        elif op == 0x59:
+        elif op == 0x59:  # dup: [a] -> [a a]
             setS(sp, getS(sp - 1)); sp += 1
-        elif op in (0x5A, 0x5B):
-            setS(sp, getS(sp - 1)); sp += 1
-        elif op in (0x5C, 0x5D, 0x5E):
-            if op == 0x5C and getS(sp - 1) == T_WIDE:
-                setS(sp, T_WIDE); sp += 2
-            elif op == 0x5D and getS(sp - 1) == T_WIDE:
-                setS(sp, T_WIDE); sp += 2
-            elif op == 0x5E and getS(sp - 1) == T_WIDE and getS(sp - 3) != T_WIDE:
+        elif op == 0x5A:  # dup_x1: [a b] -> [b a b]
+            ta, tb = getS(sp - 2), getS(sp - 1)
+            setS(sp - 2, tb); setS(sp - 1, ta); setS(sp, tb); sp += 1
+        elif op == 0x5B:  # dup_x2: [a b c]->[c a b c] albo [W c]->[c W c]
+            if getS(sp - 3) != T_WIDE:
+                ta, tb, tc = getS(sp - 3), getS(sp - 2), getS(sp - 1)
+                setS(sp - 3, tc); setS(sp - 2, ta); setS(sp - 1, tb); setS(sp, tc); sp += 1
+            else:
+                tc = getS(sp - 1)
+                setS(sp - 3, tc); setS(sp - 2, T_WIDE); setS(sp, tc); sp += 1
+        elif op == 0x5C:  # dup2: [W]->[W W] albo [a b]->[a b a b]
+            if getS(sp - 1) == T_WIDE:
                 setS(sp, T_WIDE); sp += 2
             else:
                 setS(sp, getS(sp - 2)); setS(sp + 1, getS(sp - 1)); sp += 2
-        elif op == 0x5F:
-            pass
+        elif op == 0x5D:  # dup2_x1: [a W]->[W a W] albo [a b c]->[b c a b c]
+            if getS(sp - 1) == T_WIDE:
+                ta = getS(sp - 3)
+                setS(sp - 3, T_WIDE); setS(sp - 1, ta); setS(sp, T_WIDE); sp += 2
+            else:
+                ta, tb, tc = getS(sp - 3), getS(sp - 2), getS(sp - 1)
+                setS(sp - 3, tb); setS(sp - 2, tc); setS(sp - 1, ta)
+                setS(sp, tb); setS(sp + 1, tc); sp += 2
+        elif op == 0x5E:  # dup2_x2 forma [a b W] -> [W a b W]
+            if getS(sp - 1) == T_WIDE and getS(sp - 3) != T_WIDE:
+                ta, tb = getS(sp - 4), getS(sp - 3)
+                setS(sp - 4, T_WIDE); setS(sp - 2, ta); setS(sp - 1, tb)
+                setS(sp, T_WIDE); sp += 2
+            else:
+                setS(sp, getS(sp - 2)); setS(sp + 1, getS(sp - 1)); sp += 2
+        elif op == 0x5F:  # swap: [a b] -> [b a]
+            ta, tb = getS(sp - 2), getS(sp - 1)
+            setS(sp - 2, tb); setS(sp - 1, ta)
         elif op in INT_OPS or op in FLOAT_OPS or op in INT_SHIFTS:
             sp -= 1
         elif op in LONG_OPS or op in DOUBLE_OPS:
             sp -= 2
         elif op in LONG_SHIFTS:
-            sp -= 3
+            # lshl/lshr/lushr: [long(2 sloty), int] -> long(2 sloty); bilans = -1
+            sp -= 1
         elif op in (0x74, 0x75, 0x76, 0x77):
             pass
         elif 0x85 <= op <= 0x93:
@@ -553,9 +581,9 @@ class MethodTranslator:
                  0x89: T_FLOAT, 0x8A: T_WIDE, 0x8B: T_INT, 0x8C: T_WIDE,
                  0x8D: T_WIDE, 0x8E: T_INT, 0x8F: T_WIDE, 0x90: T_FLOAT,
                  0x91: T_INT, 0x92: T_INT, 0x93: T_INT}[op]
-            sp -= 1
-            if op in (0x85, 0x87, 0x8A, 0x8D):
-                sp -= 1
+            # ŹRÓDŁA szerokie (long/double) zdejmują 2 sloty: l2i/l2f/l2d/d2i/d2l/d2f.
+            # WYNIKI szerokie (i2l/i2d/f2l/f2d) odkładają parę — wide(t) poniżej.
+            sp -= 2 if op in (0x88, 0x89, 0x8A, 0x8E, 0x8F, 0x90) else 1
             setS(sp, t); sp += wide(t)
         elif op == 0x94:
             sp -= 3; setS(sp, T_INT); sp += 1
@@ -730,7 +758,9 @@ class MethodTranslator:
         if op in (0x09, 0x0A):
             w(f"    const-wide {self.S(sp)}, {op - 0x09}"); return
         if 0x0B <= op <= 0x0D:
-            w(f"    const {self.S(sp)}, 0x{(op - 0x0B) * 0x3f800000:08x}"); return
+            # bity IEEE-754: 0.0f=0x00000000, 1.0f=0x3f800000, 2.0f=0x40000000
+            bits = {0x0B: 0x00000000, 0x0C: 0x3F800000, 0x0D: 0x40000000}[op]
+            w(f"    const {self.S(sp)}, 0x{bits:08x}"); return
         if op in (0x0E, 0x0F):
             hi = 0x3FF00000 if op == 0x0F else 0
             w(f"    const-wide {self.S(sp)}, 0x{hi:08x}00000000"); return
@@ -997,7 +1027,10 @@ class MethodTranslator:
             idx = struct.unpack_from(">H", cb, i + 1)[0]
             _, cls, nm, d = cp.ref(idx)
             t = type_of_desc(d)
-            self._iput(w, t, self.S(sp0-1), self.S(sp0-2), f"{self.lref(cls)}->{nm}:{d}"); return
+            # stos: [obiekt, wartość]; wartość szeroka zajmuje 2 sloty na szczycie
+            vreg = self.S(sp0 - (2 if t == T_WIDE else 1))
+            oreg = self.S(sp0 - (3 if t == T_WIDE else 2))
+            self._iput(w, t, vreg, oreg, f"{self.lref(cls)}->{nm}:{d}"); return
 
         # wywołania
         if op in (0xB6, 0xB7, 0xB8, 0xB9):
