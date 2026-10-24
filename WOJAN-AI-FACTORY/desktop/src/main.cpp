@@ -202,7 +202,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, PWSTR cmdLine, int) {
         if (close == std::string::npos || configJson.find('{') == std::string::npos)
             configJson = "{}";
         close = configJson.find_last_of('}');
-        const bool hasMembers = configJson.find_first_not_of(" \\t\\r\\n", configJson.find('{') + 1) < close;
+        const bool hasMembers = configJson.find_first_not_of(" \t\r\n", configJson.find('{') + 1) < close;
         configJson.insert(close, std::string(hasMembers ? "," : "") +
             "\"token\":\"" + g_app.token + "\",\"apiPort\":" + std::to_string(g_app.apiPort));
         wojs_write_file(g_app.configPath, configJson);
