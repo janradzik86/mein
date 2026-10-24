@@ -197,9 +197,14 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, PWSTR cmdLine, int) {
         srand((unsigned)GetTickCount64());
         for (int i = 0; i < 32; i++) sprintf(hex + i, "%01x", rand() % 16);
         g_app.token = hex;
-        configJson = configJson.substr(0, configJson.size() > 1 ? configJson.size() - 1 : 1);
-        if (configJson.empty() || configJson[0] != '{') configJson = "{";
-        configJson += ",\"token\":\"" + g_app.token + "\",\"apiPort\":" + std::to_string(g_app.apiPort) + "}";
+        // Preserve valid JSON: an empty object must not become {,"token":...}.
+        size_t close = configJson.find_last_of('}');
+        if (close == std::string::npos || configJson.find('{') == std::string::npos)
+            configJson = "{}";
+        close = configJson.find_last_of('}');
+        const bool hasMembers = configJson.find_first_not_of(" \\t\\r\\n", configJson.find('{') + 1) < close;
+        configJson.insert(close, std::string(hasMembers ? "," : "") +
+            "\"token\":\"" + g_app.token + "\",\"apiPort\":" + std::to_string(g_app.apiPort));
         wojs_write_file(g_app.configPath, configJson);
     }
     // store + praca pod katalogiem danych użytkownika
