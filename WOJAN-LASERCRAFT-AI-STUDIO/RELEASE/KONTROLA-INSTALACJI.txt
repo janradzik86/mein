@@ -1,23 +1,25 @@
-KONTROLA INSTALACYJNA APK — generowane przez tools/build_android.sh
-Data: 2026-10-29 04:40:20 UTC   Wersja: 1.0.5 (6)
+KONTROLA INSTALACYJNA APK — tools/build_android_smali.sh
+Data: 2026-10-29 06:05:30 UTC   Wersja: 1.0.6 (7)
 
 KONTROLA INSTALACYJNA: WOJAN-LaserCraft-AI-Android-Release.apk
-  package pl.wojan.lasercraft · wersja 1.0.5 (6) · minSdk 24 · targetSdk 36 · 828893 B
+  package pl.wojan.lasercraft · wersja 1.0.6 (7) · minSdk 24 · targetSdk 36 · 824601 B
 
   [OK  ] wpisów 20, duplikatów 0
   [OK  ] podejrzane ścieżki: brak
-  [OK  ] rozmiar pliku 828893 B
+  [OK  ] rozmiar pliku 824601 B
   [OK  ] aapt2 dump badging — manifest i zasoby parsują się
-  [OK  ] package pl.wojan.lasercraft, wersja 1.0.5 (6)
+  [OK  ] package pl.wojan.lasercraft, wersja 1.0.6 (7)
   [OK  ] activity startowa: pl.wojan.lasercraft.MainActivity
   [OK  ] etykieta: WOJAN LaserCraft AI
   [OK  ] ikona: res/mipmap-mdpi/ic_launcher.png
   [OK  ] minSdk 24
   [OK  ] targetSdk 36 (Android 14+ blokuje targetSdk < 23)
-  [OK  ] resources.arsc STORED, offset 44 (4 B OK)
+  [OK  ] resources.arsc STORED, offset 4240 (4 B OK)
   [OK  ] classes.dex: magic b'dex\n037\x00' (ART akceptuje)
   [OK  ] biblioteki natywne: 0 (brak — reguła 16 KB nie dotyczy)
-  [OK  ] podpis: v1=True v2=True v3=True (Android 11+ wymaga v2/v3)
+  [OK  ] podpis sprawdzony własnym weryfikatorem (brak apksigner.jar): v1=True v2=True, digest pliku zgodny=True
+  [OK  ] androguard (niezależna implementacja): v1=True v2=True
+  [OK  ] podpis: v1=True v2=True v3=False (Android 11+ wymaga v2/v3)
 
 WYNIK: 0 problemów blokujących instalację
 
@@ -29,4 +31,4 @@ AUDYT API: WOJAN-LaserCraft-AI-Android-Release.apk (minSdk 24)
 
 WYNIK: OK — klas nowszych niż minSdk: 0, niedostępnych nadtypów: 0, do ręcznej weryfikacji: 0
 
-SHA-256: cf311f3fc5568299476d5b4d20ddb7627c26b356404bffba1ca5b97edcdc50bb
+SHA-256: 000aee269e4c4ecd5aebdfd4437ad6b9a69eae4c3092606ca3ca06b4a20b135f

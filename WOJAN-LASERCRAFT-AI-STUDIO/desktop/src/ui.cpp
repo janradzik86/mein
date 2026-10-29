@@ -186,7 +186,7 @@ void uiDrawAll(AppState& app, int& activeTab, bool& wantExit) {
       ImGui::EndMenu();
     }
     ImGui::SameLine(ImGui::GetWindowWidth() - 380);
-    ImGui::TextDisabled("Silnik lokalny · offline · v1.0.5");
+    ImGui::TextDisabled("Silnik lokalny · offline · v1.0.6");
     ImGui::EndMainMenuBar();
   }
 
@@ -1453,7 +1453,7 @@ void uiDrawSettings(AppState& app) {
   }
   ImGui::EndChild();
   sectionTitle("O aplikacji");
-  ImGui::TextWrapped("WOJAN LaserCraft AI Studio 1.0.5 - lokalny generator wzorow do grawerowania "
+  ImGui::TextWrapped("WOJAN LaserCraft AI Studio 1.0.6 - lokalny generator wzorow do grawerowania "
                      "i ciecia laserem. Silnik regulowy i proceduralny wbudowany w program, bez chmury, "
                      "bez kluczy API, bez pobierania modeli po instalacji.");
   ImGui::Columns(1);

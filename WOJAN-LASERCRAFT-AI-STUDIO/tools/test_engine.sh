@@ -4,8 +4,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-if [ -z "${JAVA_HOME:-}" ] && [ -x /tmp/v1/bin/python ]; then
-  JAVA_HOME="$(/tmp/v1/bin/python -c 'import jdk4py;print(jdk4py.JAVA_HOME)' 2>/dev/null || true)"
+if [ -z "${JAVA_HOME:-}" ] && [ -n "$(command -v python3)" ]; then
+  JAVA_HOME="$(python3 -c 'import jdk4py;print(jdk4py.JAVA_HOME)' 2>/dev/null || true)"
 fi
 JAVA="${JAVA_HOME:?brak JAVA_HOME}/bin/java"
 CACHE="${LC_CACHE:-$HOME/.cache/lc}"

@@ -1,5 +1,5 @@
 RAPORT TESTÓW SILNIKA (wygenerowany automatycznie)
-data: 2026-10-29T04:43:41Z
+data: 2026-10-29T06:12:03Z
 wynik: 12/12 zaliczonych
 
 [PASS] A — Tabliczka: prompt → projekt → cięcie → SVG
@@ -21,7 +21,7 @@ wynik: 12/12 zaliczonych
 [PASS] I — Offline: generowanie i eksport bez internetu
     generowanie i eksport bez sieci: obiekty=7, SVG=12573 B (silnik nie ma klienta HTTP)
 [PASS] K — Pamięć: 24× generowanie bez wycieków
-    24 generowania: RSS 16.6 MB → 16.6 MB (wzrost 0.0 MB, max 16.6 MB)
+    24 generowania: RSS 16.8 MB → 16.8 MB (wzrost 0.0 MB, max 16.8 MB)
 [PASS] L — Polskie znaki ĄĆĘŁŃÓŚŹŻ w tekście i eksporcie
     tekstów=2, wszystkie glify obecne=1, SVG=12455 B, DXF=107432 B, znaki diakrytyczne w SVG=1
 [PASS] M — Zgodność: rozmiary i warstwy SVG/DXF

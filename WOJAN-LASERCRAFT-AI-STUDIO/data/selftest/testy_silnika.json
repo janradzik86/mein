@@ -56,7 +56,7 @@
       "pass": true
     },
     {
-      "detail": "24 generowania: RSS 16.6 MB → 16.6 MB (wzrost 0.0 MB, max 16.6 MB)",
+      "detail": "24 generowania: RSS 16.8 MB → 16.8 MB (wzrost 0.0 MB, max 16.8 MB)",
       "id": "K",
       "name": "Pamięć: 24× generowanie bez wycieków",
       "pass": true

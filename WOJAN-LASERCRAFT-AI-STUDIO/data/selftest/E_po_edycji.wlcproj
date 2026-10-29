@@ -3,7 +3,7 @@
  "assetMeta": {},
  "assets": {},
  "category": "warsztat",
- "created": "2026-10-29T04:43:40Z",
+ "created": "2026-10-29T06:12:03Z",
  "detail": "sredni",
  "engraveType": "fill+line",
  "extra": null,
@@ -180,7 +180,7 @@
     }
    ],
    "style": "retro",
-   "time": "2026-10-29T04:43:40Z"
+   "time": "2026-10-29T06:12:03Z"
   },
   {
    "category": "warsztat",
@@ -353,7 +353,7 @@
     }
    ],
    "style": "retro",
-   "time": "2026-10-29T04:43:40Z"
+   "time": "2026-10-29T06:12:03Z"
   },
   {
    "category": "warsztat",
@@ -526,7 +526,7 @@
     }
    ],
    "style": "retro",
-   "time": "2026-10-29T04:43:40Z"
+   "time": "2026-10-29T06:12:03Z"
   }
  ],
  "historyPos": 2,
@@ -620,7 +620,7 @@
   "lpi": 254,
   "name": "Dioda 10 W (GRBL)"
  },
- "modified": "2026-10-29T04:43:40Z",
+ "modified": "2026-10-29T06:12:03Z",
  "name": "Tabliczka — WARSZTAT",
  "objects": [
   {

@@ -174,19 +174,44 @@ def main():
     so = [n for n in names if n.startswith("lib/") and n.endswith(".so")]
     res.append((OK, f"biblioteki natywne: {len(so)}" + (" (brak — reguła 16 KB nie dotyczy)" if not so else "")))
 
-    # ---- 6. podpis
+    # ---- 6. podpis (apksigner, jeśli jest; inaczej własny weryfikator + androguard)
     java = args.java if os.path.exists(args.java) else "java"
-    rc, out = run([java, "-jar", args.apksigner, "verify", "--min-sdk-version", "21", "--verbose", path])
-    v1 = "v1 scheme (JAR signing): true" in out
-    v2 = "v2 scheme (APK Signature Scheme v2): true" in out
-    v3 = "v3 scheme (APK Signature Scheme v3): true" in out
-    if rc != 0:
-        res.append((ERR, "apksigner: podpis NIEprawidłowy: " + out.strip()[:200]))
-        blocking += 1
+    v1 = v2 = v3 = None
+    if os.path.exists(args.apksigner):
+        rc, out = run([java, "-jar", args.apksigner, "verify", "--min-sdk-version", "21",
+                       "--verbose", path])
+        v1 = "v1 scheme (JAR signing): true" in out
+        v2 = "v2 scheme (APK Signature Scheme v2): true" in out
+        v3 = "v3 scheme (APK Signature Scheme v3): true" in out
+        if rc != 0:
+            res.append((ERR, "apksigner: podpis NIEprawidłowy: " + out.strip()[:200]))
+            blocking += 1
     else:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import apk_sign
+        r = apk_sign.verify(path)
+        v1, v2, v3 = r.get("v1", False), r.get("v2", False), False
+        if r.get("bledy"):
+            for b in r["bledy"]:
+                res.append((ERR, "podpis: " + b))
+            blocking += 1
+        res.append((OK, "podpis sprawdzony własnym weryfikatorem (brak apksigner.jar): "
+                    f"v1={v1} v2={v2}, digest pliku zgodny={r.get('v2_digest_ok')}"))
+        try:
+            from loguru import logger as _lg
+            _lg.remove()
+            from androguard.core.apk import APK as _APK
+            _a = _APK(path)
+            ag1, ag2 = _a.is_signed_v1(), _a.is_signed_v2()
+            res.append((OK if ag1 and ag2 else ERR,
+                        f"androguard (niezależna implementacja): v1={ag1} v2={ag2}"))
+            blocking += not (ag1 and ag2)
+        except Exception as e:  # noqa: BLE001
+            res.append((WARN, f"androguard niedostępny ({type(e).__name__})"))
+    if v1 is not None:
         res.append((OK if (v2 or v3) and v1 else ERR,
                     f"podpis: v1={v1} v2={v2} v3={v3} (Android 11+ wymaga v2/v3)"))
-        blocking += not (v2 or v3)
+        blocking += not ((v2 or v3) and v1)
 
     # ---- raport
     print(f"KONTROLA INSTALACYJNA: {os.path.basename(path)}")

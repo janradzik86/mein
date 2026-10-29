@@ -75,7 +75,7 @@ def build():
 
     S = []
     S.append(Paragraph("WOJAN LaserCraft AI Studio — instrukcja", h1))
-    S.append(Paragraph("Wersja 1.0.5 · wydanie offline · Windows 11 x64 i Android 7.0+", base))
+    S.append(Paragraph("Wersja 1.0.6 · wydanie offline · Windows 11 x64 i Android 7.0+", base))
     S.append(Spacer(1, 6))
     S.append(Paragraph(
         "Program generuje wzory do grawerowania i cięcia laserowego: wektorowe projekty, "
@@ -108,7 +108,7 @@ def build():
         "bibliotek natywnych, więc działa na ARM64 i x86_64.",
         "Skopiuj plik <b>WOJAN-LaserCraft-AI-Android-Release.apk</b> na telefon (kabel USB, "
         "Dysk Google, e-mail) albo otwórz link do wydania w przeglądarce telefonu.",
-        "Jeśli masz zainstalowaną starszą wersję (1.0.0–1.0.4) — <b>najpierw ją odinstaluj</b>. "
+        "Jeśli masz zainstalowaną starszą wersję (1.0.0–1.0.5) — <b>najpierw ją odinstaluj</b> (1.0.6 ma nowy certyfikat podpisywania, więc aktualizacja „na wierzch” jest niemożliwa). "
         "Odinstalowanie usuwa zapisane projekty, więc przed nim zrób kopię "
         "(Moje projekty → Kopia ZIP).",
         "Otwórz plik z aplikacji „Pliki”/„Pobrane”. Android zapyta o zgodę na instalację "
@@ -117,7 +117,7 @@ def build():
         "Po instalacji ikona „WOJAN LaserCraft AI” pojawi się w szufladzie aplikacji. "
         "Aplikacja używa domyślnej ikony systemowej — to nie jest błąd instalacji.",
         "Jeśli system napisze „Aplikacja nie została zainstalowana”, sprawdź, czy plik ma "
-        "809 kB (a nie np. 40 kB strony HTML), i spróbuj ponownie po odinstalowaniu starej wersji.",
+        "805 kB (a nie np. 40 kB strony HTML), i spróbuj ponownie po odinstalowaniu starej wersji.",
     ]))
 
     S.append(Paragraph("3. Instalacja na Windows 11", h2))
@@ -201,12 +201,12 @@ def build():
         "Czas pracy lasera jest szacowany — zawsze potwierdź go w LightBurn/LaserGRBL.",
     ]))
     S.append(Paragraph(
-        "Wersja 1.0.5. Data wydania: 2026-10-29. Kontakt i zgłaszanie błędów: przez repozytorium "
+        "Wersja 1.0.6. Data wydania: 2026-10-29. Kontakt i zgłaszanie błędów: przez repozytorium "
         "wydania (GitHub) lub bezpośrednio u wykonawcy.", small))
 
     doc = SimpleDocTemplate(OUT, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                             topMargin=16 * mm, bottomMargin=16 * mm,
-                            title="WOJAN LaserCraft AI Studio — instrukcja 1.0.5",
+                            title="WOJAN LaserCraft AI Studio — instrukcja 1.0.6",
                             author="WOJAN LaserCraft AI Studio", subject="Instrukcja instalacji")
     doc.build(S)
     print(f"OK {os.path.relpath(OUT, ROOT)} {os.path.getsize(OUT)} B")

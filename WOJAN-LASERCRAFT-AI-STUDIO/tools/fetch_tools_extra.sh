@@ -40,6 +40,6 @@ else
   cp "$TMP/package/lib/apktool.jar" "$CACHE/apktool.jar"
   echo "  zapisano $CACHE/apktool.jar"
 fi
-export JAVA_HOME="${JAVA_HOME:-$(/tmp/v1/bin/python -c 'import jdk4py;print(jdk4py.JAVA_HOME)' 2>/dev/null || true)}"
+export JAVA_HOME="${JAVA_HOME:-$(python3 -c 'import jdk4py;print(jdk4py.JAVA_HOME)' 2>/dev/null || true)}"
 "$JAVA_HOME/bin/java" -jar "$CACHE/apktool.jar" --version 2>&1 | head -2 || true
 echo "OK: narzędzia w $CACHE"

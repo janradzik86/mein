@@ -2,7 +2,7 @@
 ; projekt: Tabliczka — LASERGRBL TEST, koło zębate
 ; maszyna: Dioda 10 W (GRBL) (pole 400x400 mm)
 ; materiał: sklejka3, kerf 0.15 mm
-; WYgenerowano: 2026-10-29T04:43:40Z
+; WYgenerowano: 2026-10-29T06:12:03Z
 ; UWAGA: parametry mocy/prędkości są orientacyjne — sprawdź na materiale próbnym.
 G21 ; mm
 G90 ; pozycja absolutna

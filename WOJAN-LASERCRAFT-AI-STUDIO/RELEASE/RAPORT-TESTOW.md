@@ -1,4 +1,4 @@
-# RAPORT TESTOW — WOJAN LaserCraft AI Studio 1.0.5
+# RAPORT TESTOW — WOJAN LaserCraft AI Studio 1.0.6
 
 Data: 2026-10-29 · Wersja: 1.0.5 (versionCode 6) · Środowisko: kontener Linux
 x86_64, 2 vCPU, 3 GB RAM, OpenJDK 25.0.2, Zig/clang (Windows x64), bez Androida.
@@ -6,6 +6,42 @@ x86_64, 2 vCPU, 3 GB RAM, OpenJDK 25.0.2, Zig/clang (Windows x64), bez Androida.
 Zasada tego raportu: **każdy wiersz PASS ma dowód** (polecenie + wynik albo plik w
 repozytorium). Czego nie dało się uruchomić, jest oznaczone **NIEWERYFIKOWANE** —
 nie jako PASS. Tabela na końcu zbiera status każdego wymaganego scenariusza.
+
+
+## 0a. Przebieg 1.0.6 — środowisko odtworzone od zera (2026-10-29, 06:00–06:15)
+
+Środowisko zostało wyczyszczone (brak JDK, Ziga, aapt2, apktool, `android.jar`, ImGui,
+**oraz klucza podpisywania**). Wszystko odtworzone: JDK i Zig z PyPI (`jdk4py`, `ziglang`),
+aapt2 z wheelu PyPI, apktool z npm, `android.jar` (API 34) z GitHuba (blob `923bafcc…`),
+ImGui 1.91.5 z codeload.github.com.
+
+W tym środowisku **nie ma kompilatora Javy** (JDK to samo JRE; ECJ nieosiągalny —
+Maven/Google zablokowane, repozytoria z `ecj.jar` zawierają wskaźniki Git LFS lub `.sha1`).
+Konsekwencje, podane wprost:
+
+| Element | 1.0.5 | 1.0.6 |
+|---|---|---|
+| Budowa APK | ECJ + j2smali (kompilacja źródeł Java) | **asemblacja smali** z DEX 1.0.5 (kod identyczny ze źródłami) + aapt2 |
+| Podpis | `apksigner.jar` | **własna implementacja v1+v2** (`tools/apk_sign.py`), zweryfikowana androguardem |
+| 41 testów JVM | wykonane (41 PASS) | **NIE WYKONANE** — brak kompilatora Javy |
+| 24 kontrole E2E (CLI) | wykonane | **wykonane ponownie: 24 PASS** |
+
+Znaleziony i naprawiony **realny błąd w podpisywaniu v2**: sekwencja podpisów była owinięta
+podwójnym polem długości, czyli format niezgodny ze specyfikacją — Android odrzuciłby taki
+APK mimo poprawnych obliczeń kryptograficznych. Ten sam błąd zawiera `tools/apksig/apksig.py`
+(plik z innego projektu w tym repozytorium, nigdy nieużyty do wydania). Po naprawie podpis
+potwierdzają dwie niezależne implementacje: własny weryfikator i androguard (`v1=True v2=True`).
+
+Nowy certyfikat podpisywania (stary klucz przepadł razem ze środowiskiem — nieodwracalnie):
+
+```
+CN=WOJAN AI FACTORY Release Key, O=WOJAN AI FACTORY, C=PL
+SHA-256 F3:E5:AF:82:F8:84:D6:45:AD:C3:12:44:E9:08:A9:62:E3:57:F4:22:43:B0:48:DA:16:CB:E4:04:75:FD:D7:EE
+RSA 2048, SHA256withRSA, ważny do 2036-10-26
+```
+
+Skutek: przed instalacją 1.0.6 trzeba odinstalować poprzednią wersję (inny podpis).
+Kolejne wydania z tego klucza aktualizują się już normalnie.
 
 ## 0. Czego w tym środowisku nie ma (i dlaczego)
 
@@ -29,7 +65,7 @@ udokumentowane warunki instalacji Androida 11–17.
 Nie ma też Wine, więc instalatora Windows i EXE nie da się uruchomić w tym środowisku
 (`command -v wine` → BRAK). Weryfikacja Windows jest strukturalna (pkt 5).
 
-## 1. Testy jednostkowe silnika na JVM — 41/41 PASS
+## 1. Testy jednostkowe silnika na JVM — 41/41 PASS (przebieg 1.0.5, patrz 0a)
 
 Polecenie: `bash tools/test_engine.sh` · dowód: `tests/out/raport_jvm.txt`
 (39 825 B, data 2026-10-29 04:39). Ten sam kod, który trafia do APK (klasy `Core`,
@@ -150,4 +186,4 @@ python3 tools/apk_installcheck.py RELEASE/WOJAN-LaserCraft-AI-Android-Release.ap
 python3 tools/apk_api_audit.py RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk --min-sdk 24 --pelen
 ```
 
-Wersja raportu: 1.0.5, 2026-10-29.
+Wersja raportu: 1.0.6, 2026-10-29.

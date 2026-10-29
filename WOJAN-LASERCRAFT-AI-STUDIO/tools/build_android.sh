@@ -25,8 +25,8 @@ APKSIGNER="$CACHE/apksigner.jar"
 
 # --- Java ---
 if [ -z "${JAVA_HOME:-}" ]; then
-  if [ -x /tmp/v1/bin/python ]; then
-    JAVA_HOME="$(/tmp/v1/bin/python -c 'import jdk4py;print(jdk4py.JAVA_HOME)' 2>/dev/null || true)"
+  if [ -n "$(command -v python3)" ]; then
+    JAVA_HOME="$(python3 -c 'import jdk4py;print(jdk4py.JAVA_HOME)' 2>/dev/null || true)"
   fi
 fi
 if [ -z "${JAVA_HOME:-}" ]; then

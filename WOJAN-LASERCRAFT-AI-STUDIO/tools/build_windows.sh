@@ -3,10 +3,11 @@
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
-ZC="${ZIG:-/tmp/v1/bin/python -m ziglang}"
+PY="${PY:-python3}"
+ZC="${ZIG:-$PY -m ziglang}"
 TOOLCACHE="${LC_TOOLS:-$HOME/.cache/lc}"
 IMGUI="$TOOLCACHE/src/imgui-1.91.5"
-DEF="$(/tmp/v1/bin/python -c "import ziglang,os;print(os.path.join(os.path.dirname(ziglang.__file__),\"lib\",\"libc\",\"mingw\",\"lib-common\"))")"
+DEF="$($PY -c "import ziglang,os;print(os.path.join(os.path.dirname(ziglang.__file__),\"lib\",\"libc\",\"mingw\",\"lib-common\"))")"
 B=build/win
 mkdir -p "$B/obj"
 TARGET=x86_64-windows-gnu
