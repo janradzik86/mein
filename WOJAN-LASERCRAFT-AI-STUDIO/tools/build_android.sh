@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
-# build_android.sh — buduje podpisany Release APK (bez Android SDK / Gradle).
-# Łańcuch: ECJ → j2smali → smali → dexcheck → AXML → ZIP → apksigner (v1+v2+v3)
+# build_android.sh — buduje podpisany Release APK bez Android SDK/Gradle.
+#
+# Łańcuch (wszystko oficjalne narzędzia tam, gdzie to możliwe):
+#   ECJ (.java → .class) → j2smali (.class → .smali)
+#   → apktool/aapt2 (manifest + res/ + resources.arsc + smali → classes.dex → APK)
+#   → kontrole: dexcheck, dexlink, wersja DEX, obecność resources.arsc
+#   → apksigner (v1+v2+v3) → weryfikacja
+#
+# Dlaczego apktool, a nie własne AXML: APK 1.0.0/1.0.1 miały manifest składany
+# ręcznie (tools/axmlbuild.py) i ZERO zasobów (brak res/ i resources.arsc).
+# apktool 2.9 używa aapt2 do manifestu/zasobów i nowoczesnego smali (dexlib2 3.x)
+# do DEX-a — czyli dokładnie tego, co robi Gradle, tylko bez SDK.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -9,7 +19,8 @@ OUT="build/android"
 CACHE="${LC_CACHE:-$HOME/.cache/lc}"
 ECJ="$CACHE/ecj.jar"
 ANDROID_JAR="$CACHE/android34.jar"
-SMALI="$CACHE/smali.jar"
+APKTOOL="$CACHE/apktool.jar"
+AAPT2="$CACHE/aapt2"
 APKSIGNER="$CACHE/apksigner.jar"
 
 # --- Java ---
@@ -25,14 +36,16 @@ fi
 JAVA="$JAVA_HOME/bin/java"
 "$JAVA" -version >/dev/null 2>&1 || { echo "BŁĄD: java nie działa ($JAVA)" >&2; exit 1; }
 
-for f in "$ECJ" "$ANDROID_JAR" "$SMALI" "$APKSIGNER"; do
-  [ -f "$f" ] || { echo "BŁĄD: brak narzędzia $f (uruchom tools/fetch_toolchain.sh)" >&2; exit 1; }
+for f in "$ECJ" "$ANDROID_JAR" "$APKTOOL" "$APKSIGNER"; do
+  [ -f "$f" ] || { echo "BŁĄD: brak narzędzia $f (uruchom tools/fetch_tools_extra.sh)" >&2; exit 1; }
 done
+[ -x "$AAPT2" ] || { echo "BŁĄD: brak aapt2 ($AAPT2) — uruchom tools/fetch_tools_extra.sh" >&2; exit 1; }
 
-VERSION_NAME="${VERSION_NAME:-1.0.1}"
-VERSION_CODE="${VERSION_CODE:-2}"
+VERSION_NAME="${VERSION_NAME:-1.0.2}"
+VERSION_CODE="${VERSION_CODE:-3}"
+PKG="pl.wojan.lasercraft"
 
-rm -rf "$OUT/classes" "$OUT/smali" "$OUT/classes.dex" "$OUT/base.apk" "$OUT/unsigned.apk"
+rm -rf "$OUT/classes" "$OUT/smali" "$OUT/classes.dex" "$OUT/base.apk" "$OUT/unsigned.apk" "$OUT/proj"
 mkdir -p "$OUT/classes" "$OUT/smali"
 
 echo "== 1/6 ECJ (Java 1.8 → klasy JVM) =="
@@ -44,9 +57,6 @@ echo "== 2/6 j2smali (.class → .smali) =="
 find "$OUT/classes" -name '*.class' > "$OUT/classes.txt"
 python3 tools/j2smali/j2smali.py $(cat "$OUT/classes.txt") > "$OUT/j2smali.log" 2>&1 || {
   echo "j2smali FAILED — ostatnie linie:"; tail -20 "$OUT/j2smali.log"; exit 1; }
-grep -c '\.smali' "$OUT/j2smali.log" || true
-
-echo "== 3/6 struktura smali → classes.dex =="
 python3 - "$OUT" <<'PYEOF'
 import os, shutil, sys
 out = sys.argv[1]
@@ -63,26 +73,61 @@ for root, _d, files in os.walk(src):
         n += 1
 print(f"pliki smali: {n}")
 PYEOF
-"$JAVA" -jar "$SMALI" -a 24 -o "$OUT/classes.dex" "$OUT/smali" 2>&1 | tail -5
-# smali z tego toolchainu zawsze pisze magic "036", którego ART NIE akceptuje
-# (standard_dex_file.cc: kDexMagicVersions = 035,037,038,039,040,041).
-python3 tools/dexfix.py --api 24 "$OUT/classes.dex"
+
+echo "== 3/6 zasoby Androida (ikony + values) i manifest źródłowy =="
+python3 tools/make_res.py --res android/res --manifest "$OUT/AndroidManifest.src.xml" \
+  --package "$PKG" --version-code "$VERSION_CODE" --version-name "$VERSION_NAME" \
+  --min-sdk 24 --target-sdk 36
+
+echo "== 4/6 apktool + aapt2: resources.arsc, manifest AXML, classes.dex, assets =="
+PROJ="$OUT/proj"
+mkdir -p "$PROJ"
+cp -r "$OUT/smali" "$PROJ/smali"
+cp -r android/res "$PROJ/res"
+mkdir -p "$PROJ/assets" && cp -r android/app/assets/. "$PROJ/assets/"
+cp "$OUT/AndroidManifest.src.xml" "$PROJ/AndroidManifest.xml"
+cat > "$PROJ/apktool.yml" <<YML
+!!brut.androlib.meta.MetaInfo
+apkFileName: base.apk
+isFrameworkApk: false
+packageInfo:
+  forcedPackageId: '127'
+  renameManifestPackage: null
+sdkInfo:
+  minSdkVersion: '24'
+  targetSdkVersion: '36'
+usesFramework:
+  ids:
+  - 1
+  tag: null
+versionInfo:
+  versionCode: '$VERSION_CODE'
+  versionName: $VERSION_NAME
+YML
+PATH="$(dirname "$AAPT2"):$PATH" "$JAVA" -jar "$APKTOOL" b "$PROJ" -o "$OUT/unsigned.apk" --use-aapt2 2>&1 | tail -6
+
+echo "== 5/6 kontrole DEX i zawartości APK =="
+python3 - "$OUT/unsigned.apk" "$OUT/classes.dex" <<'PYEOF'
+import sys, zipfile
+apk, dex_out = sys.argv[1], sys.argv[2]
+z = zipfile.ZipFile(apk)
+names = z.namelist()
+need = ["AndroidManifest.xml", "classes.dex", "resources.arsc"]
+missing = [n for n in need if n not in names]
+if missing:
+    sys.exit(f"BŁĄD: w APK brakuje {missing}")
+if not any(n.startswith("res/") for n in names):
+    sys.exit("BŁĄD: w APK brak katalogu res/ (ikona, style)")
+data = z.read("classes.dex")
+open(dex_out, "wb").write(data)
+magic = data[:8]
+ok = magic[4:7] in (b"035", b"037", b"038", b"039", b"040", b"041")
+print(f"APK: {len(names)} wpisów, classes.dex magic={magic!r} -> {'OK' if ok else 'BŁĄD (ART odrzuci)'}")
+if not ok:
+    sys.exit(1)
+PYEOF
 python3 tools/dexcheck.py "$OUT/classes.dex"
 python3 tools/dexlink.py "$OUT/classes.dex" "$ANDROID_JAR"
-
-echo "== 4/6 AndroidManifest.xml (AXML) =="
-/tmp/v1/bin/python tools/axmlbuild.py --out "$OUT/AndroidManifest.xml" \
-  --package pl.wojan.lasercraft --label "WOJAN LaserCraft AI" \
-  --version-code "$VERSION_CODE" --version-name "$VERSION_NAME" \
-  --min-sdk 24 --target-sdk 36 \
-  --permission android.permission.INTERNET \
-  --permission android.permission.RECORD_AUDIO \
-  --activity pl.wojan.lasercraft.MainActivity
-
-echo "== 5/6 pakowanie APK =="
-python3 tools/pack_apk.py --out "$OUT/unsigned.apk" \
-  --manifest "$OUT/AndroidManifest.xml" --dex "$OUT/classes.dex" \
-  --assets android/app/assets
 
 echo "== 6/6 podpis (v1+v2+v3) i weryfikacja =="
 KS="keystore/wojan-lasercraft.p12"
@@ -93,15 +138,7 @@ KS="keystore/wojan-lasercraft.p12"
   --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true \
   --out "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" "$OUT/unsigned.apk"
 "$JAVA" -jar "$APKSIGNER" verify --verbose --print-certs \
-  "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" 2>&1 | head -20 || true
+  "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" 2>&1 | grep -v "WARNING" | head -14 || true
 
-python3 - "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" <<'PYVER'
-import sys, zipfile
-z = zipfile.ZipFile(sys.argv[1])
-magic = z.read("classes.dex")[:8]
-ok = magic[4:7] in (b"035", b"037", b"038", b"039", b"040", b"041")
-print(f"weryfikacja APK: classes.dex magic={magic!r} -> {'OK' if ok else 'BŁĄD (ART odrzuci)'}")
-sys.exit(0 if ok else 1)
-PYVER
 ls -l "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk"
 echo "OK APK: $OUT/WOJAN-LaserCraft-AI-Android-Release.apk"

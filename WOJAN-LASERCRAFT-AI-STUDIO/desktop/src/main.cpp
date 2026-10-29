@@ -249,7 +249,18 @@ void AppState::updatePreview() {
   req.set("pxPerMm", (double)previewPxPerMm);
   req.set("guides", showGuides);
   lc::Json r = engine.handle("render", req);
-  if (!r["ok"].boolean(false) || !r.has("pngBase64")) return;
+  // Nie wymagamy pola "ok" — liczy się obecność obrazu; problemy pokazujemy w UI,
+  // żeby podgląd nigdy nie był „cicho pusty" (błąd 1.0.0: akcja render nie ustawiała "ok").
+  if (r.has("error") && !r["error"].str().empty()) {
+    toast("Podgląd: " + r["error"].str(), true);
+    previewDirty = false;
+    return;
+  }
+  if (!r.has("pngBase64") || r["pngBase64"].str().empty()) {
+    toast("Silnik nie zwrócił obrazu podglądu.", true);
+    previewDirty = false;
+    return;
+  }
   auto bytes = lc::base64Decode(r["pngBase64"].str());
   GpuTex t = makeTexture(device, bytes);
   if (t.valid()) {

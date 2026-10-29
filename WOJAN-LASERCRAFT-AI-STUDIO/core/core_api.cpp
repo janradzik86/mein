@@ -86,7 +86,7 @@ Json Engine::status() {
   Json j = Json::object();
   j.set("app", "WOJAN LaserCraft AI Studio");
   j.set("engine", "wojan-lasercraft-core");
-  j.set("version", "1.0.0");
+  j.set("version", "1.0.2");
   j.set("build", 20261029);
   j.set("offline", true);
   j.set("cloud", false);
@@ -358,6 +358,7 @@ Json Engine::renderJson(const Json& req) {
   bool raster = req["raster"].boolean(true);
   Image img = renderDesign(d, fonts_, assets_, pxPerMm, guides, raster);
   Json out = Json::object();
+  out.set("ok", true);
   out.set("width", img.w);
   out.set("height", img.h);
   auto png = pngEncode(img);
@@ -385,6 +386,7 @@ Json Engine::calculateCosts(const Json& req) {
   in.wastePercent = req["wastePercent"].num(in.wastePercent);
   CostResult r = calculateCost(in);
   Json o = Json::object();
+  o.set("ok", true);
   o.set("materialCost", r.materialCost);
   o.set("engraveMinutes", r.engraveMinutes);
   o.set("cutMinutes", r.cutMinutes);
@@ -429,6 +431,17 @@ Json specToJson(const PromptSpec& s) {
 }
 
 Json Engine::handle(const std::string& action, const Json& req) {
+  Json out = dispatch(action, req);
+  // Kontrakt dla interfejsu: KAŻDA odpowiedź ma czytelne "ok".
+  // Wcześniej "render", "calculator", "status", "catalog" i "trends" nie ustawiały
+  // tego pola, a UI (Windows/Android) sprawdzało ok == true i po cichu nic nie robiło
+  // — objaw: „EXE nie generuje obrazu wzoru”, pusty kalkulator, pusty katalog.
+  bool hasError = out.has("error") && !out["error"].str().empty();
+  if (!out.has("ok")) out.set("ok", !hasError);
+  return out;
+}
+
+Json Engine::dispatch(const std::string& action, const Json& req) {
   Json out = Json::object();
   try {
     if (action == "ping" || action == "status" || action == "ai_status") return status();

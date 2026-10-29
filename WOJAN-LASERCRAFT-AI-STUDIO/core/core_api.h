@@ -26,6 +26,8 @@ class Engine {
   Design designFromRequest(const Json& req, bool* ok = nullptr);
   Json renderJson(const Json& req);
   Json calculateCosts(const Json& req);
+  // Wewnętrzny rozgałęziacz akcji — publiczne handle() normalizuje pole "ok".
+  Json dispatch(const std::string& action, const Json& req);
 
  private:
   std::string dataDir_ = ".";

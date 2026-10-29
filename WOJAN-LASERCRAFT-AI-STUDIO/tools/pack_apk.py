@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-"""pack_apk.py — składa APK (ZIP): manifest AXML i classes.dex bez kompresji + zasoby.
+"""pack_apk.py — składa APK (ZIP).
 
-Wpisy muszą być wyrównane do 4 B (mmap), dlatego manifest i dex są STORED
-z dopełnieniem extra-field, a zasoby (czcionki) mogą być deflate.
+Dwa tryby:
+  * --base BASE.apk  — bierze APK zbudowany przez **aapt2 link** (poprawny
+    AndroidManifest.xml, res/, resources.arsc, assets/) i dokłada classes.dex.
+    To jest tryb używany w tools/build_android.sh.
+  * --manifest/--assets — tryb awaryjny (własny AXML z tools/axmlbuild.py).
+
+classes.dex jest zapisywany bez kompresji i wyrównany do 4 B (mmap w ART),
+pozostałe wpisy zachowują sposób pakowania z aapt2 (stored/deflate).
 """
 from __future__ import annotations
 
@@ -45,14 +51,43 @@ def build(entries, out_path):
     return len(buf)
 
 
+def from_base(base_path, dex_path):
+    """Wpisy z APK aapt2 + classes.dex zaraz po manifeście."""
+    dex = open(dex_path, "rb").read()
+    entries = []
+    with zipfile.ZipFile(base_path) as z:
+        names = z.namelist()
+        if "AndroidManifest.xml" not in names:
+            sys.exit("BŁĄD: base.apk bez AndroidManifest.xml")
+        for n in names:
+            info = z.getinfo(n)
+            data = z.read(n)
+            stored = info.compress_type == 0
+            entries.append((n, data, stored))
+            if n == "AndroidManifest.xml":
+                entries.append(("classes.dex", dex, True))
+    if not any(n == "classes.dex" for n, _d, _s in entries):
+        entries.append(("classes.dex", dex, True))
+    return entries
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
-    ap.add_argument("--manifest", required=True)
+    ap.add_argument("--manifest")
     ap.add_argument("--dex", required=True)
+    ap.add_argument("--base")
     ap.add_argument("--assets", action="append", default=[])
     args = ap.parse_args()
 
+    if args.base:
+        entries = from_base(args.base, args.dex)
+        size = build(entries, args.out)
+        print(f"{args.out}: {size} B, wpisów z aapt2 + classes.dex: {len(entries)}")
+        return 0
+
+    if not args.manifest:
+        ap.error("podaj --base albo --manifest")
     entries = []
     entries.append(("AndroidManifest.xml", open(args.manifest, "rb").read(), True))
     entries.append(("classes.dex", open(args.dex, "rb").read(), True))
