@@ -1,0 +1,45 @@
+KONTROLA INSTALACYJNA APK — tools/build_android_smali.sh
+Data: 2026-10-29 14:19:57 UTC   Wersja: 1.1.0 (11)
+
+KONTROLA INSTALACYJNA: WOJAN-LaserCraft-AI-Android-Release.apk
+  package pl.wojan.lasercraft · wersja 1.1.0 (11) · minSdk 24 · targetSdk 36 · 832990 B
+
+  [OK  ] wpisów 20, duplikatów 0
+  [OK  ] podejrzane ścieżki: brak
+  [OK  ] rozmiar pliku 832990 B
+  [OK  ] aapt2 dump badging — manifest i zasoby parsują się
+  [OK  ] package pl.wojan.lasercraft, wersja 1.1.0 (11)
+  [OK  ] activity startowa: pl.wojan.lasercraft.MainActivity
+  [OK  ] etykieta: WOJAN LaserCraft AI
+  [OK  ] ikona: res/mipmap-mdpi/ic_launcher.png
+  [OK  ] minSdk 24
+  [OK  ] targetSdk 36 (Android 14+ blokuje targetSdk < 23)
+  [OK  ] resources.arsc STORED, offset 44 (4 B OK)
+  [OK  ] classes.dex: magic b'dex\n037\x00' (ART akceptuje)
+  [OK  ] biblioteki natywne: 0 (brak — reguła 16 KB nie dotyczy)
+  [OK  ] podpis sprawdzony biblioteką Google apksig (uber-apk-signer): v2=True v3=True
+  [UWAGA] nasz weryfikator v1/v2: v1=True v2=False (nie obsługuje bloku v3 — wynik v2 z apksig jest rozstrzygający)
+  [OK  ] podpis: v1=True v2=True v3=True (Android 11+ wymaga v2/v3)
+
+WYNIK: 0 problemów blokujących instalację
+
+AUDYT API: WOJAN-LaserCraft-AI-Android-Release.apk (minSdk 24)
+  klas własnych: 153
+  klas platformy android.*: 56  (+ 51 klas Java/JSON)
+  wywołań do metod: 1051
+  najczęściej używane API platformy: Path×17, Paint×13, EditText×13, Canvas×12, Button×12, Intent×9, Bitmap×9, LinearLayout×9, TextView×9, RectF×8
+
+  UWAGA: klasy spoza tablicy kontrolnej (sprawdź ręcznie):
+    Landroid/app/Application;
+    Landroid/content/ClipData;
+    Landroid/content/ClipboardManager;
+
+WYNIK: OK — klas nowszych niż minSdk: 0, niedostępnych nadtypów: 0, do ręcznej weryfikacji: 3
+
+BRAMA APK: build/android/WOJAN-LaserCraft-AI-Android-Release.apk
+  · biblioteki natywne: 0
+  · rozmiar pliku: 1424112 B (nieskompresowany)
+
+WYNIK: plik jest naszą aplikacją natywną (bez WebView) — wolno wydać
+
+SHA-256: 417cbb8fd8b2e60645e2a84882e88e14f64a9f297c0fb329013da83948c818a8

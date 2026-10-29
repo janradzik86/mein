@@ -1,0 +1,13 @@
+RAPORT WALIDACJI PROJEKTU (WOJAN LaserCraft AI Studio)
+data: 2026-10-29T03:45:07Z
+wynik: GOTOWY DO EKSPORTU (bez błędów krytycznych)
+błędy: 0, ostrzeżenia: 3, informacje: 2
+
+[UWAGA] MATERIAL_INFO: Grawer wymaga lasera fiber lub pasty do znakowania na diodzie.
+[UWAGA] MATERIAL_CIEBIE: Wybrany materiał (Stal nierdzewna) zwykle nie jest cięty tą technologią.
+         poprawka: Rozważ wyłączenie cięcia (projekt na gotowym przedmiocie).
+[UWAGA] QR_MODUL: Moduł QR 0.21 mm — może być nieczytelny po grawerowaniu. (obiekt: qr1)
+         poprawka: Zwiększ rozmiar QR do min. 20 mm lub skróć dane.
+[INFO ] KERF_OK: Kompensacja kerf: 0.15 mm (kontur cięcia powiększony o 0.07 mm na stronę).
+[INFO ] PODSUMOWANIE: Obiekty: 7, powierzchnia grawerowania: 1436 mm², długość cięcia: 147 mm
+

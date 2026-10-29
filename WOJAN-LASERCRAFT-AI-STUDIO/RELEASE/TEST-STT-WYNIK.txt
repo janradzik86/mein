@@ -1,0 +1,15 @@
+TEST ROZPOZNAWANIA MOWY — wykonany 2026-10-29 07:09 UTC
+kod: core/stt.cpp (ten sam, który jest w aplikacji), silnik whisper.cpp 1.7.4,
+model: modele/ggml-base-q5_1.bin (59 707 642 B, q5_1)
+odtworzenie: bash tools/test_stt.sh
+
+== budowa biblioteki whisper.cpp ==
+OK build/whisper/libwhisper.a (16 plików, 2271418 B)
+== test EN (samples/jfk.wav, oczekiwane: 'And so my fellow Americans...') ==
+  ok=1 czas=2.62s
+  And so my fellow Americans ask not what your country can do for you, ask what you can do for your country.
+== test PL (espeak-ng, głos pl) ==
+  nagranie: /tmp/polski_test.wav (8.6 s, 22050 Hz)
+  ok=1 czas=3.64s
+  Cześć, tu boją dla serkraft, projektuje tam liczkę trawerem dla żony, nieprzówka, stalię ze mój a nieścia centymetrów.
+== gotowe, wynik w build/test_stt.txt ==

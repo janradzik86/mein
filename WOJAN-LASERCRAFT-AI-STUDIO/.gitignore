@@ -1,0 +1,16 @@
+# artefakty budowania (nie trzymamy w repozytorium)
+build/
+*.o
+*.a
+*.pdb
+dist/przyklady/_raw/
+
+# klucz podpisywania APK i hasło — NIGDY do repozytorium
+keystore/*.p12
+keystore/*.pem
+keystore/keystore.env
+*.jks
+
+# pliki wydania są wersjonowane w RELEASE/ — użytkownik pobiera je bezpośrednio z repozytorium
+__pycache__/
+*.pyc

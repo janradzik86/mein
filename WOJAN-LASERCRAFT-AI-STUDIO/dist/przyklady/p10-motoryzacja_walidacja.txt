@@ -1,0 +1,9 @@
+RAPORT WALIDACJI PROJEKTU (WOJAN LaserCraft AI Studio)
+data: 2026-10-29T03:45:07Z
+wynik: GOTOWY DO EKSPORTU (bez błędów krytycznych)
+błędy: 0, ostrzeżenia: 1, informacje: 2
+
+[UWAGA] MATERIAL_INFO: Skóra naturalna: przy cięciu wydziela zapach spalenizny, używaj odciągu.
+[INFO ] KERF_OK: Kompensacja kerf: 0.15 mm (kontur cięcia powiększony o 0.07 mm na stronę).
+[INFO ] PODSUMOWANIE: Obiekty: 6, powierzchnia grawerowania: 2706 mm², długość cięcia: 226 mm
+

@@ -1,0 +1,8 @@
+WOJAN LaserCraft AI Studio 1.0.8 — licencje
+==========================================
+Kod programu (core/, desktop/, android/, cli/, tools/) — wlasnosc zleceniodawcy.
+Dear ImGui 1.91.5 — MIT.  stb_image — public domain/MIT.
+whisper.cpp 1.7.4 + ggml — MIT (Georgi Gerganov i wspoltworcy; model Whisper: OpenAI, MIT).
+Czcionki (fonts/*.ttf) — SIL Open Font License 1.1 (Google Fonts).
+Projekty przykladowe — wygenerowane przez silnik programu.
+Modele: wagi Whisper NIE sa dolaczone (instrukcja: modele/README-MODEL.txt).

@@ -1,0 +1,47 @@
+RAPORT TESTÓW SILNIKA (JVM) — WOJAN LaserCraft AI Studio
+Data: 2026-10-29 04:39:03
+Środowisko: OpenJDK 64-Bit Server VM 25.0.2
+
+PASS T01 Analiza promptu (8 przypadków: produkt, wymiary, cięcie, kategoria) — 8/8 
+PASS T02 Analiza jednostek cm → mm (20x15 cm) — 200.0x150.0 mm
+PASS T03 QR: kodowanie → niezależny dekoder (syndromy RS) dla 5 ładunków × 4 poziomy — 20/20 
+PASS T04 QR: test strukturalny (wzory, BCH, maska) — 5 ładunków — 5/5
+PASS T05 QR: wersja >= 7 (informacja wersji, 100 B, poziom H) — wersja=10 mod=57 maska=3
+PASS T06 QR: przekroczenie pojemności zgłoszone błędem (400 B, poziom H)
+PASS T07 QR: ścieżka wektorowa w obszarze 30 mm (margines 4 modułów) — 22.73×22.73 mm, oczekiwane 22.73 mm
+PASS T08 Przykładowe projekty: 24 szt. bez błędów walidacji — 24 projektów, 114 obiektów, błędów: 0
+PASS T09 Warstwy zgodne z produktem (cięcie tylko dla wycinanych, zawsze grawer) — niezgodności: 0
+PASS T10 Każdy obiekt geometryczny ma ścieżkę (brak pustych 'd') — pustych: 0
+PASS T11 SVG (LightBurn): mm, viewBox, grupy warstw, ścieżki — 6076 B, 4 ścieżek
+PASS T12 DXF: nagłówek, jednostki mm ($INSUNITS=4), warstwy, polilinie — 7004 B, 4 polilinii
+PASS T13 PDF: nagłówek, xref, EOF, geometria wektorowa — 6945 B
+PASS T14 SVG: poprawna liczba znaczników (otwarcia = zamknięcia <g>) — 3 grup
+PASS T15 Walidacja: poprawny projekt bez błędów — []
+PASS T16 Walidacja: PVC blokuje eksport (błąd materiału) — MATERIAŁ: NIGDY nie tnij ani nie graweruj PVC — wydziela chlorowodór.
+PASS T17 Walidacja: cięcie na gotowym przedmiocie = błąd — CIECIE_NIEOCZEKANE: produkt jest gotowym przedmiotem, a projekt zawiera warstwy cięcia.
+PASS T18 Walidacja: brak konturu cięcia = błąd — BRAK_KONTURU: brak zewnętrznego konturu cięcia.
+PASS T19 Walidacja: obiekt poza produktem = błąd — POZA_PRODUKTEM: „Poza obszarem” wykracza poza obrys produktu.
+PASS T20 Generator: kod QR dodawany dla kategorii QR
+PASS T21 JSON: zapis → odczyt (wlcproj/1) zachowuje obiekty i parametry — 4718 B JSON, 4 obiektów
+PASS T22 JSON: pole format = wlcproj/1 — wlcproj/1
+PASS T23 Wektoryzacja: kwadrat 32×32 px → ścieżka ~15×15 mm w skali 30 mm — 7.50..22.50 mm
+PASS T24 Uproszczenie Douglasa-Peuckera redukuje punkty — 101 → 19
+PASS T25 Kalkulator: koszt < cena < brutto, dodatnie czasy — materiał 1.51 zł, koszt 17.87 zł, cena 28.59 zł, brutto 35.17 zł
+PASS T26 Kalkulator: wyższa marża → wyższa cena — 28.59 → 39.31 zł
+PASS T27 Determinizm generatora: ten sam prompt i wariant → identyczny projekt — 4421 B
+PASS T28 Warianty różnią się między sobą
+PASS T29 Diakrytyki: analiza tekstu z ą/ć/ę/ł/ń/ó/ś/ź/ż — napis='em ZAŻÓŁĆ GĘŚLĄ JAŹŃ'
+PASS T30 Korekta tekstu: podwójne spacje usunięte — 'tabliczka dla wedkarza z napisem'
+PASS T31 Bank napisów: 10 propozycji, żadna pusta — 10 propozycji
+PASS T32 G-code: generowany dla GRBL (mm, G90, M5 na końcu) — 61552 B
+PASS T33 G-code: ZABLOKOWANY dla nieznanego kontrolera (Ruida) — Kontroler „Ruida” nie jest GRBL — eksport G-code zablokowany.
+PASS T34 Wydajność: 50× (generowanie + SVG + DXF) poniżej 5 s — 50 projektów w 137 ms (2 ms/projekt)
+PASS T35 Pakiet produkcyjny: wszystkie wymagane pliki w ZIP — 13/13 plików, 6894 B
+PASS T36 Profil LightBurn: osobny plik tylko z warstwą cięcia — 326 B
+PASS T37 parametry.json: jednostki mm i kerf z ustawień użytkownika — kerf=0.15 mm
+PASS T38 Motywy okolicznościowe (choinka, pisanka, obrączki, medal) — 4/4 
+PASS T39 Napisy z promptu: bez instrukcji ("tylko grawer"), bez wymiarów, z diakrytykami — [WILK Z BIESZCZAD] [ANNA I PIOTR 12.06.2027] [WESOŁYCH ŚWIĄT]
+PASS T40 Zawieszka: otwór na sznurek w materiale, osobna warstwa CUT_INNER — środek 30.00,7.00 mm, r=4.07 mm, produkt 60.00x80.00
+PASS T41 Produkt okrągły: treść wpisana w koło, walidacja bez błędów — 0 obiektów poza kołem , błędy=0
+
+WYNIK: 41 PASS, 0 FAIL

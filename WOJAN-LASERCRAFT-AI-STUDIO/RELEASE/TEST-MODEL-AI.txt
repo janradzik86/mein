@@ -1,0 +1,17 @@
+TEST MODELU AI — 2026-10-29 07:49 UTC
+kod: core/aimodel.cpp (wnioskowanie), core/compose.cpp (wpięcie)
+model: modele/ai-generator.bin
+rozmiar: 1138168 B
+
+PROMPT                                 CZAS[ms]   RYSUNEK AI / WALIDACJA
+wilk na tle gór, rycina, dla ojca     59         obiektów:0 segmentów:0 walidacja:błędów: 0, ostrzeżeń: 0
+mandala w stylu retro na deskę do krojenia 73         obiektów:0 segmentów:0 walidacja:błędów: 0, ostrzeżeń: 0
+statek żaglowy, kompas i kotwica, tabliczka 94         obiektów:0 segmentów:0 walidacja:błędów: 0, ostrzeżeń: 0
+sowa na gałęzi, minimal, prezent dla mamy 84         obiektów:0 segmentów:0 walidacja:błędów: 0, ostrzeżeń: 0
+motocykl retro, szyld do garażu       91         obiektów:0 segmentów:0 walidacja:błędów: 0, ostrzeżeń: 0
+piersiówka z motywem łowiectwa, jelen 56         obiektów:0 segmentów:0 walidacja:błędów: 0, ostrzeżeń: 2
+smok w stylu gotyckim, medal           45         obiektów:0 segmentów:0 walidacja:błędów: 0, ostrzeżeń: 1
+kwiaty i motyle, elegancki, na urodziny 168        obiektów:0 segmentów:0 walidacja:błędów: 0, ostrzeżeń: 0
+
+projekty z rysunkiem z modelu: 0 / 8
+pliki wyjściowe: build/test_ai
