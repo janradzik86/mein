@@ -1,11 +1,32 @@
-# WOJAN LaserCraft AI Studio 1.0.9 — pobierz
+# WOJAN LaserCraft AI Studio — pobierz (wersja 1.0.9)
 
-**MODEL JEST W ŚRODKU.** Instalator zawiera wagi Whisper base (`modele\ggml-base-q5_1.bin`,
-59,7 MB) i wkompilowany silnik whisper.cpp 1.7.4 — rozpoznawanie mowy po polsku działa
-od razu, offline, bez kluczy API. Sprawdzone wykonawczo (szczegóły niżej).
+## UWAGA: dwie różne aplikacje o podobnej nazwie
 
-Linki przypięte do commita [`bf323c0`](https://github.com/janradzik86/mein/commit/bf323c0ca7f25de05a5b5aac60f3bb5ca446a14c) —
-trwałe, nie wygasają.
+Do telefonu trafiły pliki **`wojan-lasercraft-lite-shell-*.apk` (3,0 MB)** — to **nie jest**
+ten program, tylko powłoka WebView/Capacitor z innego projektu (pakiet
+`pl.wojan.hobby.lasercraft`). Wywala się na Androidzie 14+ wyjątkiem
+`SecurityException: One of RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED…`
+w `com.capacitorjs.plugins.share.SharePlugin`. Pełna diagnoza:
+[`RELEASE/DIAGNOZA-URUCHOMIENIA.md`](RELEASE/DIAGNOZA-URUCHOMIENIA.md).
+
+**Nasza aplikacja** (rozpoznasz po tym):
+
+| | nasza | tamta powłoka |
+|---|---|---|
+| plik | `WOJAN-LaserCraft-AI-Android-Release.apk` | `wojan-lasercraft-lite-shell-*.apk` |
+| rozmiar | **828 894 B (0,79 MB)** | 3,0 MB |
+| pakiet | `pl.wojan.lasercraft` | `pl.wojan.hobby.lasercraft` |
+| nazwa na liście aplikacji | **WOJAN LaserCraft AI** | WOJAN LaserCraft |
+| WebView / Capacitor | **brak** (własny interfejs) | cała aplikacja to WebView |
+
+Strony wydań na GitHubie nie mają załączników (serwer, z którego buduję, nie ma dostępu
+do `uploads.github.com`), dlatego plik leży **w repozytorium**, a link jest przypięty do
+commita — działa i nie wygasa:
+
+* **APK (0,79 MB, Android 8–17, arm64 i x86):**
+  https://github.com/janradzik86/mein/raw/7e49932/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk
+  SHA-256: `e793bf65faf8b7fe7a85a327cdab95491504a661fafb46ebeebe495d9bdf2821`
+* Instalator Windows (65,7 MB) — link i instrukcja niżej.
 
 ## Windows 11 x64
 
@@ -16,11 +37,24 @@ trwałe, nie wygasają.
 4. Zakładka **Mikrofon i prompt** → NAGRAJ → **ROZPOZNAJ MOWE (offline)**.
    Na górze powinno być zielone: „model: ggml-base-q5_1.bin (56.9 MB)”.
 
-## Android
+## Android — instalacja krok po kroku
 
-**WOJAN-LaserCraft-AI-Android-Release.apk** (829 kB). Odinstaluj poprzednią wersję
-(certyfikat podpisu: SHA-256 `5aac0b56…0e23d`). APK nie ma silnika whisper — na telefonie
-zakładka Mikrofon nagrywa dźwięk i prosi o wpisanie tekstu; to jest napisane wprost.
+1. Odinstaluj **starą powłokę**: Ustawienia → Aplikacje → znajdź „WOJAN LaserCraft”
+   (bez „AI”) → Odinstaluj. Jeśli zostanie, ikony nadal będą się mylić.
+2. Pobierz plik z linku wyżej (0,79 MB). Po pobraniu sprawdź rozmiar w Menedżerze plików:
+   **musi mieć mniej niż 1 MB**. Plik 3,0 MB to nie my.
+3. Otwórz plik → „Zainstaluj mimo ostrzeżenia” (Android ostrzega o instalacji spoza sklepu;
+   podpis jest nasz, SHA-256 certyfikatu `5aac0b56…0e23d`).
+4. Po instalacji na liście aplikacji pojawi się **WOJAN LaserCraft AI** — uruchom tę ikonę.
+5. Sprawdzenie tożsamości: Ustawienia → Aplikacje → WOJAN LaserCraft AI → O aplikacji:
+   pakiet musi brzmieć `pl.wojan.lasercraft`.
+
+Jeśli aplikacja **nie uruchomi się**, wyślij zrzut ekranu z pełnym logiem — w nim widać
+pakiet i numer linii, a to wystarcza do wskazania przyczyny bez zgadywania.
+
+**Czego na telefonie nie ma (napisane wprost):** silnika whisper — zakładka Mikrofon
+nagrywa dźwięk i prosi o wpisanie tekstu; model neuronowy rysowania jest na razie
+w wersji Windows (port na Androida jest osobnym zadaniem, patrz `RAPORT-TESTOW.md`).
 
 ## Dowody, nie obietnice
 

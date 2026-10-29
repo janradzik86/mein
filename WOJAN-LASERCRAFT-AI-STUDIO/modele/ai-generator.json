@@ -1,0 +1,142 @@
+{
+ "name": "WOJAN LaserCraft AI — generator wzorów (GRU-MDN)",
+ "format": "WOJANAI1",
+ "cond_dim": 128,
+ "hidden": 160,
+ "layers": 2,
+ "n_mix": 10,
+ "maxlen": 360,
+ "scale": 40.0,
+ "text_buckets": 96,
+ "param_buckets": 32,
+ "params": {
+  "category": [
+   "hobby",
+   "rodzina",
+   "praca",
+   "sport",
+   "zwierzeta",
+   "natura",
+   "motoryzacja",
+   "kuchnia",
+   "podroze",
+   "humor"
+  ],
+  "style": [
+   "rycina",
+   "retro",
+   "minimal",
+   "komiks",
+   "gotyk",
+   "geometryczny"
+  ],
+  "product": [
+   "tabliczka",
+   "piersiwka",
+   "kubek",
+   "deska",
+   "medal",
+   "brelok",
+   "zakladka",
+   "szyld"
+  ],
+  "detail": [
+   "niski",
+   "sredni",
+   "wysoki"
+  ],
+  "engrave": [
+   "line",
+   "fill",
+   "fill+line"
+  ]
+ },
+ "param_keys": [
+  "category",
+  "style",
+  "product",
+  "detail",
+  "engrave"
+ ],
+ "tensors": [
+  {
+   "name": "cond.weight",
+   "shape": [
+    320,
+    128
+   ]
+  },
+  {
+   "name": "cond.bias",
+   "shape": [
+    320
+   ]
+  },
+  {
+   "name": "gru.weight_ih_l0",
+   "shape": [
+    480,
+    5
+   ]
+  },
+  {
+   "name": "gru.weight_hh_l0",
+   "shape": [
+    480,
+    160
+   ]
+  },
+  {
+   "name": "gru.bias_ih_l0",
+   "shape": [
+    480
+   ]
+  },
+  {
+   "name": "gru.bias_hh_l0",
+   "shape": [
+    480
+   ]
+  },
+  {
+   "name": "gru.weight_ih_l1",
+   "shape": [
+    480,
+    160
+   ]
+  },
+  {
+   "name": "gru.weight_hh_l1",
+   "shape": [
+    480,
+    160
+   ]
+  },
+  {
+   "name": "gru.bias_ih_l1",
+   "shape": [
+    480
+   ]
+  },
+  {
+   "name": "gru.bias_hh_l1",
+   "shape": [
+    480
+   ]
+  },
+  {
+   "name": "out.weight",
+   "shape": [
+    53,
+    160
+   ]
+  },
+  {
+   "name": "out.bias",
+   "shape": [
+    53
+   ]
+  }
+ ],
+ "weights_bytes": 1138132
+}
