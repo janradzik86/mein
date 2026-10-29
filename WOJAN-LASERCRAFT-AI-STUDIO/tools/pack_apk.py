@@ -60,6 +60,8 @@ def from_base(base_path, dex_path):
         if "AndroidManifest.xml" not in names:
             sys.exit("BŁĄD: base.apk bez AndroidManifest.xml")
         for n in names:
+            if n == "classes.dex":
+                continue  # podmieniamy na własny (bez kompresji, wyrównany do 4 B)
             info = z.getinfo(n)
             data = z.read(n)
             stored = info.compress_type == 0
