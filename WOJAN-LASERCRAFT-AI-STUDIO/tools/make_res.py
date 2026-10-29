@@ -184,7 +184,7 @@ def main() -> int:
     ap.add_argument("--manifest", default="build/android/AndroidManifest.src.xml")
     ap.add_argument("--package", default="pl.wojan.lasercraft")
     ap.add_argument("--version-code", default="5")
-    ap.add_argument("--version-name", default="1.0.4")
+    ap.add_argument("--version-name", default="1.0.5")
     ap.add_argument("--min-sdk", default="24")
     ap.add_argument("--target-sdk", default="36")
     args = ap.parse_args()

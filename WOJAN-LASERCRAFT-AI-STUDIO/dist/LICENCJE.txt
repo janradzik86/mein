@@ -1,0 +1,30 @@
+WOJAN LaserCraft AI Studio 1.0.5 — licencje plików dołączonych do programu
+=======================================================================
+
+KOD PROGRAMU
+  Rdzeń C++ (core/), interfejs Windows (desktop/), port Android (android/app/src),
+  narzędzia budowania (tools/) — własność zleceniodawcy: WOJAN LaserCraft AI Studio.
+  Kod przekazany wraz z wydaniem; pełne źródła w KOD-ZRODLOWY.zip.
+
+BIBLIOTEKI ZEWNĘTRZNE W PROGRAMIE (Windows)
+  Dear ImGui 1.90.x ................ MIT License (Omar Cornut)
+  stb_image / stb_image_write ...... public domain / MIT (Sean Barrett)
+  Kompilator Zig ................... MIT — narzędzie budowania, NIE trafia do programu.
+
+APLIKACJA ANDROID
+  Brak bibliotek firm trzecich (poza platformą Android). Wszystkie klasy to kod własny.
+
+CZIONKI (fonts/*.ttf) — 10 plików, SIL Open Font License 1.1
+  Anton, Abril Fatface, Barlow Condensed, Barlow SemiCondensed, Bebas Neue,
+  Cinzel, Cinzel Decorative, Oswald, Pirata One, Playfair Display.
+  Źródło: Google Fonts. OFL 1.1 zezwala na użycie komercyjne, dołączanie do aplikacji
+  i osadzanie w dokumentach. Pliki nie są modyfikowane.
+  UWAGA: teksty licencji OFL poszczególnych czcionek nie są dołączone do repozytorium;
+  przed dystrybucją w sklepie należy dodać plik OFL.txt z każdego źródła.
+
+PROJEKTY PRZYKŁADOWE (projekty/*.wlcproj)
+  Wygenerowane przez silnik programu (tools/make_samples.py). Brak cudzych wzorów
+  i brak grafiki z modeli obrazu. Do dowolnego użytku przez nabywcę programu.
+
+Brak modeli sieci neuronowych: program nie zawiera wag żadnego modelu AI.
+Szczegóły: dokumentacja/MODELE-I-LICENCJE.md

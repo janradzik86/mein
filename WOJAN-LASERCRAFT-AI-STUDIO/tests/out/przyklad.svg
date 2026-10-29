@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="200.00mm" height="150.00mm" viewBox="0 0 200.00 150.00" data-units="mm" data-project="Projekt 29.10 04:13">
+<svg xmlns="http://www.w3.org/2000/svg" width="200.00mm" height="150.00mm" viewBox="0 0 200.00 150.00" data-units="mm" data-project="Projekt 29.10 04:39">
   <desc>WOJAN LaserCraft AI Studio (Android) — wymiary w mm, teksty jako ścieżki.</desc>
   <g id="CUT_OUTER" data-operation="Cięcie" data-color="#FF0000">
     <path d="M -0.08 -0.08 L 200.07 -0.08 L 200.07 150.07 L -0.08 150.07 L -0.08 -0.08 L -0.08 -0.08 Z" fill="none" stroke="#FF0000" stroke-width="0.15" id="cut1" data-name="Obrys produktu (kompensacja kerf 0.15 mm)"/>

@@ -36,6 +36,7 @@ done
 echo "== linkowanie =="
 $ZC c++ -target $TARGET -O2 -Wl,--subsystem,windows -o build/WOJAN-LaserCraft-AI.exe \
   "$B"/obj/*.o -L"$DEF" -ld3dcompiler_47 -ld3d11 -ldxgi -ldwmapi -lcomdlg32 -lshell32 -lole32 \
-  -luser32 -lgdi32 -lwinmm -ladvapi32 -lshlwapi -static -static-libgcc -static-libstdc++
+  -luser32 -lgdi32 -lwinmm -ladvapi32 -lshlwapi -static -static-libgcc -static-libstdc++ \
+  -Wl,/Brepro
 SIZE=$(stat -c%s build/WOJAN-LaserCraft-AI.exe)
 echo "OK build/WOJAN-LaserCraft-AI.exe $SIZE B"

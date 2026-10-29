@@ -24,9 +24,15 @@ CUSTOM_TYPES = {
     ".wlcproj": "application/json",
 }
 FILES = [
-    ("WOJAN-LaserCraft-AI-Android-Release.apk", "Aplikacja Android (APK, podpisany Release)"),
-    ("WOJAN-LaserCraft-AI-Windows-Setup.exe", "Instalator Windows 11 x64 (zawiera silnik, czcionki i 26 projektów)"),
+    ("WOJAN-LaserCraft-AI-Android-Release.apk", "Aplikacja Android 7.0+ (APK, podpisany Release, minSdk 24, targetSdk 36)"),
+    ("WOJAN-LaserCraft-AI-Windows-Setup.exe", "Instalator Windows 11 x64 (silnik, 10 czcionek, 26 projektów, dokumentacja)"),
     ("WOJAN-LaserCraft-AI.exe", "Sama aplikacja Windows (bez instalatora)"),
+    ("INSTRUKCJA.pdf", "Instrukcja instalacji i obsługi (PDF, 3 strony)"),
+    ("RAPORT-TESTOW.md", "Raport testów — co sprawdzone, co nieweryfikowane"),
+    ("MODELE-I-LICENCJE.md", "Co realnie liczy projekty i na jakiej licencji"),
+    ("KONTROLA-INSTALACJI.txt", "Wynik kontroli warunków instalacji APK"),
+    ("PRZYKLADOWE-PROJEKTY.zip", "26 projektów przykładowych (.wlcproj + PNG + walidacja)"),
+    ("KOD-ZRODLOWY.zip", "Pełny kod źródłowy wydania"),
     ("SHA256SUMS.txt", "Sumy kontrolne SHA-256"),
 ]
 
@@ -88,7 +94,7 @@ def build_index():
  li{margin:3px 0}
  @media(max-width:720px){ .h{display:none} th:nth-child(3){display:none} td{padding:12px} }
 </style></head><body><main>
-<h1>WOJAN LaserCraft AI Studio 1.0.4</h1>
+<h1>WOJAN LaserCraft AI Studio 1.0.5</h1>
 <p class="sub">Programy offline do projektowania wzorów laserowych — bez konta, bez kluczy API, bez pobierania modeli.</p>
 <table>
 <tr><th>Plik</th><th>Rozmiar</th><th>SHA-256</th><th></th></tr>

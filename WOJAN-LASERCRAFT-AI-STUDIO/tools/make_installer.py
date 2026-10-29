@@ -51,7 +51,8 @@ def payload_files():
         (os.path.join(ROOT, "RELEASE", "INSTRUKCJA.pdf"), "dokumentacja\\INSTRUKCJA.pdf"),
         (os.path.join(ROOT, "RELEASE", "MODELE-I-LICENCJE.md"), "dokumentacja\\MODELE-I-LICENCJE.md"),
         (os.path.join(ROOT, "RELEASE", "RAPORT-TESTOW.md"), "dokumentacja\\RAPORT-TESTOW.md"),
-        (os.path.join(ROOT, "RELEASE", "POPRAWKA-1.0.2.md"), "dokumentacja\\ZMIANY-1.0.2.md"),
+        (os.path.join(ROOT, "RELEASE", "POPRAWKA-1.0.5.md"), "dokumentacja\\ZMIANY-1.0.5.md"),
+        (os.path.join(ROOT, "RELEASE", "KONTROLA-INSTALACJI.txt"), "dokumentacja\\KONTROLA-INSTALACJI.txt"),
         (os.path.join(ROOT, "dist", "README-INSTALACJA.txt"), "README.txt"),
         (os.path.join(ROOT, "dist", "LICENCJE.txt"), "LICENCJE.txt"),
     ):

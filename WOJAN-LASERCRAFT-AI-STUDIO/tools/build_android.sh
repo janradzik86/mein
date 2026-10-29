@@ -41,8 +41,8 @@ for f in "$ECJ" "$ANDROID_JAR" "$APKTOOL" "$APKSIGNER"; do
 done
 [ -x "$AAPT2" ] || { echo "BŁĄD: brak aapt2 ($AAPT2) — uruchom tools/fetch_tools_extra.sh" >&2; exit 1; }
 
-VERSION_NAME="${VERSION_NAME:-1.0.4}"
-VERSION_CODE="${VERSION_CODE:-5}"
+VERSION_NAME="${VERSION_NAME:-1.0.5}"
+VERSION_CODE="${VERSION_CODE:-6}"
 PKG="pl.wojan.lasercraft"
 
 rm -rf "$OUT/classes" "$OUT/smali" "$OUT/classes.dex" "$OUT/base.apk" "$OUT/unsigned.apk" "$OUT/proj"
@@ -167,8 +167,25 @@ KS="keystore/wojan-lasercraft.p12"
   --key-pass "pass:${WOJAN_KEYSTORE_PASS}" \
   --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true \
   --out "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" "$OUT/unsigned.apk"
-"$JAVA" -jar "$APKSIGNER" verify --verbose --print-certs \
+"$JAVA" -jar "$APKSIGNER" verify --min-sdk-version 21 --verbose --print-certs \
   "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" 2>&1 | grep -v "WARNING" | head -14 || true
+
+echo "== 6b/6 kontrola instalacyjna i audyt API (na GOTOWYM, podpisanym APK) =="
+# apk_installcheck: warunki instalacji Androida 11–17 (arsc STORED+4B, targetSdk, podpis v2/v3,
+# DEX-version, activity startowa, package/versionCode). apk_api_audit: żadna klasa platformy
+# nie jest nowsza niż minSdk. Oba narzędzia pracują na pliku, który użytkownik dostaje.
+"$JAVA" -version >/dev/null 2>&1
+mkdir -p RELEASE
+{
+  echo "KONTROLA INSTALACYJNA APK — generowane przez tools/build_android.sh"
+  echo "Data: $(date '+%Y-%m-%d %H:%M:%S %Z')   Wersja: $VERSION_NAME ($VERSION_CODE)"
+  echo
+  JAVA_HOME="$JAVA_HOME" python3 tools/apk_installcheck.py "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" || exit 1
+  echo
+  python3 tools/apk_api_audit.py "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" --min-sdk 24 || exit 1
+  echo
+  echo "SHA-256: $(sha256sum "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" | cut -d' ' -f1)"
+} 2>&1 | tee RELEASE/KONTROLA-INSTALACJI.txt
 
 ls -l "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk"
 echo "OK APK: $OUT/WOJAN-LaserCraft-AI-Android-Release.apk"

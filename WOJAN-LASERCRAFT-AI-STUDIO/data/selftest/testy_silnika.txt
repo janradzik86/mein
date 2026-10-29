@@ -1,28 +1,28 @@
 RAPORT TESTÓW SILNIKA (wygenerowany automatycznie)
-data: 2026-10-29T02:27:26Z
+data: 2026-10-29T04:43:41Z
 wynik: 12/12 zaliczonych
 
 [PASS] A — Tabliczka: prompt → projekt → cięcie → SVG
-    obiekty=16, kontur cięcia=1 (zamknięty=1), SVG mm=1, kolor cięcia=1, błędy=0, ostrzeżenia=2
+    obiekty=19, kontur cięcia=1 (zamknięty=1), SVG mm=1, kolor cięcia=1, błędy=0, ostrzeżenia=0
 [PASS] B — Piersiówka: grawer bez linii cięcia
     produkt=piersiowka, warstwy cięcia=0, grupa CUT_OUTER w SVG=0, G-code bez cięcia=1, błędy=0
 [PASS] C — Zdjęcie: import → szarość → kontrast → dithering
-    wejście RGB=240x180, wyjście szarość=1, ciemnych pikseli=32953, obiekt obrazu w projekcie=1, ostrzeżenia=3
+    wejście RGB=240x180, wyjście szarość=1, ciemnych pikseli=32953, obiekt obrazu w projekcie=1, ostrzeżenia=1
 [PASS] D — Mikrofon: transkrypt → analiza → projekt
-    transkrypt → napis='DZIADEK RZĄDZI', szerokość=180 mm, obiektów=9 (ASR: patrz dokumentacja platformy)
+    transkrypt → napis='DZIADEK RZĄDZI', szerokość=180 mm, obiektów=10 (ASR: patrz dokumentacja platformy)
 [PASS] E — Edycja: skalowanie napisu, nowy tekst, undo
     skala 30.7→36.9 mm (+20%=1), obiekty 9→9, emblematy 2→2, undo=1
 [PASS] F — QR: generowanie → SVG → eksport (dekodowanie zewn.)
     QR: OK (wersja 3, poziom M, modów 29, maska 6), modułów=29, ścieżka=13729 znaków, PNG+SVG zapisane do weryfikacji dekoderem
 [PASS] G — DXF: geometria, jednostki, warstwy
-    jednostki mm=1, warstwy=1, LWPOLYLINE=1, brak rastra=1, rozmiar=119400 B
+    jednostki mm=1, warstwy=1, LWPOLYLINE=1, brak rastra=1, rozmiar=98411 B
 [PASS] H — LaserGRBL: PNG + G-code GRBL
-    PNG 2000x1500 (10 px/mm), G-code 401964 B, nagłówek=1, M5=1, bez G28=1
+    PNG 2000x1500 (10 px/mm), G-code 465619 B, nagłówek=1, M5=1, bez G28=1
 [PASS] I — Offline: generowanie i eksport bez internetu
-    generowanie i eksport bez sieci: obiekty=7, SVG=8018 B (silnik nie ma klienta HTTP)
+    generowanie i eksport bez sieci: obiekty=7, SVG=12573 B (silnik nie ma klienta HTTP)
 [PASS] K — Pamięć: 24× generowanie bez wycieków
-    24 generowania: RSS 16.4 MB → 16.4 MB (wzrost 0.0 MB, max 16.4 MB)
+    24 generowania: RSS 16.6 MB → 16.6 MB (wzrost 0.0 MB, max 16.6 MB)
 [PASS] L — Polskie znaki ĄĆĘŁŃÓŚŹŻ w tekście i eksporcie
-    tekstów=2, wszystkie glify obecne=1, SVG=15099 B, DXF=153385 B, znaki diakrytyczne w SVG=1
+    tekstów=2, wszystkie glify obecne=1, SVG=12455 B, DXF=107432 B, znaki diakrytyczne w SVG=1
 [PASS] M — Zgodność: rozmiary i warstwy SVG/DXF
     SVG 120×80=1, warstwy w SVG=3, DXF EXTMAX=1

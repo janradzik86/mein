@@ -1,0 +1,32 @@
+KONTROLA INSTALACYJNA APK — generowane przez tools/build_android.sh
+Data: 2026-10-29 04:40:20 UTC   Wersja: 1.0.5 (6)
+
+KONTROLA INSTALACYJNA: WOJAN-LaserCraft-AI-Android-Release.apk
+  package pl.wojan.lasercraft · wersja 1.0.5 (6) · minSdk 24 · targetSdk 36 · 828893 B
+
+  [OK  ] wpisów 20, duplikatów 0
+  [OK  ] podejrzane ścieżki: brak
+  [OK  ] rozmiar pliku 828893 B
+  [OK  ] aapt2 dump badging — manifest i zasoby parsują się
+  [OK  ] package pl.wojan.lasercraft, wersja 1.0.5 (6)
+  [OK  ] activity startowa: pl.wojan.lasercraft.MainActivity
+  [OK  ] etykieta: WOJAN LaserCraft AI
+  [OK  ] ikona: res/mipmap-mdpi/ic_launcher.png
+  [OK  ] minSdk 24
+  [OK  ] targetSdk 36 (Android 14+ blokuje targetSdk < 23)
+  [OK  ] resources.arsc STORED, offset 44 (4 B OK)
+  [OK  ] classes.dex: magic b'dex\n037\x00' (ART akceptuje)
+  [OK  ] biblioteki natywne: 0 (brak — reguła 16 KB nie dotyczy)
+  [OK  ] podpis: v1=True v2=True v3=True (Android 11+ wymaga v2/v3)
+
+WYNIK: 0 problemów blokujących instalację
+
+AUDYT API: WOJAN-LaserCraft-AI-Android-Release.apk (minSdk 24)
+  klas własnych: 150
+  klas platformy android.*: 53  (+ 50 klas Java/JSON)
+  wywołań do metod: 1032
+  najczęściej używane API platformy: Path×17, Paint×13, EditText×13, Canvas×12, Button×12, Intent×9, Bitmap×9, LinearLayout×9, TextView×9, RectF×8
+
+WYNIK: OK — klas nowszych niż minSdk: 0, niedostępnych nadtypów: 0, do ręcznej weryfikacji: 0
+
+SHA-256: cf311f3fc5568299476d5b4d20ddb7627c26b356404bffba1ca5b97edcdc50bb
