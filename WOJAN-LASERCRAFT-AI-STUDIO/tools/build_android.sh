@@ -29,8 +29,8 @@ for f in "$ECJ" "$ANDROID_JAR" "$SMALI" "$APKSIGNER"; do
   [ -f "$f" ] || { echo "BŁĄD: brak narzędzia $f (uruchom tools/fetch_toolchain.sh)" >&2; exit 1; }
 done
 
-VERSION_NAME="${VERSION_NAME:-1.0.0}"
-VERSION_CODE="${VERSION_CODE:-1}"
+VERSION_NAME="${VERSION_NAME:-1.0.1}"
+VERSION_CODE="${VERSION_CODE:-2}"
 
 rm -rf "$OUT/classes" "$OUT/smali" "$OUT/classes.dex" "$OUT/base.apk" "$OUT/unsigned.apk"
 mkdir -p "$OUT/classes" "$OUT/smali"
@@ -64,7 +64,11 @@ for root, _d, files in os.walk(src):
 print(f"pliki smali: {n}")
 PYEOF
 "$JAVA" -jar "$SMALI" -a 24 -o "$OUT/classes.dex" "$OUT/smali" 2>&1 | tail -5
+# smali z tego toolchainu zawsze pisze magic "036", którego ART NIE akceptuje
+# (standard_dex_file.cc: kDexMagicVersions = 035,037,038,039,040,041).
+python3 tools/dexfix.py --api 24 "$OUT/classes.dex"
 python3 tools/dexcheck.py "$OUT/classes.dex"
+python3 tools/dexlink.py "$OUT/classes.dex" "$ANDROID_JAR"
 
 echo "== 4/6 AndroidManifest.xml (AXML) =="
 /tmp/v1/bin/python tools/axmlbuild.py --out "$OUT/AndroidManifest.xml" \
@@ -91,5 +95,13 @@ KS="keystore/wojan-lasercraft.p12"
 "$JAVA" -jar "$APKSIGNER" verify --verbose --print-certs \
   "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" 2>&1 | head -20 || true
 
+python3 - "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" <<'PYVER'
+import sys, zipfile
+z = zipfile.ZipFile(sys.argv[1])
+magic = z.read("classes.dex")[:8]
+ok = magic[4:7] in (b"035", b"037", b"038", b"039", b"040", b"041")
+print(f"weryfikacja APK: classes.dex magic={magic!r} -> {'OK' if ok else 'BŁĄD (ART odrzuci)'}")
+sys.exit(0 if ok else 1)
+PYVER
 ls -l "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk"
 echo "OK APK: $OUT/WOJAN-LaserCraft-AI-Android-Release.apk"

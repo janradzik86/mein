@@ -55,6 +55,8 @@ setw([0xfa, 0xfb, 0xfc, 0xfd], 3)  # invoke-polymorphic/custom (35c/3rc)
 setw([0xfe, 0xff], 2)           # const-method-handle/type (21c)
 
 BAD_OPS = set(range(0x3e, 0x44)) | {0x73, 0x79, 0x7a} | set(range(0xe3, 0xfa))
+# invoke-custom / invoke-polymorphic / const-method-handle / const-method-type
+OPS_NEED_038 = {0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff}
 
 def uleb(data, p):
     if p >= len(data):
@@ -81,10 +83,17 @@ def sleb(data, p):
 def main(path):
     d = open(path, "rb").read()
     errs = []
-    # Android akceptuje wersje 035–039; smali z -a 24 emituje 036
-    if not (d[:4] == b"dex\n" and d[4:7] in (b"035", b"036", b"037", b"038", b"039")
-            and d[7] == 0):
-        errs.append(f"zły magic: {d[:8]!r}")
+    # Wersje akceptowane przez ART: standard_dex_file.cc → kDexMagicVersions
+    # = 035, 037, 038, 039, 040, 041. Wersja 036 jest CELOWO pominięta
+    # („skipped because of an old dalvik bug") → plik z 036 nie uruchomi się nigdy.
+    ART_VERSIONS = (b"035", b"037", b"038", b"039", b"040", b"041")
+    ver = bytes(d[4:7])
+    if not (d[:4] == b"dex\n" and ver in ART_VERSIONS and d[7] == 0):
+        if ver == b"036":
+            errs.append("wersja DEX 036 — ART ją odrzuca (kDexMagicVersions jej nie zawiera); "
+                        "uruchom tools/dexfix.py")
+        else:
+            errs.append(f"zły magic: {d[:8]!r} (dozwolone 035/037/038/039/040/041)")
     if struct.unpack_from("<I", d, 40)[0] != 0x12345678:
         errs.append("zła endian tag")
     if hashlib.sha1(d[32:]).digest() != d[12:32]:
@@ -99,6 +108,7 @@ def main(path):
     for ci in range(class_defs):
         cd = class_off + 32 * ci
         class_idx, access, super_idx, interfaces_off, source_idx, annotations_off, class_data_off, static_values_off = struct.unpack_from("<8I", d, cd)
+        is_iface = (access & 0x200) != 0
         if class_data_off == 0:
             continue
         p = class_data_off
@@ -114,6 +124,8 @@ def main(path):
                 code_off, p = uleb(d, p)
                 if code_off == 0:
                     continue
+                if is_iface and ver == b"035":
+                    errs.append(f"method {midx}: metoda interfejsu z kodem wymaga DEX >= 037")
                 n_code += 1
                 registers_size, ins_size, outs_size, tries_size, debug_off, insns_size = struct.unpack_from("<HHHHII", d, code_off)
                 # ins_size zgodne z method_id (proto + static)?
@@ -147,6 +159,8 @@ def main(path):
                         continue
                     op = insns[off * 2]   # off w jednostkach 16-bitowych → bajty
                     wdt = W[op]
+                    if op in OPS_NEED_038 and ver < b"038":
+                        errs.append(f"method {midx}: opcode {op:#x} wymaga DEX >= 038, plik ma {ver.decode()}")
                     if op in BAD_OPS:
                         errs.append(f"method {midx}: niedozwolony opcode {op:#x} @ {off}")
                     if off + wdt > insns_size:

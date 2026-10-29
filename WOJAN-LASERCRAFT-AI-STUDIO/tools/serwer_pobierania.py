@@ -88,7 +88,7 @@ def build_index():
  li{margin:3px 0}
  @media(max-width:720px){ .h{display:none} th:nth-child(3){display:none} td{padding:12px} }
 </style></head><body><main>
-<h1>WOJAN LaserCraft AI Studio 1.0.0</h1>
+<h1>WOJAN LaserCraft AI Studio 1.0.1</h1>
 <p class="sub">Programy offline do projektowania wzorów laserowych — bez konta, bez kluczy API, bez pobierania modeli.</p>
 <table>
 <tr><th>Plik</th><th>Rozmiar</th><th>SHA-256</th><th></th></tr>

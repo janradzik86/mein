@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class MainActivity extends Activity {
 
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "1.0.1";
     public static final String[] TABS = {"Generator AI", "Mikrofon i prompt", "Import zdjęcia",
             "Kategorie", "Edytor", "Napisy AI", "QR", "Moje projekty", "Kalkulator", "Eksport",
             "Diagnostyka AI", "Ustawienia"};
@@ -55,6 +55,65 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+        installCrashHandler();
+        try {
+            initUi();
+        } catch (Throwable t) {
+            showFatal(t);
+        }
+    }
+
+    /** Zapisuje nieobsłużony wyjątek do pliku i pokazuje go na ekranie (diagnostyka zdalna). */
+    private void installCrashHandler() {
+        final Thread.UncaughtExceptionHandler prev = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            public void uncaughtException(Thread th, Throwable e) {
+                try {
+                    java.io.StringWriter sw = new java.io.StringWriter();
+                    e.printStackTrace(new java.io.PrintWriter(sw));
+                    writeCrash(sw.toString());
+                } catch (Throwable ignored) {
+                }
+                if (prev != null) prev.uncaughtException(th, e);
+            }
+        });
+    }
+
+    private void writeCrash(String trace) {
+        try {
+            java.io.File f = new java.io.File(getFilesDir(), "crash.txt");
+            java.io.FileOutputStream fo = new java.io.FileOutputStream(f);
+            fo.write(trace.getBytes("UTF-8"));
+            fo.close();
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** Ekran błędu startu — zamiast anonimowego zamknięcia aplikacji. */
+    private void showFatal(Throwable t) {
+        try {
+            java.io.StringWriter sw = new java.io.StringWriter();
+            t.printStackTrace(new java.io.PrintWriter(sw));
+            String trace = sw.toString();
+            writeCrash(trace);
+            ScrollView sc = new ScrollView(this);
+            sc.setBackgroundColor(0xFF0E1013);
+            LinearLayout box = new LinearLayout(this);
+            box.setOrientation(LinearLayout.VERTICAL);
+            box.setPadding(Ui.dp(this, 14), Ui.dp(this, 24), Ui.dp(this, 14), Ui.dp(this, 14));
+            box.addView(Ui.text(this, "WOJAN LaserCraft AI — błąd uruchamiania", 16, 0xFFFF6B6B, true));
+            box.addView(Ui.text(this, "Wersja " + VERSION + " · Android " + android.os.Build.VERSION.RELEASE
+                    + " · " + android.os.Build.MODEL, 12, Ui.TXT, false));
+            TextView tv = Ui.text(this, trace, 11, 0xFFD0D4DA, false);
+            tv.setTypeface(android.graphics.Typeface.MONOSPACE);
+            box.addView(tv);
+            sc.addView(box);
+            setContentView(sc);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private void initUi() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         getWindow().setStatusBarColor(0xFF0E1013);
@@ -142,6 +201,33 @@ public class MainActivity extends Activity {
         rebuildTabs();
         host.removeAllViews();
         View v;
+        try {
+            v = buildTab(i);
+        } catch (Throwable t) {
+            v = tabError(i, t);
+        }
+        host.addView(v, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    private View tabError(int i, Throwable t) {
+        ScrollView sc = new ScrollView(this);
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
+        box.addView(Ui.text(this, "Zakładka „" + TABS[i] + "” zgłosiła błąd", 15, 0xFFFF6B6B, true));
+        java.io.StringWriter sw = new java.io.StringWriter();
+        t.printStackTrace(new java.io.PrintWriter(sw));
+        writeCrash(sw.toString());
+        TextView tv = Ui.text(this, sw.toString(), 11, 0xFFD0D4DA, false);
+        tv.setTypeface(android.graphics.Typeface.MONOSPACE);
+        box.addView(tv);
+        sc.addView(box);
+        return sc;
+    }
+
+    private View buildTab(int i) {
+        View v;
         switch (i) {
             case 0: v = TabGen.build(this); break;
             case 1: v = TabMic.build(this); break;
@@ -156,8 +242,7 @@ public class MainActivity extends Activity {
             case 10: v = TabDiag.build(this); break;
             default: v = TabSet.build(this); break;
         }
-        host.addView(v, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+        return v;
     }
 
     private void rebuildTabs() {

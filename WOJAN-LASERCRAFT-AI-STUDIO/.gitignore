@@ -12,3 +12,5 @@ keystore/keystore.env
 *.jks
 
 # pliki wydania są wersjonowane w RELEASE/ — użytkownik pobiera je bezpośrednio z repozytorium
+__pycache__/
+*.pyc

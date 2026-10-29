@@ -1,3 +1,3 @@
-a2f70db13e4cc88cfa70201e4ee2da6ddeb1fe37257675948a6861d8baa45678  WOJAN-LaserCraft-AI-Android-Release.apk
+2d0a5523e8cb5c599c847baaf112c0385a84757b50049dfadb10c20fc43c7d4e  WOJAN-LaserCraft-AI-Android-Release.apk
 e3f4b0a6e89db08bfc08351bb8e3843af9c96938bc70d2bfab3d760bf812aee9  WOJAN-LaserCraft-AI-Windows-Setup.exe
 65f265eda9ba9fb2f7d7f5234450af24a8adb608044f386d7e08a2899cc78ce6  WOJAN-LaserCraft-AI.exe
