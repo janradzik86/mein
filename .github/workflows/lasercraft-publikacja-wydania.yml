@@ -7,13 +7,13 @@ name: LaserCraft — publikacja plików wydania
 # (pełny dostęp do internetu) i dokłada pliki do wydania jako prawdziwe załączniki,
 # czyli działają linki typu /releases/download/<tag>/<plik>.
 
+# UWAGA (2026-10-29): w tym repozytorium GitHub Actions NIE URUCHAMIA zadań —
+# przebieg kończy się po 3 s z pustą listą kroków i bez przydzielonego runners
+# (blokada rozliczeniowa konta, ta sama, którą udokumentowano w projekcie
+# Terminownik). Dlatego workflow jest tylko ręczny: po scaleniu do gałęzi domyślnej
+# właściciel może uruchomić go z zakładki Actions, gdy blokada zostanie zdjęta.
+# Do tego czasu pliki wydania są dostępne bezpośrednio z repozytorium (POBIERZ.md).
 on:
-  push:
-    branches:
-      - 'arena/768e1933-mein'
-    paths:
-      - 'WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/**'
-      - '.github/workflows/lasercraft-publikacja-wydania.yml'
   workflow_dispatch:
 
 permissions:
