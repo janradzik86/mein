@@ -32,3 +32,8 @@ AUDYT API: WOJAN-LaserCraft-AI-Android-Release.apk (minSdk 24)
 WYNIK: OK — klas nowszych niż minSdk: 0, niedostępnych nadtypów: 0, do ręcznej weryfikacji: 0
 
 SHA-256: e793bf65faf8b7fe7a85a327cdab95491504a661fafb46ebeebe495d9bdf2821
+BRAMA APK: RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk
+  · biblioteki natywne: 0
+  · rozmiar pliku: 1421720 B (nieskompresowany)
+
+WYNIK: plik jest naszą aplikacją natywną (bez WebView) — wolno wydać

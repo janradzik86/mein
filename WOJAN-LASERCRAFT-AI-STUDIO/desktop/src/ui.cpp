@@ -8,6 +8,7 @@
 #include "export.h"
 #include "validate.h"
 #include "stt.h"
+#include "aimodel.h"
 
 namespace {
 
@@ -187,7 +188,7 @@ void uiDrawAll(AppState& app, int& activeTab, bool& wantExit) {
       ImGui::EndMenu();
     }
     ImGui::SameLine(ImGui::GetWindowWidth() - 380);
-    ImGui::TextDisabled("Silnik lokalny · offline · v1.0.9");
+    ImGui::TextDisabled("Silnik lokalny · offline · v1.1.0");
     ImGui::EndMainMenuBar();
   }
 
@@ -1360,6 +1361,19 @@ void uiDrawDiagnostics(AppState& app) {
   ImGui::Text("Katalog danych: %s", app.dataDir.c_str());
   ImGui::Text("Fonty: %d | emblematy: %d", app.engineStatus["fonts"].integer(0),
               app.engineStatus["emblems"].integer(0));
+  sectionTitle("Model generowania wzorow (neuronowy)");
+  {
+    lc::aimodel::Info ai = lc::aimodel::status();
+    if (ai.available) {
+      ImGui::TextColored(ImVec4(0.45f, 0.85f, 0.45f, 1), "%s", lc::aimodel::engineInfo().c_str());
+      ImGui::TextDisabled("architektura: GRU 2x160 + mieszanina 10 Gaussow, opis projektu jako stan poczatkowy");
+      ImGui::TextDisabled("plik: %s", ai.path.c_str());
+    } else {
+      ImGui::TextColored(ImVec4(1, 0.8f, 0.3f, 1), "Model AI niedostepny: %s", ai.error.c_str());
+      ImGui::TextWrapped("Bez pliku modele\\ai-generator.bin generator rysuje emblemty z biblioteki "
+                         "(tryb proceduralny). Model jest dolaczony do instalatora.");
+    }
+  }
   sectionTitle("Moduly lokalne");
   for (auto& m : app.engineStatus["modules"].items()) ImGui::BulletText("%s", m.str().c_str());
   if (ImGui::Button("Test silnika (walidacja + eksporty + QR)", ImVec2(380, 32))) {
@@ -1483,7 +1497,7 @@ void uiDrawSettings(AppState& app) {
   }
   ImGui::EndChild();
   sectionTitle("O aplikacji");
-  ImGui::TextWrapped("WOJAN LaserCraft AI Studio 1.0.9 - lokalny generator wzorow do grawerowania "
+  ImGui::TextWrapped("WOJAN LaserCraft AI Studio 1.1.0 - lokalny generator wzorow do grawerowania "
                      "i ciecia laserem. Silnik regulowy i proceduralny wbudowany w program, bez chmury, "
                      "bez kluczy API, bez pobierania modeli po instalacji.");
   ImGui::Columns(1);

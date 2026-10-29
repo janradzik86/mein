@@ -17,6 +17,7 @@ struct GenerateOptions {
   std::string textTop, textBottom;
   bool forceCut = false, forceNoCut = false;
   bool lockTexts = false;
+  bool useNeural = true;        // rysunek z modelu neuronowego (jeśli wagi są dostępne)
 };
 
 struct GenerateResult {

@@ -1,4 +1,5 @@
 #include "core_api.h"
+#include "aimodel.h"
 #include "emblems.h"
 #include "qr.h"
 #include "library.h"
@@ -86,7 +87,7 @@ Json Engine::status() {
   Json j = Json::object();
   j.set("app", "WOJAN LaserCraft AI Studio");
   j.set("engine", "wojan-lasercraft-core");
-  j.set("version", "1.0.9");
+  j.set("version", "1.1.0");
   j.set("build", 20261029);
   j.set("offline", true);
   j.set("cloud", false);
@@ -241,6 +242,7 @@ Json Engine::generate(const Json& req) {
   if (req.has("font") && !req["font"].str().empty()) spec.fontId = req["font"].str();
 
   GenerateOptions opt;
+  if (req.has("aiEngine") && req["aiEngine"].str() == "proceduralny") opt.useNeural = false;
   opt.seed = (uint32_t)req["seed"].integer(0);
   if (opt.seed == 0) opt.seed = (uint32_t)(std::hash<std::string>{}(prompt) & 0x7FFFFFFF);
   bool variantsRequested = req["variants"].integer(1) > 1;

@@ -18,8 +18,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-VERSION_NAME="${VERSION_NAME:-1.0.9}"
-VERSION_CODE="${VERSION_CODE:-10}"
+VERSION_NAME="${VERSION_NAME:-1.1.0}"
+VERSION_CODE="${VERSION_CODE:-11}"
 BASE_APK="${BASE_APK:-RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk}"
 OUT="build/android"
 CACHE="${LC_CACHE:-$HOME/.cache/lc}"
@@ -150,6 +150,8 @@ mkdir -p RELEASE
   JAVA_HOME="$JAVA_HOME" python3 tools/apk_installcheck.py "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk"
   echo
   python3 tools/apk_api_audit.py "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" --min-sdk 24
+  echo
+  python3 tools/apk_guard.py "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk"
   echo
   echo "SHA-256: $(sha256sum "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" | cut -d' ' -f1)"
 } 2>&1 | tee RELEASE/KONTROLA-INSTALACJI.txt

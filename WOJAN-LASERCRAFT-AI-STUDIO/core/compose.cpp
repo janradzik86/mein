@@ -1,4 +1,5 @@
 #include "compose.h"
+#include "aimodel.h"
 #include <map>
 #include "emblems.h"
 #include "qr.h"
@@ -332,8 +333,43 @@ GenerateResult generateDesign(const PromptSpec& spec, FontRegistry& fonts, Asset
       if (spec.category == kv[0]) { subject = kv[1]; break; }
     }
   }
-  if (!subject.empty()) addEmblem(d, subject, emblemArea, detail, res.log);
-  else res.log.push_back("Bez emblematu — kompozycja tekstowa (kategoria: " + spec.category + ")");
+  // --- rysunek z modelu neuronowego (własny model, wagi w modele/ai-generator.bin) ---
+  bool neuralDrawn = false;
+  if (opt.useNeural) {
+    aimodel::Info aiInfo = aimodel::status();
+    if (aiInfo.available) {
+      std::vector<std::vector<Vec2>> strokes;
+      std::string aiErr;
+      uint32_t aiSeed = (opt.seed ? opt.seed : 1) * 2654435761u + (uint32_t)d.objects.size();
+      if (aimodel::generate(spec.rawPrompt, spec.category, d.style, pdef->id, d.detail,
+                            d.engraveType, aiSeed, strokes, aiErr)) {
+        double side = std::min(emblemArea.w, emblemArea.h);
+        double ox = emblemArea.cx() - side / 2, oy = emblemArea.cy() - side / 2;
+        Path art;
+        size_t used = 0;
+        for (auto& st : strokes) {
+          if (st.size() < 2) continue;
+          art.moveTo({ox + st[0].x * side, oy + st[0].y * side});
+          for (size_t i = 1; i < st.size(); i++)
+            art.lineTo({ox + st[i].x * side, oy + st[i].y * side});
+          used++;
+        }
+        if (used >= 2) {
+          d.objects.push_back(makePathObj(d, art, LAYER_ENGRAVE_VECTOR, "Rysunek AI", "line",
+                                          minimal ? 0.2 : 0.25));
+          res.log.push_back("Rysunek: model neuronowy (GRU-MDN, " + std::to_string(used) +
+                            " kresek, " + std::to_string(aiInfo.params) + " parametrów)");
+          neuralDrawn = true;
+        }
+      } else {
+        res.log.push_back("Model AI nie narysował wzoru (" + aiErr +
+                          ") — użyto emblematu z biblioteki");
+      }
+    }
+  }
+  if (!neuralDrawn && !subject.empty()) addEmblem(d, subject, emblemArea, detail, res.log);
+  else if (!neuralDrawn)
+    res.log.push_back("Bez emblematu — kompozycja tekstowa (kategoria: " + spec.category + ")");
   if (!spec.secondarySubject.empty() && spec.secondarySubject != subject && detail != "niski") {
     Rect side(emblemArea.x, emblemArea.y + emblemArea.h * 0.45, emblemArea.w * 0.28, emblemArea.h * 0.5);
     Rect side2(emblemArea.x1() - emblemArea.w * 0.28, emblemArea.y + emblemArea.h * 0.45,

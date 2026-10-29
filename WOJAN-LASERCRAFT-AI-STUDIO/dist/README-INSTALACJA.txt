@@ -1,4 +1,4 @@
-WOJAN LaserCraft AI Studio 1.0.9 — Windows 11 x64
+WOJAN LaserCraft AI Studio 1.1.0 — Windows 11 x64
 =================================================
 1. Uruchom WOJAN-LaserCraft-AI-Windows-Setup.exe (SmartScreen: Wiecej informacji -> Uruchom mimo to).
 2. Instalacja do %LOCALAPPDATA%\WOJAN LaserCraft AI (bez uprawnien administratora), skroty w Menu Start i na pulpicie.
