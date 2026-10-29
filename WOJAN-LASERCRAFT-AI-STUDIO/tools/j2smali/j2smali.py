@@ -1008,6 +1008,13 @@ class MethodTranslator:
             _, cls, nm, d = cp.ref(idx)
             kind = {0xB6: "invoke-virtual", 0xB7: "invoke-direct",
                     0xB8: "invoke-static", 0xB9: "invoke-interface"}[op]
+            # JVM `invokespecial` to NIE tylko konstruktory: to także super.metoda().
+            # W DEX invoke-direct wolno użyć wyłącznie do <init> lub metody prywatnej
+            # tej samej klasy — wywołanie super.metoda() MUSI być invoke-super,
+            # inaczej ART odrzuca klasę (VerifyError: invoke-direct ... is not private)
+            # i aplikacja nie startuje (tak było do wersji 1.0.2 włącznie).
+            if op == 0xB7 and nm != "<init>" and cls != self.cf["name"]:
+                kind = "invoke-super"
             args, ret = split_params(d)
             arg_slots = sum(slot_count(a) for a in args) + (0 if op == 0xB8 else 1)
             base = sp0 - arg_slots

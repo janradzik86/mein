@@ -41,8 +41,8 @@ for f in "$ECJ" "$ANDROID_JAR" "$APKTOOL" "$APKSIGNER"; do
 done
 [ -x "$AAPT2" ] || { echo "BŁĄD: brak aapt2 ($AAPT2) — uruchom tools/fetch_tools_extra.sh" >&2; exit 1; }
 
-VERSION_NAME="${VERSION_NAME:-1.0.2}"
-VERSION_CODE="${VERSION_CODE:-3}"
+VERSION_NAME="${VERSION_NAME:-1.0.3}"
+VERSION_CODE="${VERSION_CODE:-4}"
 PKG="pl.wojan.lasercraft"
 
 rm -rf "$OUT/classes" "$OUT/smali" "$OUT/classes.dex" "$OUT/base.apk" "$OUT/unsigned.apk" "$OUT/proj"
@@ -128,6 +128,7 @@ if not ok:
 PYEOF
 python3 tools/dexcheck.py "$OUT/classes.dex"
 python3 tools/dexlink.py "$OUT/classes.dex" "$ANDROID_JAR"
+python3 tools/dexverify.py "$OUT/classes.dex" "$ANDROID_JAR"
 
 echo "== 6/6 podpis (v1+v2+v3) i weryfikacja =="
 KS="keystore/wojan-lasercraft.p12"
