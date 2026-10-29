@@ -1,6 +1,16 @@
 # WOJAN LaserCraft AI Studio — pobierz (wersja 1.0.9)
 
-## UWAGA: dwie różne aplikacje o podobnej nazwie
+## UWAGA: TRZY różne programy o podobnej nazwie
+
+Do telefonu trafiły **dwa inne programy** o zbliżonej nazwie — żaden nie jest tym produktem:
+
+1. **`wojan-lasercraft-lite-shell-*.apk` (3,0 MB)** — powłoka WebView/Capacitor, pakiet
+   `pl.wojan.hobby.lasercraft`; wywala się na Androidzie 14+.
+2. **„Wojan Studio”** — strona WWW w WebView otwierająca `wojan-studio-ai-e4wd.onrender.com`;
+   pokazuje „Strona nie wyświetliła się” (serwer zwraca HTML zamiast plików JS/CSS).
+
+Pełne rozróżnienie (rozmiar, pakiet, nazwa, zachowanie):
+[`RELEASE/JAK-ROZPOZNAC-APLIKACJE.md`](RELEASE/JAK-ROZPOZNAC-APLIKACJE.md).
 
 Do telefonu trafiły pliki **`wojan-lasercraft-lite-shell-*.apk` (3,0 MB)** — to **nie jest**
 ten program, tylko powłoka WebView/Capacitor z innego projektu (pakiet
@@ -18,6 +28,7 @@ w `com.capacitorjs.plugins.share.SharePlugin`. Pełna diagnoza:
 | pakiet | `pl.wojan.lasercraft` | `pl.wojan.hobby.lasercraft` |
 | nazwa na liście aplikacji | **WOJAN LaserCraft AI** | WOJAN LaserCraft |
 | WebView / Capacitor | **brak** (własny interfejs) | cała aplikacja to WebView |
+| ładuje adres internetowy | **nigdy** | tak |
 
 Strony wydań na GitHubie nie mają załączników (serwer, z którego buduję, nie ma dostępu
 do `uploads.github.com`), dlatego plik leży **w repozytorium**, a link jest przypięty do
