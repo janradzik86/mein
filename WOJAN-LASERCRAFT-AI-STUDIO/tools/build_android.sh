@@ -41,8 +41,8 @@ for f in "$ECJ" "$ANDROID_JAR" "$APKTOOL" "$APKSIGNER"; do
 done
 [ -x "$AAPT2" ] || { echo "BŁĄD: brak aapt2 ($AAPT2) — uruchom tools/fetch_tools_extra.sh" >&2; exit 1; }
 
-VERSION_NAME="${VERSION_NAME:-1.0.3}"
-VERSION_CODE="${VERSION_CODE:-4}"
+VERSION_NAME="${VERSION_NAME:-1.0.4}"
+VERSION_CODE="${VERSION_CODE:-5}"
 PKG="pl.wojan.lasercraft"
 
 rm -rf "$OUT/classes" "$OUT/smali" "$OUT/classes.dex" "$OUT/base.apk" "$OUT/unsigned.apk" "$OUT/proj"
@@ -103,8 +103,25 @@ usesFramework:
 versionInfo:
   versionCode: '$VERSION_CODE'
   versionName: $VERSION_NAME
+resourcesAreCompressed: false
 YML
 PATH="$(dirname "$AAPT2"):$PATH" "$JAVA" -jar "$APKTOOL" b "$PROJ" -o "$OUT/unsigned.apk" --use-aapt2 2>&1 | tail -6
+
+# Android 11+ (targetSdk >= 30) NIE zainstaluje APK, w którym resources.arsc jest
+# spakowany albo nie jest wyrównany do 4 B:
+#   INSTALL_PARSE_FAILED_RESOURCES_ARSC_COMPRESSED
+#   „Targeting R+ … requires the resources.arsc of installed APKs to be stored
+#    uncompressed and aligned on a 4-byte boundary" (ParsingPackageUtils)
+# apktool pakuje arsc deflate, więc przepakowujemy: arsc i dex bez kompresji, wyrównane.
+python3 - "$OUT/unsigned.apk" "$OUT/classes.dex" <<'PYDEX'
+import sys, zipfile
+z = zipfile.ZipFile(sys.argv[1])
+open(sys.argv[2], "wb").write(z.read("classes.dex"))
+print("classes.dex z apktool:", len(open(sys.argv[2], "rb").read()), "B")
+PYDEX
+python3 tools/pack_apk.py --base "$OUT/unsigned.apk" --dex "$OUT/classes.dex" \
+  --out "$OUT/unsigned-aligned.apk"
+mv "$OUT/unsigned-aligned.apk" "$OUT/unsigned.apk"
 
 echo "== 5/6 kontrole DEX i zawartości APK =="
 python3 - "$OUT/unsigned.apk" "$OUT/classes.dex" <<'PYEOF'
@@ -118,8 +135,20 @@ if missing:
     sys.exit(f"BŁĄD: w APK brakuje {missing}")
 if not any(n.startswith("res/") for n in names):
     sys.exit("BŁĄD: w APK brak katalogu res/ (ikona, style)")
+info = z.getinfo("resources.arsc")
+arsc_off = info.header_offset + 30 + len(info.filename.encode()) + len(info.extra)
+if info.compress_type != 0:
+    sys.exit("BŁĄD: resources.arsc jest spakowany (deflate) — Android 11+ odrzuci instalację")
+if arsc_off % 4 != 0:
+    sys.exit(f"BŁĄD: resources.arsc pod adresem {arsc_off} nie jest wyrównany do 4 B")
+print(f"resources.arsc: STORED, offset {arsc_off} (4B OK)")
 data = z.read("classes.dex")
 open(dex_out, "wb").write(data)
+di = z.getinfo("classes.dex")
+dex_off = di.header_offset + 30 + len(di.filename.encode()) + len(di.extra)
+if di.compress_type == 0 and dex_off % 4 != 0:
+    sys.exit(f"BŁĄD: classes.dex niepakowany pod adresem {dex_off} nie jest wyrównany do 4 B")
+print(f"classes.dex: {'STORED' if di.compress_type == 0 else 'deflate'}, offset {dex_off}")
 magic = data[:8]
 ok = magic[4:7] in (b"035", b"037", b"038", b"039", b"040", b"041")
 print(f"APK: {len(names)} wpisów, classes.dex magic={magic!r} -> {'OK' if ok else 'BŁĄD (ART odrzuci)'}")

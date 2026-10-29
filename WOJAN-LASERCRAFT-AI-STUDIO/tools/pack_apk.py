@@ -24,6 +24,23 @@ def align4(n: int) -> int:
     return (4 - n % 4) % 4
 
 
+def _align_extra(base_off: int) -> bytes:
+    """Poprawne pole extra wyrównujące dane wpisu do 4 B.
+
+    Android wymaga, aby NIEPAKOWANE wpisy (resources.arsc, classes.dex) zaczynały się
+    pod adresem podzielnym przez 4 — inaczej system nie może zmapować resources.arsc
+    w pamięć i instalacja kończy się błędem
+    INSTALL_PARSE_FAILED_RESOURCES_ARSC_COMPRESSED (dla targetSdk >= 30).
+    Pole extra to sekwencja rekordów (id u16, rozmiar u16, dane); używamy id 0xD935,
+    tak jak robi to zipalign.
+    """
+    need = (4 - base_off % 4) % 4
+    if need == 0:
+        return b""
+    size = need + 4          # nagłówek rekordu (4 B) + dane rekord uzupełniające
+    return struct.pack("<HH", 0xD935, size - 4) + b"\x00" * (size - 4)
+
+
 def build(entries, out_path):
     """entries: lista (name, data, stored)."""
     buf = bytearray()
@@ -34,8 +51,8 @@ def build(entries, out_path):
         raw = data if stored else zlib.compress(data, 9)[2:-4]
         crc = zlib.crc32(data) & 0xFFFFFFFF
         off = len(buf)
-        extra_len = align4(off + 30 + len(nb)) if stored else 0
-        extra = b"\x00" * extra_len
+        extra = _align_extra(off + 30 + len(nb)) if stored else b""
+        extra_len = len(extra)
         buf += struct.pack("<IHHHHHIIIHH", 0x04034B50, 20, 0, method, 0, 0,
                            crc, len(raw), len(data), len(nb), extra_len)
         buf += nb + extra + raw
@@ -65,6 +82,9 @@ def from_base(base_path, dex_path):
             info = z.getinfo(n)
             data = z.read(n)
             stored = info.compress_type == 0
+            if n == "resources.arsc":
+                # obowiązkowe: targetSdk >= 30 odrzuca APK ze spakowanym resources.arsc
+                stored = True
             entries.append((n, data, stored))
             if n == "AndroidManifest.xml":
                 entries.append(("classes.dex", dex, True))
