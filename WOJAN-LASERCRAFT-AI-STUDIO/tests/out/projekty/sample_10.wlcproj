@@ -1,0 +1,92 @@
+{
+   "format": "wlcproj/1",
+   "id": "sample_10",
+   "name": "Przykład 10 — Deska kuchenna",
+   "prompt": "Deska kuchenna z napisem MISTRZ KUCHNI, 300x200 mm, tylko grawer",
+   "category": "kuchnia",
+   "style": "rycina",
+   "detail": "sredni",
+   "engraveType": "grawer wypełnienia",
+   "created": "2026-10-29 03:44",
+   "modified": "2026-10-29 03:44",
+   "nextId": 4,
+   "product": {
+     "id": "deska",
+     "name": "Deska kuchenna",
+     "shape": "rounded",
+     "material": "drewno",
+     "w": 300.0,
+     "h": 200.0,
+     "cornerR": 20.0,
+     "engraveMargin": 10.0,
+     "requiresCut": false,
+     "curved": false
+   },
+   "machine": {
+     "id": "dioda10",
+     "name": "Dioda 10 W (GRBL)",
+     "controller": "GRBL",
+     "fieldW": 400.0,
+     "fieldH": 400.0,
+     "kerf": 0.15,
+     "lpi": 254
+   },
+   "objects": [
+     {
+       "id": "frame1",
+       "type": "path",
+       "layer": "ENGRAVE_VECTOR",
+       "role": "line",
+       "name": "Ramka (retro)",
+       "x": 0.0,
+       "y": 0.0,
+       "sx": 1.0,
+       "sy": 1.0,
+       "rot": 0.0,
+       "visible": true,
+       "locked": false,
+       "d": "M 10.60 10.60 L 289.40 10.60 L 289.40 189.40 L 10.60 189.40 L 10.60 10.60 Z",
+       "strokeW": 0.35
+     },
+     {
+       "id": "emblem2",
+       "type": "path",
+       "layer": "ENGRAVE_VECTOR",
+       "role": "line",
+       "name": "Motyw: kubek",
+       "x": 30.0,
+       "y": 36.0,
+       "sx": 1.0,
+       "sy": 1.0,
+       "rot": 0.0,
+       "visible": true,
+       "locked": false,
+       "d": "M 190.84 77.00 L 160.58 93.81 L 170.09 127.09 L 136.81 117.58 L 120.00 147.84 L 103.19 117.58 L 69.91 127.09 L 79.42 93.81 L 49.16 77.00 L 79.42 60.19 L 69.91 26.91 L 103.19 36.42 L 120.00 6.16 L 136.81 36.42 L 170.09 26.91 L 160.58 60.19 L 190.84 77.00 L  Z M 135.58 77.00 L 134.40 82.96 L 131.02 88.02 L 125.96 91.40 L 120.00 92.58 L 114.04 91.40 L 108.98 88.02 L 105.60 82.96 L 104.42 77.00 L 105.60 71.04 L 108.98 65.98 L 114.04 62.60 L 120.00 61.42 L 125.96 62.60 L 131.02 65.98 L 134.40 71.04 L 135.58 77.00 L 135.58 77.00 Z",
+       "strokeW": 0.3
+     },
+     {
+       "id": "txt3",
+       "type": "text",
+       "layer": "ENGRAVE_FILL",
+       "role": "fill",
+       "name": "Napis górny",
+       "x": 150.0,
+       "y": 29.0,
+       "sx": 1.0,
+       "sy": 1.0,
+       "rot": 0.0,
+       "visible": true,
+       "locked": false,
+       "text": "em MISTRZ KUCHNI",
+       "font": "anton",
+       "size": 20.0,
+       "tracking": 0.4,
+       "align": "center",
+       "warp": "none",
+       "strokeW": 0.25
+     }
+   ],
+   "history": [
+     "Wygenerowano: wariant 10"
+   ]
+ }

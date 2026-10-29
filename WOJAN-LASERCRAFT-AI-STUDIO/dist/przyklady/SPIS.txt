@@ -1,0 +1,34 @@
+WOJAN LaserCraft AI Studio — przykładowe projekty
+Wszystkie projekty wygenerowane przez lokalny silnik aplikacji (deterministycznie, bez grafiki z modeli obrazu).
+Format: .wlcproj (JSON) — otwierany w wersji Android i Windows.
+
+plik                               produkt        kategoria      mm        obj  bł/warn warstwy
+p01-wedkarstwo.wlcproj             Tabliczka      wedkarstwo     200x150   25   0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p02-wilki.wlcproj                  Piersiówka     wilki          95x115    11   0/1    ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p03-dom-i-rodzina.wlcproj          Kubek          dom_i_rodzina  210x90    6    0/1    ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p04-dzien-babci.wlcproj            Deska kuchenna dzien_babci    300x200   4    0/0    ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p05-rolnictwo.wlcproj              Medal          rolnictwo      60x60     8    0/0    CUT_INNER,CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p06-logo.wlcproj                   Brelok         logo           50x30     5    0/1    CUT_INNER,CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p07-hobby.wlcproj                  Zakładka do książki hobby          50x150    5    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p08-boze-narodzenie.wlcproj        Ozdoba świąteczna boze_narodzenie 80x90     14   0/0    CUT_INNER,CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p09-dzien-matki.wlcproj            Medalion       dzien_matki    40x40     10   0/1    ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p10-motoryzacja.wlcproj            Naszywka skórzana motoryzacja    80x40     6    0/1    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p11-warsztat.wlcproj               Szyld          warsztat       300x150   7    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p12-emblematy.wlcproj              Tarcza / emblemat emblematy      150x170   6    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p13-zwierzeta.wlcproj              Magnes         zwierzeta      60x45     6    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p14-prezenty.wlcproj               Etui skórzane  prezenty       110x80    9    0/1    ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p15-minimalistyczne.wlcproj        Podkładka      minimalistyczne 100x100   7    0/1    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p16-garaz.wlcproj                  Skrzynka       garaz          250x160   5    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p17-boze-narodzenie.wlcproj        Zawieszka      boze_narodzenie 60x80     14   0/0    CUT_INNER,CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p18-vintage.wlcproj                Portfel        vintage        120x95    6    0/1    ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p19-pamiatki.wlcproj               Nieśmiertelnik pamiatki       50x28     7    0/3    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p20-urodziny.wlcproj               Tabliczka      urodziny       200x150   8    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p21-wielkanoc.wlcproj              Ozdoba świąteczna wielkanoc      80x90     9    0/0    CUT_INNER,CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p22-satyra-spoleczna.wlcproj       Tabliczka      satyra_spoleczna 200x150   7    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p23-sluby.wlcproj                  Tabliczka      sluby          200x150   8    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p24-slowianskie.wlcproj            Medalion       slowianskie    60x60     6    0/0    ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p25-portrety.wlcproj               Tabliczka      portrety       200x150   7    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+p26-gaming.wlcproj                 Tabliczka      gaming         200x150   7    0/0    CUT_OUTER,ENGRAVE_FILL,ENGRAVE_VECTOR,GUIDES
+
+suma obiektów: 213
+projektów: 26

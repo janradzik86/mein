@@ -1,0 +1,8 @@
+RAPORT WALIDACJI PROJEKTU (WOJAN LaserCraft AI Studio)
+data: 2026-10-29T03:45:08Z
+wynik: GOTOWY DO EKSPORTU (bez błędów krytycznych)
+błędy: 0, ostrzeżenia: 0, informacje: 2
+
+[INFO ] KERF_OK: Kompensacja kerf: 0.15 mm (kontur cięcia powiększony o 0.07 mm na stronę).
+[INFO ] PODSUMOWANIE: Obiekty: 8, powierzchnia grawerowania: 50007 mm², długość cięcia: 690 mm
+
