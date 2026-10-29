@@ -89,6 +89,26 @@ Pole „Android System WebView 156… aktywny” na zrzucie **nie pochodzi z nas
 nasz APK nie zawiera `WebView` ani jednego odwołania do niego (tabela w pkt 3). To kolejny
 dowód, że raport dotyczy powłoki Capacitor, która w WebView wyświetla stronę.
 
+
+## 3b. Jak wygląda ekran błędu NASZEJ aplikacji (odróżnienie bez zaglądania w ustawienia)
+
+Nasz program ma własny ekran awarii (`MainActivity.showFatal`): zamiast systemowego
+„aplikacja została zatrzymana” pokazuje pełny stos wywołań na przewijanym ekranie.
+Nagłówek tego ekranu po przebudowie będzie brzmiał:
+
+```
+pl.wojan.lasercraft · wersja 1.1.0 · Android <wersja>
+```
+
+(do 1.0.9 włącznie było tam „Wersja 1.0.6” — poprawiłem to, bo mylące).
+Jeśli więc zobaczysz ekran z napisem `pl.wojan.lasercraft` — to nasz program i wtedy
+wyślij zrzut z tym stosem: wskazuje konkretną linię. Jeśli widzisz
+`pl.wojan.hobby.lasercraft` i `com.getcapacitor…` — to tamta powłoka, nie nasz program.
+
+Nasz program zapisuje też `crash.txt` w prywatnym katalogu aplikacji
+(`/data/data/pl.wojan.lasercraft/files/crash.txt`); bez roota nie da się go odczytać,
+dlatego jedyną praktyczną drogą jest zrzut ekranu albo połączenie USB z `adb`.
+
 ## 4. Jak sprawdzić na telefonie, który plik się instaluje
 
 0. **Nazwa na liście aplikacji**: nasza to **„WOJAN LaserCraft AI”** (z „AI” na końcu,

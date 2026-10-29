@@ -65,8 +65,13 @@ for root, _d, files in os.walk(os.path.join(dec, "smali")):
             continue
         q = os.path.join(root, f)
         t = open(q, encoding="utf-8").read()
-        if '1.0.5' in t or '1.0.4' in t:
-            t2 = t.replace('1.0.5', name).replace('1.0.4', name)
+        t2 = re.sub(r"1\.0\.\d+", name, t)
+        # ekran błędu uruchamiania ma pokazywać pakiet — po nim od razu widać, która
+        # aplikacja się wywaliła (nauka z pomyłki z powłoką pl.wojan.hobby.lasercraft)
+        t2 = re.sub(r'const-string (v\d+), "Wersja [0-9.]+ \\u00b7 Android "',
+                    lambda m: 'const-string ' + m.group(1) + ', "pl.wojan.lasercraft \\u00b7 wersja '
+                              + name + ' \\u00b7 Android "', t2)
+        if t2 != t:
             open(q, "w", encoding="utf-8").write(t2)
             changed += 1
 print(f"   wersja w apktool.yml + manifeście; plików smali z numerem wersji: {changed}")
