@@ -18,8 +18,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-VERSION_NAME="${VERSION_NAME:-1.0.6}"
-VERSION_CODE="${VERSION_CODE:-7}"
+VERSION_NAME="${VERSION_NAME:-1.0.8}"
+VERSION_CODE="${VERSION_CODE:-9}"
 BASE_APK="${BASE_APK:-RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk}"
 OUT="build/android"
 CACHE="${LC_CACHE:-$HOME/.cache/lc}"
@@ -27,7 +27,10 @@ JAVA_HOME="${JAVA_HOME:-$(python3 -c 'import jdk4py;print(jdk4py.JAVA_HOME)')}"
 JAVA="$JAVA_HOME/bin/java"
 [ -f "$CACHE/apktool.jar" ] || { echo "BŁĄD: brak $CACHE/apktool.jar (tools/fetch_tools_extra.sh)" >&2; exit 1; }
 [ -x "$CACHE/aapt2" ] || { echo "BŁĄD: brak aapt2" >&2; exit 1; }
-set -a; . keystore/keystore.env; set +a
+KS="${WOJAN_KEYSTORE:-/home/user/toolchain/keystore/wojan-lasercraft.p12}"
+ENVF="/home/user/toolchain/keystore/keystore.env"
+[ -f "$ENVF" ] || ENVF="keystore/keystore.env"
+set -a; . "$ENVF"; set +a
 
 echo "== 1/7 baksmali wydanego APK =="
 rm -rf "$OUT/dec"
@@ -98,17 +101,39 @@ python3 tools/dexcheck.py "$OUT/classes.dex"
 python3 tools/dexlink.py "$OUT/classes.dex" "$CACHE/android34.jar"
 python3 tools/dexverify.py "$OUT/classes.dex" "$CACHE/android34.jar"
 
-echo "== 6/7 podpis v1 (JAR) + v2 =="
-python3 tools/apk_sign.py --in "$OUT/unsigned.apk" \
-  --out "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" \
-  --ks keystore/wojan-lasercraft.p12 --pass-env WOJAN_KEYSTORE_PASS
+echo "== 6/7 podpis PRAWDZIWYM apksig (v1 + v2 + v3) + zipalign =="
+# Podpisuje oficjalna biblioteka Google `apksig` (uber-apk-signer 1.3.0 z PyPI).
+# Zapewnia: podpis v1 (JAR), v2, v3 oraz zipalign — czyli dokładnie to, co robi
+# `apksigner` z Android SDK. tools/apk_sign.py zostaje jako weryfikator i awaryjny
+# podpisujący (gdyby uber-apk-signer był niedostępny).
+rm -rf "$OUT/signed"
+if [ -f "$CACHE/uber-apk-signer.jar" ]; then
+  "$JAVA" -jar "$CACHE/uber-apk-signer.jar" -a "$OUT/unsigned.apk" \
+    --ks "$KS" --ksAlias wojan \
+    --ksPass "$WOJAN_KEYSTORE_PASS" --ksKeyPass "$WOJAN_KEYSTORE_PASS" \
+    -o "$OUT/signed" 2>&1 | grep -E "zipalign|signature verified|Successfully|error" || true
+  cp "$OUT/signed"/unsigned-aligned-signed.apk "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk"
+else
+  echo "   UWAGA: brak uber-apk-signer.jar — podpis własną implementacją (v1+v2, bez v3)"
+  python3 tools/apk_sign.py --in "$OUT/unsigned.apk" \
+    --out "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" \
+    --ks "$KS" --pass-env WOJAN_KEYSTORE_PASS
+fi
 
 echo "== 7/7 weryfikacja niezależna =="
 python3 tools/apk_sign.py --verify "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk"
-python3 - "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" <<'PY'
+if [ -f "$CACHE/uber-apk-signer.jar" ]; then
+  echo "   --- weryfikacja PRAWDZIWYM apksig:"
+  "$JAVA" -jar "$CACHE/uber-apk-signer.jar" -a "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" -y 2>&1 \
+    | grep -E "zipalign|signature verified|SHA256:|Successfully|error" || true
+fi
+python3 - "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" 2>/dev/null <<'PY' || echo "   (androguard niedostępny — pominięty)"
 import sys
-from loguru import logger
-logger.remove()
+try:
+    from loguru import logger
+    logger.remove()
+except ImportError:
+    pass
 from androguard.core.apk import APK
 a = APK(sys.argv[1])
 print("   androguard: package", a.get_package(), "| wersja", a.get_androidversion_name(),

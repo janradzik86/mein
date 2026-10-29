@@ -8,6 +8,7 @@ CXX="${CXX:-g++}"
 FLAGS="-std=c++17 -O2 -Wall -Wextra -Wno-unused-parameter -Icore"
 OBJS=()
 for f in core/*.cpp; do
+  case "$(basename "$f")" in stt.cpp) continue;; esac
   o="build/$(basename "${f%.cpp}").o"
   $CXX $FLAGS -c "$f" -o "$o"
   OBJS+=("$o")

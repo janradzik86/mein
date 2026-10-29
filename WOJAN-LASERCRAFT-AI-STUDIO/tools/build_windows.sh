@@ -7,11 +7,12 @@ PY="${PY:-python3}"
 ZC="${ZIG:-$PY -m ziglang}"
 TOOLCACHE="${LC_TOOLS:-$HOME/.cache/lc}"
 IMGUI="$TOOLCACHE/src/imgui-1.91.5"
+[ -d "$IMGUI" ] || IMGUI="/home/user/toolchain/src/imgui-1.91.5"
 DEF="$($PY -c "import ziglang,os;print(os.path.join(os.path.dirname(ziglang.__file__),\"lib\",\"libc\",\"mingw\",\"lib-common\"))")"
 B=build/win
 mkdir -p "$B/obj"
 TARGET=x86_64-windows-gnu
-CXXFLAGS="-target $TARGET -O2 -std=gnu++17 -D_WIN32_WINNT=0x0A00 -DIMGUI_IMPL_WIN32_DISABLE_GAMEPAD -Icore -Idesktop/src -I$IMGUI -I$IMGUI/backends -Wno-unused-command-line-argument"
+CXXFLAGS="-target $TARGET -O2 -std=gnu++17 -D_WIN32_WINNT=0x0A00 -DIMGUI_IMPL_WIN32_DISABLE_GAMEPAD -Icore -Idesktop/src -I$IMGUI -I$IMGUI/backends -Ithird_party/whisper.cpp/include -Ithird_party/whisper.cpp/ggml/include -Wno-unused-command-line-argument"
 
 compile() { # $1 = plik źródłowy, $2 = nazwa obiektu
   local src="$1" obj="$B/obj/$2.o"
@@ -34,9 +35,15 @@ for f in imgui imgui_draw imgui_tables imgui_widgets backends/imgui_impl_win32 b
     $ZC c++ $CXXFLAGS -c "$src" -o "$B/obj/$name.o"
   fi
 done
+# silnik mowy: whisper.cpp (kompilowany raz, potem cache w build/win/whisper)
+if [ ! -f build/win/whisper/libwhisper.a ]; then
+  echo "== whisper.cpp (STT) =="
+  bash tools/build_whisper.sh windows
+fi
+
 echo "== linkowanie =="
 $ZC c++ -target $TARGET -O2 -Wl,--subsystem,windows -o build/WOJAN-LaserCraft-AI.exe \
-  "$B"/obj/*.o -L"$DEF" -ld3dcompiler_47 -ld3d11 -ldxgi -ldwmapi -lcomdlg32 -lshell32 -lole32 \
+  "$B"/obj/*.o build/win/whisper/libwhisper.a -L"$DEF" -ld3dcompiler_47 -ld3d11 -ldxgi -ldwmapi -lcomdlg32 -lshell32 -lole32 \
   -luser32 -lgdi32 -lwinmm -ladvapi32 -lshlwapi -static -static-libgcc -static-libstdc++ \
   -Wl,/Brepro
 SIZE=$(stat -c%s build/WOJAN-LaserCraft-AI.exe)

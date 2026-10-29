@@ -7,6 +7,7 @@
 #include "common.h"
 #include "export.h"
 #include "validate.h"
+#include "stt.h"
 
 namespace {
 
@@ -186,7 +187,7 @@ void uiDrawAll(AppState& app, int& activeTab, bool& wantExit) {
       ImGui::EndMenu();
     }
     ImGui::SameLine(ImGui::GetWindowWidth() - 380);
-    ImGui::TextDisabled("Silnik lokalny · offline · v1.0.6");
+    ImGui::TextDisabled("Silnik lokalny · offline · v1.0.8");
     ImGui::EndMainMenuBar();
   }
 
@@ -438,11 +439,22 @@ void uiDrawMic(AppState& app) {
   ImGui::Columns(2, "##miccols", true);
   ImGui::SetColumnWidth(0, ImGui::GetContentRegionAvail().x * 0.5f);
   sectionTitle("Dyktowanie opisu (offline)");
-  ImGui::TextWrapped(
-      "Nagranie zapisujemy lokalnie jako WAV 16 kHz. Windows 11 nie udostepnia darmowego, w pelni "
-      "offline silnika rozpoznawania mowy dla aplikacji desktop bez instalacji pakietu jezyka. "
-      "Dlatego nagrywamy i zapisujemy dzwiek, a transkrypcje wpisujesz lub wklejasz ponizej - caly "
-      "pozostaly potok (analiza promptu, projekt, eksport) dziala w 100%% lokalnie.");
+  stt::Status ss = stt::status();
+  if (ss.model) {
+    ImGui::TextColored(ImVec4(0.45f, 0.85f, 0.45f, 1),
+                       "Silnik mowy: whisper.cpp 1.7.4 (wbudowany) - model: %s (%.1f MB)",
+                       ss.model_name.c_str(), ss.model_bytes / 1048576.0);
+    ImGui::TextWrapped("Nagraj wypowiedz, potem nacisnij ROZPOZNAJ MOWE. Rozpoznawanie odbywa sie "
+                       "na tym komputerze, bez internetu i bez kluczy API.");
+  } else {
+    ImGui::TextColored(ImVec4(1, 0.8f, 0.3f, 1),
+                       "Silnik mowy whisper.cpp JEST wbudowany, ale brak pliku wag modelu.");
+    ImGui::TextWrapped(
+        "Aby wlaczyc rozpoznawanie mowy offline, wloz plik ggml-base-q5_1.bin (59,7 MB) do katalogu "
+        "„modele” obok programu. Plik mozesz pobrac na swoim komputerze jednym poleceniem: "
+        "tools\\pobierz_model.bat (albo skrypt tools/pobierz_model.sh). Aplikacja sama go wykryje - "
+        "wystarczy ponownie otworzyc te zakladke. Do tego czasu mozesz wpisac tekst recznie.");
+  }
   if (ImGui::Button(app.micRecording ? "ZATRZYMAJ NAGRANIE" : "NAGRAJ (mikrofon)", ImVec2(240, 36))) {
     std::string err;
     if (!app.micRecording) {
@@ -466,6 +478,24 @@ void uiDrawMic(AppState& app) {
   }
   if (app.micRecording) ImGui::TextColored(ImVec4(1, 0.35f, 0.3f, 1), "NAGRYWANIE...");
   if (!app.micInfo.empty()) ImGui::TextDisabled("Plik: %s", app.micInfo.c_str());
+  if (!app.micInfo.empty() && !app.micRecording) {
+    if (ImGui::Button("ROZPOZNAJ MOWE (offline)", ImVec2(240, 32))) {
+      std::string text, err;
+      double sek = 0;
+      if (stt::transcribe_wav(app.micInfo, "pl", text, err, &sek)) {
+        app.transcript = text;
+        snprintf(buf, sizeof buf, "%s", app.transcript.c_str());
+        char msg[256];
+        snprintf(msg, sizeof msg, "Rozpoznano w %.1f s: %s", sek,
+                 text.empty() ? "(brak mowy w nagraniu)" : "gotowe");
+        app.toast(msg, text.empty());
+      } else {
+        app.toast(err, true);
+      }
+    }
+    ImGui::SameLine();
+    ImGui::TextDisabled("(whisper.cpp, jezyk polski)");
+  }
   sectionTitle("Transkrypcja / opis");
   if (buf[0] == 0) snprintf(buf, sizeof buf, "%s", app.transcript.c_str());
   if (ImGui::InputTextMultiline("##transcript", buf, sizeof buf, ImVec2(-1, 170)))
@@ -1453,7 +1483,7 @@ void uiDrawSettings(AppState& app) {
   }
   ImGui::EndChild();
   sectionTitle("O aplikacji");
-  ImGui::TextWrapped("WOJAN LaserCraft AI Studio 1.0.6 - lokalny generator wzorow do grawerowania "
+  ImGui::TextWrapped("WOJAN LaserCraft AI Studio 1.0.8 - lokalny generator wzorow do grawerowania "
                      "i ciecia laserem. Silnik regulowy i proceduralny wbudowany w program, bez chmury, "
                      "bez kluczy API, bez pobierania modeli po instalacji.");
   ImGui::Columns(1);

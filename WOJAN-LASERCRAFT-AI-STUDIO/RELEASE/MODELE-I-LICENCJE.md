@@ -91,3 +91,23 @@ obrazu ani cudzych wzorów. Każdy plik ma obok siebie plik `_walidacja.txt` z w
 ---
 
 Wersja dokumentu: 1.0.5, 2026-10-29.
+
+## Aktualizacja 1.0.8 — silnik mowy whisper.cpp JEST wkompilowany
+
+| Element | Stan w wydaniu 1.0.8 |
+|---|---|
+| silnik whisper.cpp 1.7.4 + ggml (CPU) | **wkompilowany** w `WOJAN-LaserCraft-AI.exe` (Zig/clang, bez CUDA/Metal) |
+| kod integracji | `core/stt.h`, `core/stt.cpp`; UI: zakładka „Mikrofon i prompt” |
+| plik wag `modele\ggml-base-q5_1.bin` (59,7 MB) | **nie dołączony** — blokada pobierania w środowisku budowania (patrz niżej) |
+| skrypt pobrania dla użytkownika | `modele\pobierz_model.bat` w instalatorze (sprawdza rozmiar) |
+| licencja wag Whisper (OpenAI) | MIT — użycie komercyjne dozwolone |
+| RAM przy pracy modelu base q5_1 | ok. 400–500 MB (plus program: ~150 MB) |
+
+Blokada wag: w środowisku, w którym budowane jest wydanie, host `huggingface.co` jest
+nieosiągalny, a **wszystkie 43 znalezione w GitHub kopie plików `ggml-*.bin` to wskaźniki
+Git LFS o rozmiarze 131–134 B**, nie wagi. Nie da się więc dołączyć modelu do instalatora
+bez zewnętrznego źródła. Program wykrywa wagę automatycznie po jej włożeniu do `modele\`.
+
+Model językowy (LLM) nie jest dołączony z tego samego powodu; „Generator AI” działa
+na wbudowanym silniku proceduralnym i parserze języka polskiego (deterministyczny,
+offline), co jest opisane w raporcie bez upiększeń.

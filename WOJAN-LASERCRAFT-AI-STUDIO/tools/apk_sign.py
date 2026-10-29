@@ -272,10 +272,15 @@ def verify(path: str) -> dict:
         apk = fh.read()
     with zipfile.ZipFile(path) as z:
         names = z.namelist()
-        if "META-INF/MANIFEST.MF" in names:
+        sf_name = next((n for n in names if n.upper().startswith("META-INF/")
+                        and n.upper().endswith(".SF")), None)
+        rsa_name = next((n for n in names if n.upper().startswith("META-INF/")
+                         and n.upper().endswith((".RSA", ".DSA", ".EC"))), None)
+        if "META-INF/MANIFEST.MF" in names and sf_name and rsa_name:
             mf = z.read("META-INF/MANIFEST.MF").decode("utf-8", "replace")
-            sf = z.read("META-INF/CERT.SF").decode("utf-8", "replace")
-            rsa = z.read("META-INF/CERT.RSA")
+            sf = z.read(sf_name).decode("utf-8", "replace")
+            rsa = z.read(rsa_name)
+            out["v1_sf"] = sf_name
             # 1. digest całego manifestu
             if f"SHA-256-Digest-Manifest: {_b64(hashlib.sha256(mf.encode()).digest())}" in sf:
                 out["v1_mf"] = True

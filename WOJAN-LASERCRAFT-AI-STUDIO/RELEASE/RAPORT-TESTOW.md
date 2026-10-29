@@ -1,4 +1,4 @@
-# RAPORT TESTOW — WOJAN LaserCraft AI Studio 1.0.6
+# RAPORT TESTOW — WOJAN LaserCraft AI Studio 1.0.8
 
 Data: 2026-10-29 · Wersja: 1.0.5 (versionCode 6) · Środowisko: kontener Linux
 x86_64, 2 vCPU, 3 GB RAM, OpenJDK 25.0.2, Zig/clang (Windows x64), bez Androida.
@@ -7,6 +7,40 @@ Zasada tego raportu: **każdy wiersz PASS ma dowód** (polecenie + wynik albo pl
 repozytorium). Czego nie dało się uruchomić, jest oznaczone **NIEWERYFIKOWANE** —
 nie jako PASS. Tabela na końcu zbiera status każdego wymaganego scenariusza.
 
+
+
+## 0b. Przebieg 1.0.8 — silnik mowy whisper.cpp wbudowany (2026-10-29)
+
+**Zrobione:** whisper.cpp 1.7.4 + ggml skompilowane do aplikacji Windows (`tools/build_whisper.sh`,
+16 plików źródłowych, biblioteka statyczna 7,46 MB). Integracja: `core/stt.cpp` (WAV PCM →
+resampling 16 kHz → mono → `whisper_full` z językiem „pl”), zakładka Mikrofon z przyciskiem
+ROZPOZNAJ MOWE i widocznym statusem modelu. EXE urósł z 2,80 MB do **3,75 MB**.
+
+**Sprawdzone wykonawczo:** kompilacja i linkowanie (Linux: `gcc/g++`, Windows: Zig/clang),
+uruchomienie `stt::status()`, `stt::engine_info()` → „whisper.cpp 1.7.4 | AVX = 0 …”.
+Ścieżka transkrypcji jest zaimplementowana i zwraca czytelny błąd, gdy brak wag.
+
+**Nie sprawdzone wykonawczo:** sama transkrypcja realnego nagrania — nie ma czym.
+W środowisku budowania nie da się pobrać pliku wag:
+
+| Źródło | Wynik sprawdzenia |
+|---|---|
+| huggingface.co (oficjalne wagi) | host niedostępny |
+| GitHub, 43 znalezione kopie modeli (`ggml-tiny/base`, `q5_1`) | wszystkie to wskaźniki Git LFS (131–134 B) |
+| raw./media.githubusercontent.com | zablokowane (SSL) |
+| PyPI | brak paczek z wagami Whispera |
+
+Dlatego instalator zawiera katalog `modele` ze skryptem `pobierz_model.bat`, który pobiera
+`ggml-base-q5_1.bin` (59,7 MB) na komputer użytkownika i sprawdza rozmiar. Aplikacja wykrywa
+plik automatycznie; status jest pokazany wprost w interfejsie.
+
+**Podpis APK:** build przeszedł na **oryginalny `apksig` Google** (uber-apk-signer 1.3.0 z PyPI):
+`zipalign verified`, `signature verified [v2, v3]`, nowy certyfikat `5aac0b56…0e23d`.
+Kontrola instalacyjna: 0 problemów blokujących; DEX 0/0/0; audyt API 0 klas nowszych.
+
+**Nadal brak:** model językowy (LLM) — te same blokady pobierania wag; STT na Androidzie —
+brak NDK/kompilatora ARM w środowisku; instalacja APK na telefonie — nieweryfikowana
+(brak wirtualizacji i dostępu do obrazów systemu).
 
 ## 0a. Przebieg 1.0.6 — środowisko odtworzone od zera (2026-10-29, 06:00–06:15)
 
@@ -186,4 +220,4 @@ python3 tools/apk_installcheck.py RELEASE/WOJAN-LaserCraft-AI-Android-Release.ap
 python3 tools/apk_api_audit.py RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk --min-sdk 24 --pelen
 ```
 
-Wersja raportu: 1.0.6, 2026-10-29.
+Wersja raportu: 1.0.8, 2026-10-29.

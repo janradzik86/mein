@@ -43,3 +43,20 @@ fi
 export JAVA_HOME="${JAVA_HOME:-$(python3 -c 'import jdk4py;print(jdk4py.JAVA_HOME)' 2>/dev/null || true)}"
 "$JAVA_HOME/bin/java" -jar "$CACHE/apktool.jar" --version 2>&1 | head -2 || true
 echo "OK: narzędzia w $CACHE"
+
+echo "== uber-apk-signer (prawdziwy apksig Google: v1+v2+v3 + zipalign) =="
+if [ -f "$CACHE/uber-apk-signer.jar" ]; then
+  echo "  już jest: $CACHE/uber-apk-signer.jar"
+else
+  python3 -m pip download simple-apk-signer -d "$TMP" --no-deps -q
+  python3 - "$TMP" "$CACHE/uber-apk-signer.jar" <<'PY'
+import sys, glob, zipfile, os
+whl = glob.glob(os.path.join(sys.argv[1], "simple_apk_signer-*.whl"))[0]
+with zipfile.ZipFile(whl) as z:
+    name = [n for n in z.namelist() if n.endswith("uber-apk-signer-1.3.0.jar")][0]
+    data = z.read(name)
+open(sys.argv[2], "wb").write(data)
+print("  zapisano", sys.argv[2], len(data), "B")
+PY
+fi
+"$JAVA_HOME/bin/java" -jar "$CACHE/uber-apk-signer.jar" --version 2>&1 | head -1
