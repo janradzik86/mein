@@ -9,6 +9,32 @@ nie jako PASS. Tabela na końcu zbiera status każdego wymaganego scenariusza.
 
 
 
+
+## 0c. Przebieg 1.0.9 — model Whisper w instalatorze, realna transkrypcja PL/EN
+
+**Model pozyskany i przetestowany wykonawczo.** Wagi znalezione w PyPI (nie w GitHubie —
+tam wszystko było LFS 131 B): `gympulse-whisper-base-part1/part2`, format CTranslate2
+`WhisperSpec`, 145 217 532 B, 212 tensory. Konwersja do ggml: `tools/convert_whisperspec.py`.
+
+| Krok | Wynik |
+|---|---|
+| rozpoznanie nieudokumentowanego formatu | 212/212 tensorów, parsowanie do końca pliku (0 błędów) |
+| mapowanie nazw TF/CT2 → ggml | 263 tensory, QKV 1536→3×512 i KV 1024→2×512 rozbite |
+| filtr mel vs wzorzec whisper.cpp | różnica maksymalna **0.0** |
+| wczytanie modelu przez whisper.cpp | OK, „type = 2 (base)”, 147,37 MB w RAM (f16) |
+| transkrypcja EN (`samples/jfk.wav`) | „And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.” — **2,68 s** |
+| transkrypcja PL (espeak-ng, głos pl, 8,6 s) | tekst polski z diakrytykami rozpoznany poprawnie w większości słów — **3,70 s** |
+| kwantyzacja q5_1 | 147,95 MB → **59 707 642 B**, transkrypcja EN po kwantyzacji identyczna |
+| model w instalatorze | `modele\ggml-base-q5_1.bin` + README |
+
+**Błędy po drodze (dla porządku, wszystkie naprawione):** pierwsze trzy próby transkrypcji
+dały ciągi losowych słów. Przyczyny: (1) w kontenerze pole 4-bajtowe stoi **przed** danymi,
+nie za nimi — odczyt przesunięty o 4 bajty, (2) sklejone QKV trzeba rozbijać blokami
+`[q;k;v]`, a nie „na głowę”. Po obu poprawkach wynik jest poprawny i powtarzalny.
+
+**Nadal niezweryfikowane wykonawczo:** uruchomienie EXE/Setup na Windows, nagranie
+z prawdziwego mikrofonu, instalacja APK na telefonie, STT na Androidzie (brak silnika ARM).
+
 ## 0b. Przebieg 1.0.8 — silnik mowy whisper.cpp wbudowany (2026-10-29)
 
 **Zrobione:** whisper.cpp 1.7.4 + ggml skompilowane do aplikacji Windows (`tools/build_whisper.sh`,
@@ -220,4 +246,4 @@ python3 tools/apk_installcheck.py RELEASE/WOJAN-LaserCraft-AI-Android-Release.ap
 python3 tools/apk_api_audit.py RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk --min-sdk 24 --pelen
 ```
 
-Wersja raportu: 1.0.8, 2026-10-29.
+Wersja raportu: 1.0.9, 2026-10-29.

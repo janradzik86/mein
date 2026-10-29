@@ -18,8 +18,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-VERSION_NAME="${VERSION_NAME:-1.0.8}"
-VERSION_CODE="${VERSION_CODE:-9}"
+VERSION_NAME="${VERSION_NAME:-1.0.9}"
+VERSION_CODE="${VERSION_CODE:-10}"
 BASE_APK="${BASE_APK:-RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk}"
 OUT="build/android"
 CACHE="${LC_CACHE:-$HOME/.cache/lc}"

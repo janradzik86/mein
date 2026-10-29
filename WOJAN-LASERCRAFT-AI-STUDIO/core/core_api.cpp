@@ -86,7 +86,7 @@ Json Engine::status() {
   Json j = Json::object();
   j.set("app", "WOJAN LaserCraft AI Studio");
   j.set("engine", "wojan-lasercraft-core");
-  j.set("version", "1.0.8");
+  j.set("version", "1.0.9");
   j.set("build", 20261029);
   j.set("offline", true);
   j.set("cloud", false);

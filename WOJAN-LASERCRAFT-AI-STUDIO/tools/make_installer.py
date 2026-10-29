@@ -51,11 +51,12 @@ def payload_files():
         (os.path.join(ROOT, "RELEASE", "INSTRUKCJA.pdf"), "dokumentacja\\INSTRUKCJA.pdf"),
         (os.path.join(ROOT, "RELEASE", "MODELE-I-LICENCJE.md"), "dokumentacja\\MODELE-I-LICENCJE.md"),
         (os.path.join(ROOT, "RELEASE", "RAPORT-TESTOW.md"), "dokumentacja\\RAPORT-TESTOW.md"),
-        (os.path.join(ROOT, "RELEASE", "POPRAWKA-1.0.8.md"), "dokumentacja\\ZMIANY-1.0.8.md"),
+        (os.path.join(ROOT, "RELEASE", "POPRAWKA-1.0.9.md"), "dokumentacja\\ZMIANY-1.0.8.md"),
         (os.path.join(ROOT, "RELEASE", "KONTROLA-INSTALACJI.txt"), "dokumentacja\\KONTROLA-INSTALACJI.txt"),
         (os.path.join(ROOT, "dist", "README-INSTALACJA.txt"), "README.txt"),
         (os.path.join(ROOT, "dist", "LICENCJE.txt"), "LICENCJE.txt"),
         (os.path.join(ROOT, "dist", "modele", "README-MODEL.txt"), "modele\\README-MODEL.txt"),
+        (os.path.join(ROOT, "modele", "ggml-base-q5_1.bin"), "modele\\ggml-base-q5_1.bin"),
         (os.path.join(ROOT, "dist", "modele", "pobierz_model.bat"), "modele\\pobierz_model.bat"),
         (os.path.join(ROOT, "dist", "modele", "pobierz_model.sh"), "modele\\pobierz_model.sh"),
     ):

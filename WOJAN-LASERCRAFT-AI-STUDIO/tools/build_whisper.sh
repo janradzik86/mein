@@ -23,17 +23,17 @@ else
   CC="gcc"
   CXX="g++"
   OUT=build/whisper
-  EXTRA="-D_GNU_SOURCE"
+  EXTRA="-D_GNU_SOURCE -mavx -mavx2 -mfma -mf16c -msse4.2"
 fi
 rm -rf "$OUT" && mkdir -p "$OUT"
 n=0
 while IFS= read -r f; do
   o="$OUT/$(echo "$f" | tr '/' '_').o"
   case "$f" in
-    *.c)   $CC  -O2 -std=gnu11 $EXTRA -pthread -fPIC -I"$SRC" -I"$SRC/ggml/include" \
+    *.c)   $CC  -O3 -std=gnu11 $EXTRA -pthread -fPIC -I"$SRC" -I"$SRC/ggml/include" \
                  -I"$SRC/include" -I"$SRC/src" -I"$SRC/ggml/src" -I"$SRC/ggml/src/ggml-cpu" \
                  -c "$SRC/$f" -o "$o" ;;
-    *.cpp) $CXX -O2 -std=c++17 $EXTRA -pthread -fPIC -I"$SRC" -I"$SRC/ggml/include" \
+    *.cpp) $CXX -O3 -std=c++17 $EXTRA -pthread -fPIC -I"$SRC" -I"$SRC/ggml/include" \
                  -I"$SRC/include" -I"$SRC/src" -I"$SRC/ggml/src" -I"$SRC/ggml/src/ggml-cpu" \
                  -c "$SRC/$f" -o "$o" ;;
   esac

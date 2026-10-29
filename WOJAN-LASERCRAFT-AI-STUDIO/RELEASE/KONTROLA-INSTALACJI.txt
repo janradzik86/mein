@@ -1,14 +1,14 @@
 KONTROLA INSTALACYJNA APK — tools/build_android_smali.sh
-Data: 2026-10-29 06:47:59 UTC   Wersja: 1.0.8 (9)
+Data: 2026-10-29 07:06:48 UTC   Wersja: 1.0.9 (10)
 
 KONTROLA INSTALACYJNA: WOJAN-LaserCraft-AI-Android-Release.apk
-  package pl.wojan.lasercraft · wersja 1.0.8 (9) · minSdk 24 · targetSdk 36 · 828893 B
+  package pl.wojan.lasercraft · wersja 1.0.9 (10) · minSdk 24 · targetSdk 36 · 828894 B
 
   [OK  ] wpisów 20, duplikatów 0
   [OK  ] podejrzane ścieżki: brak
-  [OK  ] rozmiar pliku 828893 B
+  [OK  ] rozmiar pliku 828894 B
   [OK  ] aapt2 dump badging — manifest i zasoby parsują się
-  [OK  ] package pl.wojan.lasercraft, wersja 1.0.8 (9)
+  [OK  ] package pl.wojan.lasercraft, wersja 1.0.9 (10)
   [OK  ] activity startowa: pl.wojan.lasercraft.MainActivity
   [OK  ] etykieta: WOJAN LaserCraft AI
   [OK  ] ikona: res/mipmap-mdpi/ic_launcher.png
@@ -31,4 +31,4 @@ AUDYT API: WOJAN-LaserCraft-AI-Android-Release.apk (minSdk 24)
 
 WYNIK: OK — klas nowszych niż minSdk: 0, niedostępnych nadtypów: 0, do ręcznej weryfikacji: 0
 
-SHA-256: 3ba6f389aa008b2effa748724624a5e911ea539290b86f40551929edca8626c4
+SHA-256: e793bf65faf8b7fe7a85a327cdab95491504a661fafb46ebeebe495d9bdf2821

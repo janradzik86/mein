@@ -187,7 +187,7 @@ void uiDrawAll(AppState& app, int& activeTab, bool& wantExit) {
       ImGui::EndMenu();
     }
     ImGui::SameLine(ImGui::GetWindowWidth() - 380);
-    ImGui::TextDisabled("Silnik lokalny · offline · v1.0.8");
+    ImGui::TextDisabled("Silnik lokalny · offline · v1.0.9");
     ImGui::EndMainMenuBar();
   }
 
@@ -450,10 +450,10 @@ void uiDrawMic(AppState& app) {
     ImGui::TextColored(ImVec4(1, 0.8f, 0.3f, 1),
                        "Silnik mowy whisper.cpp JEST wbudowany, ale brak pliku wag modelu.");
     ImGui::TextWrapped(
-        "Aby wlaczyc rozpoznawanie mowy offline, wloz plik ggml-base-q5_1.bin (59,7 MB) do katalogu "
-        "„modele” obok programu. Plik mozesz pobrac na swoim komputerze jednym poleceniem: "
-        "tools\\pobierz_model.bat (albo skrypt tools/pobierz_model.sh). Aplikacja sama go wykryje - "
-        "wystarczy ponownie otworzyc te zakladke. Do tego czasu mozesz wpisac tekst recznie.");
+        "Plik wag ggml-base-q5_1.bin (59,7 MB) jest dolaczony do instalatora w katalogu „modele”. "
+        "Ten komunikat oznacza, ze plik zostal usuniety albo program uruchomiono z innego katalogu. "
+        "Skopiuj modele\\ggml-base-q5_1.bin obok pliku EXE (albo do %LOCALAPPDATA%\\WOJAN LaserCraft AI"
+        "\\modele) i otworz te zakladke ponownie. Do tego czasu mozesz wpisac tekst recznie.");
   }
   if (ImGui::Button(app.micRecording ? "ZATRZYMAJ NAGRANIE" : "NAGRAJ (mikrofon)", ImVec2(240, 36))) {
     std::string err;
@@ -1483,7 +1483,7 @@ void uiDrawSettings(AppState& app) {
   }
   ImGui::EndChild();
   sectionTitle("O aplikacji");
-  ImGui::TextWrapped("WOJAN LaserCraft AI Studio 1.0.8 - lokalny generator wzorow do grawerowania "
+  ImGui::TextWrapped("WOJAN LaserCraft AI Studio 1.0.9 - lokalny generator wzorow do grawerowania "
                      "i ciecia laserem. Silnik regulowy i proceduralny wbudowany w program, bez chmury, "
                      "bez kluczy API, bez pobierania modeli po instalacji.");
   ImGui::Columns(1);

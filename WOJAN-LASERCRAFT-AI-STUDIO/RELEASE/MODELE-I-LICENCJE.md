@@ -111,3 +111,19 @@ bez zewnętrznego źródła. Program wykrywa wagę automatycznie po jej włożen
 Model językowy (LLM) nie jest dołączony z tego samego powodu; „Generator AI” działa
 na wbudowanym silniku proceduralnym i parserze języka polskiego (deterministyczny,
 offline), co jest opisane w raporcie bez upiększeń.
+
+## Aktualizacja 1.0.9 — MODEL JEST DOŁĄCZONY (to już nie zapowiedź)
+
+| Element | Stan w wydaniu 1.0.9 |
+|---|---|
+| `modele\ggml-base-q5_1.bin` | **w instalatorze**, 59 707 642 B, Whisper base, q5_1 |
+| pochodzenie wag | PyPI: `gympulse-whisper-base-part1/part2` → CTranslate2 `WhisperSpec` (145 217 532 B) |
+| oryginał | OpenAI Whisper base (MIT) → `Systran/faster-whisper-base` (MIT) |
+| konwersja do ggml | własna: `tools/convert_whisperspec.py` (212 → 263 tensorów) |
+| kwantyzacja | `examples/quantize` z whisper.cpp: f16 147,95 MB → q5_1 59,71 MB |
+| silnik | whisper.cpp 1.7.4 + ggml wkompilowany w EXE (3,75 MB) |
+| test EN | jfk.wav → poprawna transkrypcja, 2,68 s |
+| test PL | espeak-ng (głos pl) → tekst polski z diakrytykami, 3,70 s |
+| RAM | ~400–500 MB podczas pracy modelu base |
+
+Model Whisper na licencji MIT — użycie komercyjne dozwolone, bez opłat i bez limitów.
