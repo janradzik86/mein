@@ -1,5 +1,5 @@
 RAPORT TESTÓW SILNIKA (JVM) — WOJAN LaserCraft AI Studio
-Data: 2026-10-29 03:44:12
+Data: 2026-10-29 04:13:58
 Środowisko: OpenJDK 64-Bit Server VM 25.0.2
 
 PASS T01 Analiza promptu (8 przypadków: produkt, wymiary, cięcie, kategoria) — 8/8 
@@ -35,7 +35,7 @@ PASS T30 Korekta tekstu: podwójne spacje usunięte — 'tabliczka dla wedkarza 
 PASS T31 Bank napisów: 10 propozycji, żadna pusta — 10 propozycji
 PASS T32 G-code: generowany dla GRBL (mm, G90, M5 na końcu) — 61552 B
 PASS T33 G-code: ZABLOKOWANY dla nieznanego kontrolera (Ruida) — Kontroler „Ruida” nie jest GRBL — eksport G-code zablokowany.
-PASS T34 Wydajność: 50× (generowanie + SVG + DXF) poniżej 5 s — 50 projektów w 146 ms (2 ms/projekt)
+PASS T34 Wydajność: 50× (generowanie + SVG + DXF) poniżej 5 s — 50 projektów w 128 ms (2 ms/projekt)
 PASS T35 Pakiet produkcyjny: wszystkie wymagane pliki w ZIP — 13/13 plików, 6894 B
 PASS T36 Profil LightBurn: osobny plik tylko z warstwą cięcia — 326 B
 PASS T37 parametry.json: jednostki mm i kerf z ustawień użytkownika — kerf=0.15 mm
