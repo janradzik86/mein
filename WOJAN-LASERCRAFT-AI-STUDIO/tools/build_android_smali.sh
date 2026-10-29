@@ -77,6 +77,9 @@ for root, _d, files in os.walk(os.path.join(dec, "smali")):
 print(f"   wersja w apktool.yml + manifeście; plików smali z numerem wersji: {changed}")
 PY
 
+echo "== 2b/7 raport błędu na starcie (watchdog + ekran raportu) =="
+python3 tools/android_diag_patch.py "$OUT/dec"
+
 echo "== 3/7 aapt2 + apktool: zasoby i manifest =="
 PATH="$CACHE:$PATH" "$JAVA" -jar "$CACHE/apktool.jar" b "$OUT/dec" -o "$OUT/unsigned-raw.apk" --use-aapt2 2>&1 | tail -3
 
@@ -104,6 +107,14 @@ PY
 echo "== 5/7 kontrole DEX =="
 python3 tools/dexcheck.py "$OUT/classes.dex"
 python3 tools/dexlink.py "$OUT/classes.dex" "$CACHE/android34.jar"
+# dodatkowo: czy każde wywołanie istnieje na Androidzie 16 i 17 (API 36/37)?
+TCBIN="/home/user/toolchain/bin"
+for j in android36.jar android37.jar; do
+  if [ -f "$TCBIN/$j" ]; then
+    echo "   --- zgodność z $j:"
+    python3 tools/dexlink.py "$OUT/classes.dex" "$TCBIN/$j"
+  fi
+done
 python3 tools/dexverify.py "$OUT/classes.dex" "$CACHE/android34.jar"
 
 echo "== 6/7 podpis PRAWDZIWYM apksig (v1 + v2 + v3) + zipalign =="
@@ -126,7 +137,10 @@ else
 fi
 
 echo "== 7/7 weryfikacja niezależna =="
-python3 tools/apk_sign.py --verify "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk"
+# nasz weryfikator nie obsługuje bloku v3 ani podpisu RSASSA-PSS w bloku v2 —
+# wynik rozstrzygający daje apksig (wyżej) i apk_installcheck.py (niżej)
+python3 tools/apk_sign.py --verify "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" \
+  || echo "   (nasz weryfikator: brak obsługi bloku v3/PSS — patrz wynik apksig wyżej)"
 if [ -f "$CACHE/uber-apk-signer.jar" ]; then
   echo "   --- weryfikacja PRAWDZIWYM apksig:"
   "$JAVA" -jar "$CACHE/uber-apk-signer.jar" -a "$OUT/WOJAN-LaserCraft-AI-Android-Release.apk" -y 2>&1 \

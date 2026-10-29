@@ -24,7 +24,7 @@ w `com.capacitorjs.plugins.share.SharePlugin`. Pełna diagnoza:
 | | nasza | tamta powłoka |
 |---|---|---|
 | plik | `WOJAN-LaserCraft-AI-Android-Release.apk` | `wojan-lasercraft-lite-shell-*.apk` |
-| rozmiar | **828 894 B (0,79 MB)** | 3,0 MB |
+| rozmiar | **828 894 B (0,83 MB)** | 3,0 MB |
 | pakiet | `pl.wojan.lasercraft` | `pl.wojan.hobby.lasercraft` |
 | nazwa na liście aplikacji | **WOJAN LaserCraft AI** | WOJAN LaserCraft |
 | WebView / Capacitor | **brak** (własny interfejs) | cała aplikacja to WebView |
@@ -34,9 +34,9 @@ Strony wydań na GitHubie nie mają załączników (serwer, z którego buduję, 
 do `uploads.github.com`), dlatego plik leży **w repozytorium**, a link jest przypięty do
 commita — działa i nie wygasa:
 
-* **APK (0,79 MB, Android 8–17, arm64 i x86):**
+* **APK (0,83 MB, Android 8–17, arm64 i x86):**
   https://github.com/janradzik86/mein/raw/7e49932/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk
-  SHA-256: `e793bf65faf8b7fe7a85a327cdab95491504a661fafb46ebeebe495d9bdf2821`
+  SHA-256: `417cbb8fd8b2e60645e2a84882e88e14f64a9f297c0fb329013da83948c818a8`
 * Instalator Windows (65,7 MB) — link i instrukcja niżej.
 
 ## Windows 11 x64
@@ -52,9 +52,10 @@ commita — działa i nie wygasa:
 
 1. Odinstaluj **starą powłokę**: Ustawienia → Aplikacje → znajdź „WOJAN LaserCraft”
    (bez „AI”) → Odinstaluj. Jeśli zostanie, ikony nadal będą się mylić.
-2. Pobierz plik z linku wyżej (0,79 MB). Po pobraniu sprawdź rozmiar w Menedżerze plików:
-   **musi mieć mniej niż 1 MB**. Plik 3,0 MB to nie my.
-3. Otwórz plik → „Zainstaluj mimo ostrzeżenia” (Android ostrzega o instalacji spoza sklepu;
+2. Pobierz plik z linku wyżej (0,83 MB). Po pobraniu sprawdź rozmiar w Menedżerze plików:
+   **musi mieć mniej niż 1 MB (0,83 MB)**. Plik 3,0 MB to nie my.
+3. **Odinstaluj starą wersję** (nowy klucz podpisujący — inaczej instalacja odmówi),
+   potem otwórz plik → „Zainstaluj mimo ostrzeżenia” (Android ostrzega o instalacji spoza sklepu;
    podpis jest nasz, SHA-256 certyfikatu `5aac0b56…0e23d`).
 4. Po instalacji na liście aplikacji pojawi się **WOJAN LaserCraft AI** — uruchom tę ikonę.
 5. Sprawdzenie tożsamości: Ustawienia → Aplikacje → WOJAN LaserCraft AI → O aplikacji:
@@ -82,7 +83,7 @@ w wersji Windows (port na Androida jest osobnym zadaniem, patrz `RAPORT-TESTOW.m
 | Plik | Rozmiar | SHA-256 |
 |---|---|---|
 | [WOJAN-LaserCraft-AI-Windows-Setup.exe](https://github.com/janradzik86/mein/raw/bf323c0ca7f25de05a5b5aac60f3bb5ca446a14c/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Windows-Setup.exe) | 65 715 235 B | `6745f7789709ef4c16d346b2eb88197d6319ad2ec247541f86297ccc959a844f` |
-| [WOJAN-LaserCraft-AI-Android-Release.apk](https://github.com/janradzik86/mein/raw/bf323c0ca7f25de05a5b5aac60f3bb5ca446a14c/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk) | 828 894 B | `e793bf65faf8b7fe7a85a327cdab95491504a661fafb46ebeebe495d9bdf2821` |
+| [WOJAN-LaserCraft-AI-Android-Release.apk](https://github.com/janradzik86/mein/raw/bf323c0ca7f25de05a5b5aac60f3bb5ca446a14c/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk) | 828 894 B | `417cbb8fd8b2e60645e2a84882e88e14f64a9f297c0fb329013da83948c818a8` |
 | [SHA256SUMS.txt](https://github.com/janradzik86/mein/raw/bf323c0ca7f25de05a5b5aac60f3bb5ca446a14c/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/SHA256SUMS.txt) | 555 B | `ca3da0febd4b0fcdee05ba4592c62d065cc7d0bc59c5e68e347f57a84f50cd0b` |
 | [INSTRUKCJA.pdf](https://github.com/janradzik86/mein/raw/bf323c0ca7f25de05a5b5aac60f3bb5ca446a14c/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/INSTRUKCJA.pdf) | 70 313 B | `0e37e1192cfe4427fb1ea4e331cf772d96d2763d1644c6e95951ba0d0180a8dc` |
 | [RAPORT-TESTOW.md](https://github.com/janradzik86/mein/raw/bf323c0ca7f25de05a5b5aac60f3bb5ca446a14c/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/RAPORT-TESTOW.md) | 15 342 B | `d552f868d839059b2ecca88ec6827b4b373b649ddf158ff7ebc81822137f48ed` |

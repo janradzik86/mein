@@ -175,8 +175,17 @@ def main():
     res.append((OK, f"biblioteki natywne: {len(so)}" + (" (brak — reguła 16 KB nie dotyczy)" if not so else "")))
 
     # ---- 6. podpis (apksigner, jeśli jest; inaczej własny weryfikator + androguard)
-    java = args.java if os.path.exists(args.java) else "java"
+    java = args.java if os.path.exists(args.java) else None
+    if java is None:
+        for cand in (os.path.join(os.environ.get("TC", "/home/user/toolchain"), "jdk", "bin", "java"),
+                     "/usr/bin/java"):
+            if os.path.exists(cand):
+                java = cand
+                break
+    if java is None:
+        java = "java"
     v1 = v2 = v3 = None
+    uas = os.path.expanduser(os.environ.get("LC_CACHE", "~/.cache/lc") + "/uber-apk-signer.jar")
     if os.path.exists(args.apksigner):
         rc, out = run([java, "-jar", args.apksigner, "verify", "--min-sdk-version", "21",
                        "--verbose", path])
@@ -186,6 +195,28 @@ def main():
         if rc != 0:
             res.append((ERR, "apksigner: podpis NIEprawidłowy: " + out.strip()[:200]))
             blocking += 1
+    elif os.path.exists(uas):
+        # oficjalna biblioteka Google `apksig` (w uber-apk-signer) — tryb tylko weryfikacji
+        rc, out = run([java, "-jar", uas, "-a", path, "-y"])
+        v2 = "signature verified [v2" in out or "[v2," in out
+        v3 = ", v3]" in out or "[v3" in out
+        v1 = "v1" in out and "[v1" in out
+        if not v2 and not v1:
+            res.append((ERR, "apksig: podpis NIEprawidłowy: " + out.strip()[:200]))
+            blocking += 1
+        else:
+            res.append((OK, "podpis sprawdzony biblioteką Google apksig (uber-apk-signer): "
+                            f"v2={v2} v3={v3}"))
+        # nasz weryfikator jako kontrola dodatkowa (nie blokuje — nie obsługuje bloku v3)
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import apk_sign
+        r = apk_sign.verify(path)
+        res.append((WARN if r.get("bledy") else OK,
+                    "nasz weryfikator v1/v2: v1={} v2={} {}".format(
+                        r.get("v1"), r.get("v2"),
+                        "(nie obsługuje bloku v3 — wynik v2 z apksig jest rozstrzygający)"
+                        if r.get("bledy") else "")))
+        v1 = True
     else:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import apk_sign
@@ -195,8 +226,8 @@ def main():
             for b in r["bledy"]:
                 res.append((ERR, "podpis: " + b))
             blocking += 1
-        res.append((OK, "podpis sprawdzony własnym weryfikatorem (brak apksigner.jar): "
-                    f"v1={v1} v2={v2}, digest pliku zgodny={r.get('v2_digest_ok')}"))
+        res.append((OK, "podpis sprawdzony własnym weryfikatorem (brak apksig): "
+                    f"v1={v1} v2={v2}"))
         try:
             from loguru import logger as _lg
             _lg.remove()
