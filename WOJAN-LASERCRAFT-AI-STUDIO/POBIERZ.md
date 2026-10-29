@@ -35,7 +35,7 @@ do `uploads.github.com`), dlatego plik leży **w repozytorium**, a link jest prz
 commita — działa i nie wygasa:
 
 * **APK (0,83 MB, Android 8–17, arm64 i x86):**
-  https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk
+  https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk
   SHA-256: `417cbb8fd8b2e60645e2a84882e88e14f64a9f297c0fb329013da83948c818a8`
 * Instalator Windows (65,7 MB) — link i instrukcja niżej.
 
@@ -47,6 +47,13 @@ commita — działa i nie wygasa:
 3. Instalacja bez administratora: `%LOCALAPPDATA%\WOJAN LaserCraft AI`.
 4. Zakładka **Mikrofon i prompt** → NAGRAJ → **ROZPOZNAJ MOWE (offline)**.
    Na górze powinno być zielone: „model: ggml-base-q5_1.bin (56.9 MB)”.
+
+## Test 30-sekundowy (jeśli aplikacja nadal się zamyka)
+
+* **WOJAN-PROBE-test.apk (29 KB)** — https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-PROBE-test.apk
+  pokazuje jeden napis „DZIAŁA” (pakiet `pl.wojan.probe`, ikona „WOJAN PROBE”).
+  Jeśli ten plik działa, a LaserCraft nie — problem jest w kodzie aplikacji, nie w podpisie.
+  Szczegóły i instrukcja: `RELEASE/TEST-URUCHOMIENIA.md`.
 
 ## Android — instalacja krok po kroku
 
@@ -82,17 +89,17 @@ w wersji Windows (port na Androida jest osobnym zadaniem, patrz `RAPORT-TESTOW.m
 
 | Plik | Rozmiar | SHA-256 |
 |---|---|---|
-| [WOJAN-LaserCraft-AI-Windows-Setup.exe](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Windows-Setup.exe) | 65715235 B | `6745f7789709ef4c16d346b2eb88197d6319ad2ec247541f86297ccc959a844f` |
-| [WOJAN-LaserCraft-AI-Android-Release.apk](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk) | 832990 B | `417cbb8fd8b2e60645e2a84882e88e14f64a9f297c0fb329013da83948c818a8` |
-| [SHA256SUMS.txt](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/SHA256SUMS.txt) | 210 B | `342e6b1c5b19f303a78fa566bb42fcf24650db8d7531a7fd6e97e1f0b4f51f0b` |
-| [INSTRUKCJA.pdf](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/INSTRUKCJA.pdf) | 70313 B | `0e37e1192cfe4427fb1ea4e331cf772d96d2763d1644c6e95951ba0d0180a8dc` |
-| [RAPORT-TESTOW.md](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/RAPORT-TESTOW.md) | 15342 B | `d552f868d839059b2ecca88ec6827b4b373b649ddf158ff7ebc81822137f48ed` |
-| [MODELE-I-LICENCJE.md](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/MODELE-I-LICENCJE.md) | 8479 B | `5d775ac9c3c82168f3d150f61e999d7d431a3241850f29bed9c52e76809fa74d` |
-| [PRZYKLADOWE-PROJEKTY.zip](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/PRZYKLADOWE-PROJEKTY.zip) | 564614 B | `3701d96f9b5d4ee6d8e506908edb68af7e22a1f2e86f516756e2d51e651a6066` |
-| [KOD-ZRODLOWY.zip](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/KOD-ZRODLOWY.zip) | 8401684 B | `31a37850f5d621d34cb0e6486ee954f99d7591a46fa16b4d46ab455b0b34a7a9` |
-| [POPRAWKA-1.1.0-ANDROID.md](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/POPRAWKA-1.1.0-ANDROID.md) | 3657 B | `12e87fed0a77d23cc673d0dba61b62abadeb8cbfa7cf40ec226a0921b1e8af4a` |
-| [DIAGNOZA-URUCHOMIENIA.md](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/DIAGNOZA-URUCHOMIENIA.md) | 7416 B | `d2a34ef12981ba9c12101b0fc9b1eec133c6985050d0c4561173d5d01c844494` |
-| [JAK-ROZPOZNAC-APLIKACJE.md](https://github.com/janradzik86/mein/raw/9c5e174/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/JAK-ROZPOZNAC-APLIKACJE.md) | 4199 B | `298ab496b6573fec5b7ff37ee2598caee46750d6c34ce5e45ead841ae914f8b4` |
+| [WOJAN-LaserCraft-AI-Windows-Setup.exe](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Windows-Setup.exe) | 65715235 B | `6745f7789709ef4c16d346b2eb88197d6319ad2ec247541f86297ccc959a844f` |
+| [WOJAN-LaserCraft-AI-Android-Release.apk](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/WOJAN-LaserCraft-AI-Android-Release.apk) | 832990 B | `417cbb8fd8b2e60645e2a84882e88e14f64a9f297c0fb329013da83948c818a8` |
+| [SHA256SUMS.txt](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/SHA256SUMS.txt) | 210 B | `342e6b1c5b19f303a78fa566bb42fcf24650db8d7531a7fd6e97e1f0b4f51f0b` |
+| [INSTRUKCJA.pdf](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/INSTRUKCJA.pdf) | 70313 B | `0e37e1192cfe4427fb1ea4e331cf772d96d2763d1644c6e95951ba0d0180a8dc` |
+| [RAPORT-TESTOW.md](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/RAPORT-TESTOW.md) | 15342 B | `d552f868d839059b2ecca88ec6827b4b373b649ddf158ff7ebc81822137f48ed` |
+| [MODELE-I-LICENCJE.md](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/MODELE-I-LICENCJE.md) | 8479 B | `5d775ac9c3c82168f3d150f61e999d7d431a3241850f29bed9c52e76809fa74d` |
+| [PRZYKLADOWE-PROJEKTY.zip](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/PRZYKLADOWE-PROJEKTY.zip) | 564614 B | `3701d96f9b5d4ee6d8e506908edb68af7e22a1f2e86f516756e2d51e651a6066` |
+| [KOD-ZRODLOWY.zip](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/KOD-ZRODLOWY.zip) | 8401684 B | `31a37850f5d621d34cb0e6486ee954f99d7591a46fa16b4d46ab455b0b34a7a9` |
+| [POPRAWKA-1.1.0-ANDROID.md](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/POPRAWKA-1.1.0-ANDROID.md) | 3657 B | `12e87fed0a77d23cc673d0dba61b62abadeb8cbfa7cf40ec226a0921b1e8af4a` |
+| [DIAGNOZA-URUCHOMIENIA.md](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/DIAGNOZA-URUCHOMIENIA.md) | 7416 B | `d2a34ef12981ba9c12101b0fc9b1eec133c6985050d0c4561173d5d01c844494` |
+| [JAK-ROZPOZNAC-APLIKACJE.md](https://github.com/janradzik86/mein/raw/6a30bd1/WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/JAK-ROZPOZNAC-APLIKACJE.md) | 4199 B | `298ab496b6573fec5b7ff37ee2598caee46750d6c34ce5e45ead841ae914f8b4` |
 
 ## Czego nadal nie ma (mówię wprost)
 
