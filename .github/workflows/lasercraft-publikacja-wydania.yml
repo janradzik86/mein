@@ -1,0 +1,85 @@
+name: LaserCraft — publikacja plików wydania
+
+# Po co ten workflow: wydania (Releases) tworzone z poziomu agenta nie mają
+# załączników, bo w środowisku, w którym budujemy, host uploads.github.com jest
+# zablokowany (SSL_ERROR_SYSCALL). W efekcie strona wydania nie miała ANI JEDNEGO
+# pliku do pobrania — tylko opis. Ten workflow uruchamia się na maszynie GitHuba
+# (pełny dostęp do internetu) i dokłada pliki do wydania jako prawdziwe załączniki,
+# czyli działają linki typu /releases/download/<tag>/<plik>.
+
+on:
+  push:
+    branches:
+      - 'arena/768e1933-mein'
+    paths:
+      - 'WOJAN-LASERCRAFT-AI-STUDIO/RELEASE/**'
+      - '.github/workflows/lasercraft-publikacja-wydania.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publikuj:
+    name: Załączniki wydania
+    runs-on: ubuntu-latest
+    env:
+      TAG: lasercraft-v1.0.5
+    steps:
+      - name: Pobranie repozytorium
+        uses: actions/checkout@v4
+
+      - name: Sprawdzenie plików przed wysłaniem
+        working-directory: WOJAN-LASERCRAFT-AI-STUDIO/RELEASE
+        run: |
+          set -eu
+          for f in WOJAN-LaserCraft-AI-Android-Release.apk \
+                   WOJAN-LaserCraft-AI-Windows-Setup.exe \
+                   WOJAN-LaserCraft-AI.exe \
+                   SHA256SUMS.txt INSTRUKCJA.pdf RAPORT-TESTOW.md \
+                   MODELE-I-LICENCJE.md KONTROLA-INSTALACJI.txt \
+                   PRZYKLADOWE-PROJEKTY.zip KOD-ZRODLOWY.zip \
+                   POPRAWKA-1.0.5.md; do
+            test -f "$f" || { echo "BRAK PLIKU: $f"; exit 1; }
+          done
+          sha256sum -c <(grep -E '\.(apk|exe|zip|pdf)$' SHA256SUMS.txt)
+          ls -l
+
+      - name: Wgranie załączników do wydania
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: WOJAN-LASERCRAFT-AI-STUDIO/RELEASE
+        run: |
+          set -eu
+          # wydanie musi istnieć (tag wskazuje commit); jeśli nie ma — tworzymy
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" \
+              --title "WOJAN LaserCraft AI Studio ${TAG#lasercraft-v}" \
+              --notes "Wydanie WOJAN LaserCraft AI Studio — pliki w załącznikach."
+          fi
+          for f in WOJAN-LaserCraft-AI-Android-Release.apk \
+                   WOJAN-LaserCraft-AI-Windows-Setup.exe \
+                   WOJAN-LaserCraft-AI.exe \
+                   SHA256SUMS.txt INSTRUKCJA.pdf RAPORT-TESTOW.md \
+                   MODELE-I-LICENCJE.md KONTROLA-INSTALACJI.txt \
+                   PRZYKLADOWE-PROJEKTY.zip KOD-ZRODLOWY.zip \
+                   POPRAWKA-1.0.5.md; do
+            echo "→ $f"
+            for proba in 1 2 3; do
+              if gh release upload "$TAG" "$f" --repo "$GITHUB_REPOSITORY" --clobber; then
+                break
+              fi
+              echo "  próba $proba nieudana, ponawiam za 5 s"
+              sleep 5
+            done
+          done
+
+      - name: Kontrola — co realnie jest w wydaniu
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets \
+            --jq '.assets[] | "\(.name)\t\(.size) B\t\(.url)"'
+          LICZBA=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets|length')
+          echo "załączników: $LICZBA"
+          test "$LICZBA" -ge 11
