@@ -11,6 +11,4 @@ keystore/*.pem
 keystore/keystore.env
 *.jks
 
-# pliki wydania są publikowane jako assety GitHub Release (nie w historii git)
-RELEASE/*.apk
-RELEASE/*.exe
+# pliki wydania są wersjonowane w RELEASE/ — użytkownik pobiera je bezpośrednio z repozytorium
